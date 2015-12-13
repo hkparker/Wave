@@ -19,6 +19,6 @@ func NewRouter() *gin.Engine {
 }
 
 func main() {
-	gin.SetMode(gin.ReleaseMode)
+	//	gin.SetMode(gin.ReleaseMode)
 	NewRouter().Run(":8080")
 }

@@ -15,6 +15,5 @@ var _ = Describe("Main", func() {
 		server := httptest.NewServer(router)
 		_, err := http.Get("http://" + server.Listener.Addr().String())
 		Expect(err).To(BeNil())
-		//server.Close()
 	})
 })
