@@ -1,75 +1,172 @@
+body {
+	background-color:	#333333!important;
+}
 .active-space {
-	margin-top: 50px;
+	margin-top:		50px;
 }
 .nav>li>a:hover, .nav>li>a:focus, .nav .open>a, .nav .open>a:hover, .nav .open>a:focus {
-    background:#fff;
+ 	background:		#FFFFFF;
 }
 .dropdown {
-    border-radius:4px;
-    width:	200px;
+ 	border-radius:		4px;
+	width:			200px;
 }
 .dropdown-menu>li>a {
-    color:	#003163;
+ 	color:			#19C5FF;
+}
+.dropdown-menu>li>a:hover {
+	background-color:	#444444;
+ 	color:			#EEEEEE;
 }
 .dropdown ul.dropdown-menu {
-    border-radius:4px;
-    box-shadow:none;
-    margin-top:20px;
-    width:200px;
+	border-radius:		4px;
+	box-shadow:		none;
+	margin-top:		20px;
+	width:			200px;
+	background-color:	#222222;
 }
 .dropdown ul.dropdown-menu:before {
-    content: "";
-    border-right: 10px solid transparent;
-    border-left: 10px solid transparent;
-    position: absolute;
-    top: -10px;
-    right: 16px;
-    z-index: 10;
+	content:		"";
+	border-right:		10px solid transparent;
+	border-left:		10px solid transparent;
+	position:		absolute;
+	top:			-10px;
+	right:			16px;
+	z-index:		10;
 }
 .dropdown ul.dropdown-menu:after {
-    content: "";
-    border-bottom: 12px solid #ccc;
-    border-right: 12px solid transparent;
-    border-left: 12px solid transparent;
-    position: absolute;
-    top: -12px;
-    right: 14px;
-    z-index: 9;
+ 	content:		"";
+	border-bottom:		12px solid #222222;
+	border-right:		12px solid transparent;
+	border-left:		12px solid transparent;
+	position:		absolute;
+	top:			-12px;
+	right:			14px;
+	z-index:		9;
 }
 .report-count {
-	margin-left: 8px;
-	margin-top: 2px;
+	margin-left:		8px;
+	margin-top:		2px;
+	background-color:	#A00000;
 }
 .caret {
-	margin-top: 9px;
-}
-.badge {
-	background-color: #A00000;
+	margin-top:		9px;
 }
 .logo {
-	height: 42px;
-	margin-top: -13px;
+	height:			42px;
+	margin-top:		-13px;
+}
+.logo-login {
+	height:			80px;
+	margin-top:		-13px;
 }
 .navbar-toplink {
-	font-size: 16px;
+	font-size:		16px;
 }
 .navbar-nav>li>a {
-	color: #DEDEDE!important;
+	color:			#DEDEDE!important;
 }
 .navbar-nav>li>a:hover {
-	color: #FFFFFF!important;
+	color:			#FFFFFF!important;
 }
 .navbar-search {
 	background-color:	#000000!important;
+	color:			#FFFFFF!important;
 	border:			1px solid #808080!important;
 	width:			300px!important;
 }
 .navbar-search-button {
-	background-color: #000000!important;
-	padding: 9px!important;
-	border-color: #808080!important;
+	background-color:	#000000!important;
+	padding:		9px!important;
+	border-color:		#808080!important;
 }
 .user-icon {
-	margin-right: 6px!important;
-	margin-top: 1px!important;
+	margin-right:		8px!important;
+	margin-top:		1px!important;
+}
+.settings-icon {
+	     margin-top:	4px;
+}
+@-moz-document url-prefix() {
+	.settings-icon {
+		margin-top:	-18px;
+	}
+	.logout-icon {
+		margin-top:	-22px;
+	}
+}
+.login-container {
+	max-width:		600px;
+	margin:			0 auto;
+	padding:		80px 0;
+	height:			400px;
+	text-align:		center;
+}
+.midbar {
+	background:		#222222;
+	position:		absolute;
+	top:			50%;
+	left:			0;
+	width:			100%;
+	height:			400px;
+	margin-top:		-200px;
+	overflow:		hidden;
+}
+.password-reset {
+	color:			#A9A9A9;
+	font-size:		18px;
+	position:		relative;
+	top:			-25px;
+	text-decoration:	underline;
+}
+.midbar-form {
+	padding:		20px 0;
+	position:		relative;
+	z-index:		2;
+}
+.midbar-form-input {
+	-webkit-appearance:	none;
+	   -moz-appearance:	none;
+		appearance:	none;
+	outline:		0;
+	border:			1px solid rgba(255, 255, 255, 0.4);
+	background-color:	#111111;
+	width:			250px;
+	border-radius:		3px;
+	padding:		10px 15px;
+	margin:			0 auto 10px auto;
+	display:		block;
+	text-align:		center;
+	font-size:		18px;
+	color:			white;
+	-webkit-transition-duration: 0.25s;
+		transition-duration: 0.25s;
+	font-weight:		300;
+}
+.midbar-form-button {
+	-webkit-appearance:	none;
+	   -moz-appearance:	none;
+		appearance:	none;
+	outline:		0;
+	background-color:	#111111;
+	border:			1px solid rgba(255, 255, 255, 0.4);
+	padding:		10px 15px;
+	color:			#19C5FF;
+	border-radius:		3px;
+	width:			250px;
+	cursor:			pointer;
+	font-size:		18px;
+	-webkit-transition-duration: 0.25s;
+		transition-duration: 0.25s;
+}
+.midbar-form-input:hover {
+	background-color:	#000000!important;
+}
+.midbar-form-input:focus {
+	background-color:	#000000;
+	width:			300px;
+	color:			#19C5FF;
+}
+.midbar-form-button:hover {
+	background-color:	#000000;
 }
