@@ -170,3 +170,6 @@ body {
 .midbar-form-button:hover {
 	background-color:	#000000;
 }
+#nprogress .bar {
+	background:		#19C5FF;
+}
