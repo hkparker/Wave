@@ -173,3 +173,91 @@ body {
 #nprogress .bar {
 	background:		#19C5FF;
 }
+
+
+.dashboard {
+	margin-top: 80px;
+}
+
+
+.dash-unit {
+    margin-bottom: 30px;
+    padding-bottom: 10px;
+    border: 1px solid #383737;
+    background-color: #3d3d3d;
+    color: white;
+    height: 290px;
+}
+
+
+.dash-unit hr {
+    border: 0;
+    border-top: 1px solid #151515;
+    border-top-style: dashed;
+    margin-top: 3px;
+}
+
+.dash-unit dtitle {
+    font-size: 11px;
+    text-transform: uppercase;
+    color: #ffffff;
+    margin: 8px;
+    padding: 0px;
+    height: inherit;
+	line-height:	28px;
+}
+
+#space {
+    width: 11.313em;
+    height: 11.313em;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+    margin-bottom: 1.063em;
+    background-position: center center;
+    margin: auto;
+}
+
+
+.dash-unit h2 {
+    font-family: 'Open Sans', sans-serif;
+    font-weight: bold;
+    font-size: 30px;
+    line-height: 26px;
+    letter-spacing: 0px;
+    color: #ffffff;
+    padding-top: 10px;
+    padding-left: 5px;
+    margin-top: 2px;
+    text-align: center;
+}
+
+.half-unit {
+    margin-bottom: 30px;
+    padding-bottom: 4px;
+    border: 1px solid #383737;
+    background-image: url('../images/sep-half.png');
+    background-color: #3d3d3d;
+    color: white;
+    height: 130px;
+}
+
+.half-unit hr {
+    border: 0;
+    border-top: 1px solid #151515;
+    border-top-style: dashed;
+    margin-top: 3px;
+}
+
+.half-unit dtitle {
+    font-size: 10px;
+    text-transform: uppercase;
+    color: #ffffff;
+    margin: 8px;
+    padding: 0px;
+    height: inherit;
+	line-height:	28px;
+}
+
+.clockcenter {
+    text-align: center;
+}
