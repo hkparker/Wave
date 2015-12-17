@@ -1,5 +1,6 @@
 body {
 	background-color:	#333333!important;
+	font-family: 'Open Sans', sans-serif;
 }
 .active-space {
 	margin-top:		50px;
@@ -173,11 +174,14 @@ body {
 #nprogress .bar {
 	background:		#19C5FF;
 }
-
-
 .dashboard {
 	margin-top: 80px;
 }
+
+
+
+
+
 
 
 .dash-unit {
@@ -195,6 +199,10 @@ body {
     border-top: 1px solid #151515;
     border-top-style: dashed;
     margin-top: 3px;
+}
+
+.accordion-hr {
+	margin-bottom:	3px!important;
 }
 
 .dash-unit dtitle {
@@ -225,7 +233,7 @@ body {
     line-height: 26px;
     letter-spacing: 0px;
     color: #ffffff;
-    padding-top: 10px;
+    padding-top: 4px;
     padding-left: 5px;
     margin-top: 2px;
     text-align: center;
@@ -260,4 +268,16 @@ body {
 
 .clockcenter {
     text-align: center;
+}
+
+.accordion-heading {
+    background-color: #252525;
+    background-repeat: repeat-x;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+    zoom: 1;
+    -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+    -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+    background-image: linear-gradient(to bottom, #1F1F1F, #353535);
 }

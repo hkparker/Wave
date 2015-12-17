@@ -57,11 +57,11 @@
 		<div class="container dashboard">
 			<div class="col-sm-3 col-lg-6">
 				<div class="dash-unit">
-					<dtitle>Disk Space</dtitle>
+					<dtitle>Alerts overview<span class="pull-right">link</span></dtitle>
 					<hr>
 					<div id="space">chart</div>
 					<hr>
-					<h2>65%</h2>
+					<h2>up/down blah percent today</h2>
 				</div>
 			</div>
 			<div class="col-sm-3 col-lg-3">
@@ -76,17 +76,53 @@
 			<div class="col-sm-3 col-lg-3">
 				<div class="dash-unit">
 					<dtitle>Active APs</dtitle>
-					<hr>
-					<div id="space">dropdown chat of APs and text overview</div>
-					<hr>
-					<h2>n APs</h2>
+					<hr class="accordion-hr">
+					<div class="accordion" id="accordion2">
+						<div class="accordion-group">
+						    <div class="accordion-heading">
+							<a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion2" href="#collapseOne" aria-expanded="false">
+							Collapsible Group Item #1
+							</a>
+						    </div>
+						    <div id="collapseOne" class="accordion-body collapse" aria-expanded="false" style="height: 0px;">
+							<div class="accordion-inner">
+										</div>
+						    </div>
+						</div>
+
+						<div class="accordion-group">
+						    <div class="accordion-heading">
+							<a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion2" href="#collapseTwo" aria-expanded="false">
+							Collapsible Group Item #2
+							</a>
+						    </div>
+						    <div id="collapseTwo" class="accordion-body collapse" aria-expanded="false" style="height: 0px;">
+							<div class="accordion-inner">
+
+										</div>
+						    </div>
+						</div>
+
+						 <div class="accordion-group">
+						    <div class="accordion-heading">
+							<a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion2" href="#collapseThree" aria-expanded="false">
+							Collapsible Group Item #3
+							</a>
+						    </div>
+						    <div id="collapseThree" class="accordion-body collapse" aria-expanded="false" style="height: 0px;">
+							<div class="accordion-inner">
+
+							</div>
+						    </div>
+						</div>
+					</div>
 				</div>
 			</div>
 			<div class="col-sm-3 col-lg-3">
 				<div class="dash-unit">
-					<dtitle>Disk Space</dtitle>
+					<dtitle>Alerts by MAC</dtitle>
 					<hr>
-					<div id="space">chart</div>
+					<div id="space">pie chart of alerts this week by mac address</div>
 					<hr>
 					<h2>65%</h2>
 				</div>
@@ -100,7 +136,7 @@
 				<div class="half-unit">
 					<dtitle>Disk Space</dtitle>
 					<hr>
-					<div id="space">chart</div>
+					<div class="clockcenter">centered</div>
 				</div>
 			</div>
 			<div class="col-sm-3 col-lg-3">
@@ -112,16 +148,13 @@
 				<div class="half-unit">
 					<dtitle>Disk Space</dtitle>
 					<hr>
-					<div id="space">chart</div>
+					<div class="clockcenter">centered</div>
 				</div>
 			</div>
 			<div class="col-sm-3 col-lg-3">
 				<div class="dash-unit">
-					<dtitle>Disk Space</dtitle>
-					<hr>
-					<div id="space">chart</div>
-					<hr>
-					<h2>65%</h2>
+					<dtitle>Data Hogs</dtitle>
+					<hr class="accordion-hr">
 				</div>
 			</div>
 			<div class="col-sm-3 col-lg-3">
