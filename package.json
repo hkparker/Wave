@@ -1,0 +1,26 @@
+{
+  "name": "wave",
+  "version": "0.0.1",
+  "description": "Wave ====",
+  "main": "index.js",
+  "dependencies": {
+    "babel": "^6.3.26"
+  },
+  "devDependencies": {
+    "babel-core": "^6.4.0",
+    "babel-loader": "^6.2.1"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hkparker/Wave.git"
+  },
+  "author": "Hayden Parker",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/hkparker/Wave/issues"
+  },
+  "homepage": "https://github.com/hkparker/Wave#readme"
+}

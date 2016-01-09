@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/gin-gonic/contrib/static"
 	"github.com/gin-gonic/gin"
+	"github.com/hkparker/Wave/controllers"
 	"net/http"
 )
 
@@ -25,12 +26,13 @@ func renderReset(c *gin.Context) {
 func NewRouter() *gin.Engine {
 	router := gin.Default()
 	router.Use(static.Serve("/vendor", static.LocalFile("vendor", false)))
-	router.Use(static.Serve("/", static.LocalFile("vendor", false)))
+	router.Use(static.Serve("/", static.LocalFile("static", false)))
 	router.LoadHTMLGlob("views/*")
 	router.GET("/", getting)
 	router.GET("/login", renderLogin)
 	router.GET("/2fa", render2FA)
 	router.GET("/reset", renderReset)
+	router.POST("/frame", controllers.FrameFromCollector)
 	return router
 }
 

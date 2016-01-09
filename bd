@@ -1,0 +1,2 @@
+#!/bin/bash
+babel --watch frontend --out-dir assets
