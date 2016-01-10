@@ -177,7 +177,10 @@ body {
 .dashboard {
 	margin-top: 80px;
 }
-
+.unit-option {
+	color:		#A1A1A1;	
+	margin-right:	8px;
+}
 
 
 

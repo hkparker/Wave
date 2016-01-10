@@ -32,7 +32,7 @@ func NewRouter() *gin.Engine {
 	router.GET("/login", renderLogin)
 	router.GET("/2fa", render2FA)
 	router.GET("/reset", renderReset)
-	router.POST("/frame", controllers.FrameFromCollector)
+	router.GET("/frames", controllers.PollCollector)
 	return router
 }
 
