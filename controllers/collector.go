@@ -1,28 +1,32 @@
 package controllers
 
 import (
-	"bytes"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
-	"io/ioutil"
-	"net"
+	"gopkg.in/olivere/elastic.v3"
+	"log"
 	"net/http"
-	"time"
+	"os"
 )
 
-//frame_elasticsearch_client
-var transport = &http.Transport{
-	Proxy: http.ProxyFromEnvironment,
-	Dial: (&net.Dialer{
-		Timeout:   30 * time.Second,
-		KeepAlive: time.Minute,
-	}).Dial,
-	TLSHandshakeTimeout: 10 * time.Second,
-}
+var elasticsearch, _ = prepareElasticsearch()
 
-var client = &http.Client{
-	Transport: transport,
+func prepareElasticsearch() (*elastic.Client, error) {
+	errorlog := log.New(os.Stdout, "Wave ", log.LstdFlags)
+	client, err := elastic.NewClient(elastic.SetErrorLog(errorlog))
+	if err != nil {
+		log.Println(err)
+		return client, err
+	}
+	exists, err := client.IndexExists("frames").Do()
+	if err != nil {
+		log.Println(err)
+		return client, err
+	}
+	if exists {
+		client.DeleteIndex("frames").Do()
+	}
+	return client, nil
 }
 
 var upgrader = websocket.Upgrader{
@@ -33,24 +37,23 @@ var upgrader = websocket.Upgrader{
 }
 
 func elasticache(frame []byte) {
-	req, err := http.NewRequest("POST", "http://127.0.0.1:9200/frames/frame/", bytes.NewBuffer(frame))
+	_, err := elasticsearch.Index().
+		Index("frames").
+		Type("frame").
+		BodyString(string(frame)).
+		Do()
 	if err != nil {
-		fmt.Println("error creating elasticsearch request:", err)
-		return
+		log.Println(err)
 	}
-	resp, err := client.Do(req)
-	if err != nil {
-		fmt.Println("error writing frame to elasticsearch:", err)
-		return
-	}
-	ioutil.ReadAll(resp.Body)
+
 	// parse ID, go delete in 30 seconds
 	//go func() {
 	//	time.Sleep(30 * time.Second)
 	//	make a delete request for that frame
 	//	client.Do(reqQ)
 	//}()
-	resp.Body.Close()
+
+	//resp.Body.Close()
 }
 
 func PollCollector(c *gin.Context) {
