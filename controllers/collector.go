@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 )
 
 var elasticsearch, _ = prepareElasticsearch()
@@ -37,7 +38,7 @@ var upgrader = websocket.Upgrader{
 }
 
 func elasticache(frame []byte) {
-	_, err := elasticsearch.Index().
+	record, err := elasticsearch.Index().
 		Index("frames").
 		Type("frame").
 		BodyString(string(frame)).
@@ -45,15 +46,14 @@ func elasticache(frame []byte) {
 	if err != nil {
 		log.Println(err)
 	}
-
-	// parse ID, go delete in 30 seconds
-	//go func() {
-	//	time.Sleep(30 * time.Second)
-	//	make a delete request for that frame
-	//	client.Do(reqQ)
-	//}()
-
-	//resp.Body.Close()
+	go func() {
+		time.Sleep(30 * time.Second)
+		elasticsearch.Delete().
+			Index("frames").
+			Type("frame").
+			Id(record.Id).
+			Do()
+	}()
 }
 
 func PollCollector(c *gin.Context) {
