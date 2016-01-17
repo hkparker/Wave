@@ -178,12 +178,19 @@ body {
 	margin-top: 80px;
 }
 .unit-option {
-	color:		#A1A1A1;	
+	color:		#A1A1A1;
 	margin-right:	8px;
 }
-
-
-
+.unit-container {
+	padding-right: 0px !important;
+	padding-left: 0px !important;
+}
+.half-width {
+	width: 50% !important;
+}
+.double-height {
+	height: 610px !important;
+}
 
 
 
