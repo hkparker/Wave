@@ -4,34 +4,37 @@ import (
 	"github.com/gin-gonic/contrib/static"
 	"github.com/gin-gonic/gin"
 	"github.com/hkparker/Wave/controllers"
-	"net/http"
 )
 
-func getting(c *gin.Context) {
-	c.HTML(http.StatusOK, "layout.tmpl", gin.H{})
-}
+func renderWebpack(c *gin.Context) {
+	c.Writer.Header().Set("Content-Type", "text/html")
+	c.String(200,
+		`<html>
+	<head>
+		<meta charset="utf-8">
 
-func renderLogin(c *gin.Context) {
-	c.HTML(http.StatusOK, "login.tmpl", gin.H{})
-}
+		<script src="/vendor/jquery/jquery-2.2.0.min.js"></script>
+		<script src="/vendor/bootstrap/js/bootstrap.min.js"></script>
 
-func render2FA(c *gin.Context) {
-	c.HTML(http.StatusOK, "2fa.tmpl", gin.H{})
-}
+		<link href="/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+		<link href="/vendor/wave/wave.css" rel="stylesheet" />
 
-func renderReset(c *gin.Context) {
-	c.HTML(http.StatusOK, "reset.tmpl", gin.H{})
+		<title>Wave</title>
+	</head>
+	<body>
+		<div id="content"></div>
+		<script type="text/javascript" src="bundle.js" charset="utf-8"></script>
+	</body>
+</html>
+`,
+	)
 }
 
 func NewRouter() *gin.Engine {
 	router := gin.Default()
 	router.Use(static.Serve("/vendor", static.LocalFile("vendor", false)))
 	router.Use(static.Serve("/", static.LocalFile("static", false)))
-	router.LoadHTMLGlob("views/*")
-	router.GET("/", getting)
-	router.GET("/login", renderLogin)
-	router.GET("/2fa", render2FA)
-	router.GET("/reset", renderReset)
+	router.GET("/", renderWebpack)
 	router.GET("/frames", controllers.PollCollector)
 	return router
 }
