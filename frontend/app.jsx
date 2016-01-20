@@ -2,6 +2,7 @@ import { Router, Route, RouteHandler, Link, browserHistory} from 'react-router';
 import { Nav, Navbar, NavItem, NavDropdown, MenuItem, Button, Input, Glyphicon } from 'react-bootstrap';
 var React = require('react');
 var ReactDOM = require('react-dom');
+require("./wave.css");
 
 const App = React.createClass({
   render () {
@@ -9,7 +10,7 @@ const App = React.createClass({
       <Navbar inverse fixedTop>
         <Navbar.Header>
           <Navbar.Brand>
-            <a href="#"><img className="logo" src="vendor/wave/wave.svg" /></a>
+            <a href="#"><img className="logo" src="wave.svg" /></a>
           </Navbar.Brand>
         </Navbar.Header>
         <Nav>

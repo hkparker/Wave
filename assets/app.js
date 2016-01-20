@@ -6,6 +6,7 @@ var _reactBootstrap = require('react-bootstrap');
 
 var React = require('react');
 var ReactDOM = require('react-dom');
+require("./wave.css");
 
 var App = React.createClass({
   displayName: 'App',
