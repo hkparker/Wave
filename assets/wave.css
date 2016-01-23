@@ -13,7 +13,7 @@ body {
 	width:			200px;
 }
 .dropdown-menu>li>a {
- 	color:			#19C5FF;
+ 	color:			#19C5FF !important;
 }
 .dropdown-menu>li>a:hover {
 	background-color:	#444444;
@@ -24,7 +24,7 @@ body {
 	box-shadow:		none;
 	margin-top:		20px;
 	width:			200px;
-	background-color:	#222222;
+	background-color:	#222222 !important;
 }
 .dropdown ul.dropdown-menu:before {
 	content:		"";
@@ -48,7 +48,7 @@ body {
 .report-count {
 	margin-left:		8px;
 	margin-top:		2px;
-	background-color:	#A00000;
+	background-color:	#A00000 !important;
 }
 .caret {
 	margin-top:		9px;

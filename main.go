@@ -12,11 +12,6 @@ func renderWebpack(c *gin.Context) {
 		`<html>
 	<head>
 		<meta charset="utf-8">
-
-		<script src="/vendor/jquery/jquery-2.2.0.min.js"></script>
-		<script src="/vendor/bootstrap/js/bootstrap.min.js"></script>
-		<link href="/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
-
 		<title>Wave</title>
 	</head>
 	<body>

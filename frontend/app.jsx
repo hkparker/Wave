@@ -1,12 +1,17 @@
-import { Router, Route, RouteHandler, Link, browserHistory} from 'react-router';
-import { Nav, Navbar, NavItem, NavDropdown, MenuItem, Button, Input, Glyphicon } from 'react-bootstrap';
+import { Router, Route, RouteHandler, Link, browserHistory, IndexRoute } from 'react-router';
+import { Nav, Navbar, NavItem, NavDropdown, MenuItem, Button, Input, Glyphicon, Badge } from 'react-bootstrap';
+import { Dashboard } from './dashboard.js';
 var React = require('react');
 var ReactDOM = require('react-dom');
 require("./wave.css");
+require('expose?$!expose?jQuery!jquery');
+require("bootstrap-webpack");
 
-const App = React.createClass({
-  render () {
+
+var App = React.createClass ({
+  render() {
     return (
+      <div>
       <Navbar inverse fixedTop>
         <Navbar.Header>
           <Navbar.Brand>
@@ -15,8 +20,8 @@ const App = React.createClass({
         </Navbar.Header>
         <Nav>
           <NavItem eventKey={1} href="#">Visualize</NavItem>
-          <NavItem eventKey={2} href="#">Report<span className="badge pull-right report-count">42</span></NavItem>
-          <NavItem eventKey={1} href="#">Investigate</NavItem>
+          <NavItem eventKey={2} href="#">Report<Badge className="report-count" pullRight>42</Badge></NavItem>
+          <NavItem eventKey={3} href="#">Investigate</NavItem>
 	</Nav>
 	<Nav>
           <Navbar.Form pullLeft>
@@ -24,13 +29,15 @@ const App = React.createClass({
 	  </Navbar.Form>
         </Nav>
 	<Nav pullRight>
-          <NavDropdown eventKey={3} title="Hayden Parker" id="basic-nav-dropdown" noCaret>
-            <MenuItem eventKey={3.3}>Settings<span className="glyphicon glyphicon-cog pull-right settings-icon"></span></MenuItem>
+          <NavDropdown eventKey={4} title="Hayden Parker" id="basic-nav-dropdown" noCaret>
+            <MenuItem eventKey={4.1}>Settings<span className="glyphicon glyphicon-cog pull-right settings-icon"></span></MenuItem>
             <MenuItem divider />
-            <MenuItem eventKey={3.3}>Logout<span className="glyphicon glyphicon-log-out pull-right logout-icon"></span></MenuItem>
+            <MenuItem eventKey={4.2}>Logout<span className="glyphicon glyphicon-log-out pull-right logout-icon"></span></MenuItem>
           </NavDropdown>
         </Nav>
       </Navbar>
+      {this.props.children}
+      </div>
     )
   }
 })
@@ -38,6 +45,8 @@ const App = React.createClass({
 ReactDOM.render((
   <Router history={browserHistory}>
     <Route path="/" component={App}>
+      <IndexRoute component={Dashboard}/>
+      <Route path="/dashboard" component={Dashboard} />
     </Route>
   </Router>
 ), document.getElementById('content'))
