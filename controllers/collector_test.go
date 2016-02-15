@@ -1,14 +1,9 @@
-package controllers_test
+package controllers
 
 import (
-	. "github.com/onsi/ginkgo"
-	. "github.com/onsi/gomega"
+	"testing"
 	//"net/http"
 	//"net/http/httptest"
 )
 
-var _ = Describe("Collector", func() {
-	It("", func() {
-		Expect(1).To(Equal(2))
-	})
-})
+func TestCollectorUnauthenticated(t *testing.T) {}
