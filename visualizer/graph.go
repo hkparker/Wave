@@ -1,4 +1,4 @@
-package main
+package visualizer
 
 var graphing_data = make(map[string]string)
 
