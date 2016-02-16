@@ -50,6 +50,8 @@ func NewRouter() *gin.Engine {
 	router.Use(middleware.Authentication())
 	router.Use(static.Serve("/", static.LocalFile("static", false)))
 	router.GET("/", renderWebpack)
+	router.POST("/login", controllers.Login)
+	router.POST("/2fa", controllers.SubmitTwoFactor)
 	router.GET("/frames", controllers.PollCollector)
 	return router
 }

@@ -4,6 +4,9 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+//
+// Ensure that a request is authenticated
+//
 func Authentication() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		if !PublicEndpoint(c.Request.URL.Path) {
