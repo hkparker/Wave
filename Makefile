@@ -1,12 +1,20 @@
 all:
-	go build -o Wave main.go
+	babel frontend --out-dir assets
+	webpack assets/* static/bundle.js
+	go build
 
 backend-tests:
 	go test ./... -cover -race
 
-test: backend-tests
+frontend-tests:
+	echo "frontend tests missing!"
+
+test: backend-tests frontend-tests
+
+setup-env:
+	npm install
 
 clean:
 	rm Wave
-	rm -r assets/*
-	rm -r static/*
+	rm assets/*.js
+	rm static/bundle.js
