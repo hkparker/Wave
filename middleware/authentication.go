@@ -9,7 +9,7 @@ import (
 //
 // Ensure that a request is authenticated
 //
-func Authentication(db gorm.DB) gin.HandlerFunc {
+func Authentication(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		if !PublicEndpoint(c.Request.URL.Path) {
 			session_cookie, present := c.Request.Header["wavesession"]
@@ -50,7 +50,7 @@ func PublicEndpoint(url string) bool {
 //
 // See if the provided session cookie is valid in the database.
 //
-func ActiveSession(id string, db gorm.DB) bool {
+func ActiveSession(id string, db *gorm.DB) bool {
 	//Session.where(id: id).nil?
 	session := &models.Session{}
 	db.Where(&models.Session{Cookie: id}).First(&session)

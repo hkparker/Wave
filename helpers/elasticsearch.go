@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-var elasticsearch *elastic.Client //, _ = prepareElasticsearch()
+var elasticsearch *elastic.Client
 
 func SetupElasticsearch() {
 	errorlog := log.New(os.Stdout, "Wave ", log.LstdFlags)
@@ -38,7 +38,7 @@ func ElasticacheFrame(frame []byte) {
 	if err != nil {
 		log.Println(err)
 	}
-	go func() {
+	go func() { // TTL depicated in ES2.2 but still works?
 		time.Sleep(30 * time.Second)
 		elasticsearch.Delete().
 			Index("frames").

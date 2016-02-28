@@ -4,6 +4,7 @@ import (
 	"crypto"
 	"crypto/rand"
 	"encoding/base64"
+	"github.com/hkparker/Wave/helpers"
 	"github.com/jinzhu/gorm"
 	"github.com/sec51/twofactor"
 	"golang.org/x/crypto/bcrypt"
@@ -78,7 +79,7 @@ func (user *User) NewSession() (wave_session string, err error) {
 		Cookie:   wave_session,
 	}
 	user.Sessions = append(user.Sessions, session)
-	db.Save(&user)
+	helpers.DB().Save(&user)
 	return
 }
 

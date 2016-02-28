@@ -15,6 +15,6 @@ setup-env:
 	npm install
 
 clean:
-	rm Wave
-	rm assets/*.js
-	rm static/bundle.js
+	rm -f Wave
+	rm -f assets/*.js
+	rm -f static/bundle.js
