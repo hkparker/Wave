@@ -6,11 +6,21 @@ var _reactBootstrap = require('react-bootstrap');
 
 var _dashboard = require('./dashboard.js');
 
+var _reactRedux = require('react-redux');
+
+var _redux = require('redux');
+
 var React = require('react');
 var ReactDOM = require('react-dom');
 require("./wave.css");
 require('expose?$!expose?jQuery!jquery');
 require("bootstrap-webpack");
+
+var store = (0, _redux.createStore)(function () {
+	var state = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+	var action = arguments[1];
+	return state;
+});
 
 var App = function App(props) {
 	return React.createElement(
@@ -92,12 +102,16 @@ var App = function App(props) {
 };
 
 ReactDOM.render(React.createElement(
-	_reactRouter.Router,
-	{ history: _reactRouter.browserHistory },
+	_reactRedux.Provider,
+	{ store: store },
 	React.createElement(
-		_reactRouter.Route,
-		{ path: '/', component: App },
-		React.createElement(_reactRouter.IndexRoute, { component: _dashboard.Dashboard }),
-		React.createElement(_reactRouter.Route, { path: '/dashboard', component: _dashboard.Dashboard })
+		_reactRouter.Router,
+		{ history: _reactRouter.browserHistory },
+		React.createElement(
+			_reactRouter.Route,
+			{ path: '/', component: App },
+			React.createElement(_reactRouter.IndexRoute, { component: _dashboard.Dashboard }),
+			React.createElement(_reactRouter.Route, { path: '/dashboard', component: _dashboard.Dashboard })
+		)
 	)
 ), document.getElementById('content'));

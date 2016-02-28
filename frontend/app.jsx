@@ -1,12 +1,15 @@
 import { Router, Route, RouteHandler, Link, browserHistory, IndexRoute } from 'react-router';
 import { Nav, Navbar, NavItem, NavDropdown, MenuItem, Button, Input, Glyphicon, Badge } from 'react-bootstrap';
 import { Dashboard } from './dashboard.js';
+import { Provider } from 'react-redux'
+import { createStore } from 'redux'
 var React = require('react');
 var ReactDOM = require('react-dom');
 require("./wave.css");
 require('expose?$!expose?jQuery!jquery');
 require("bootstrap-webpack");
 
+let store = createStore((state = {}, action) => { return state })
 
 var App = (props) => (
 	<div>
@@ -39,10 +42,14 @@ var App = (props) => (
 )
 
 ReactDOM.render((
-  <Router history={browserHistory}>
-    <Route path="/" component={App}>
-      <IndexRoute component={Dashboard}/>
-      <Route path="/dashboard" component={Dashboard} />
-    </Route>
-  </Router>
-), document.getElementById('content'))
+	<Provider store={store}>
+		<Router history={browserHistory}>
+			<Route path="/" component={App}>
+				<IndexRoute component={Dashboard}/>
+				<Route path="/dashboard" component={Dashboard} />
+			</Route>
+		</Router>
+	</Provider>
+	),
+	document.getElementById('content')
+)
