@@ -1,14 +1,18 @@
 package main
 
 import (
+	"flag"
+	"fmt"
 	log "github.com/Sirupsen/logrus"
 	"github.com/gin-gonic/contrib/static"
 	"github.com/gin-gonic/gin"
 	"github.com/hkparker/Wave/controllers"
+	"github.com/hkparker/Wave/helpers"
 	"github.com/hkparker/Wave/middleware"
 	"github.com/hkparker/Wave/models"
 	"github.com/jinzhu/gorm"
 	_ "github.com/lib/pq"
+	"os"
 )
 
 type WaveConfig struct {
@@ -16,6 +20,7 @@ type WaveConfig struct {
 }
 
 var wave = WaveConfig{}
+var help = flag.Bool("help", false, "display help message")
 
 func initDB() {
 	db, err := gorm.Open("postgres", "user=postgres dbname=postgres sslmode=disable")
@@ -47,7 +52,6 @@ func renderWebpack(c *gin.Context) {
 
 func NewRouter() *gin.Engine {
 	log.SetFormatter(&log.JSONFormatter{})
-	initDB()
 	router := gin.Default()
 	router.Use(middleware.Authentication(wave.DB))
 	router.Use(static.Serve("/", static.LocalFile("static", false)))
@@ -65,6 +69,13 @@ func NewRouter() *gin.Engine {
 }
 
 func main() {
+	flag.Parse()
+	if *help {
+		fmt.Println("Wave 0.0.1")
+		os.Exit(0)
+	}
 	//gin.SetMode(gin.ReleaseMode)
+	helpers.SetupElasticsearch()
+	initDB()
 	NewRouter().Run(":8080")
 }

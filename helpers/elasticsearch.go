@@ -7,24 +7,26 @@ import (
 	"time"
 )
 
-var elasticsearch, _ = prepareElasticsearch()
+var elasticsearch *elastic.Client //, _ = prepareElasticsearch()
 
-func prepareElasticsearch() (*elastic.Client, error) {
+func SetupElasticsearch() {
 	errorlog := log.New(os.Stdout, "Wave ", log.LstdFlags)
 	client, err := elastic.NewClient(elastic.SetErrorLog(errorlog))
 	if err != nil {
 		log.Println(err)
-		return client, err
+		elasticsearch = client
+		return
 	}
 	exists, err := client.IndexExists("frames").Do()
 	if err != nil {
 		log.Println(err)
-		return client, err
+		elasticsearch = client
+		return
 	}
 	if exists {
 		client.DeleteIndex("frames").Do()
 	}
-	return client, nil
+	elasticsearch = client
 }
 
 func ElasticacheFrame(frame []byte) {

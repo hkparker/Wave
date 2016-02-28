@@ -45,21 +45,33 @@ README.md			this file
 Wave				compiled binary
 ```
 
+Installing Dependencies
+-----------------------
+
+```
+make setup-env
+```
+
+Testing
+-------
+
+```
+make test
+```
+
 Building
 --------
 
 ```
-git clone https://github.com/hkparker/Wave
-cd Wave
-go test ./...
-
-babel frontend --out-dir assets
-webpack assets/* static/bundle.js
-
-go build
+make
 ```
 
-Binaries will also be available to try in the releases tab.
+Usage
+-----
+
+```
+./Wave -help
+```
 
 License
 -------
