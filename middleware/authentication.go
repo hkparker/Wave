@@ -2,15 +2,21 @@ package middleware
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/hkparker/Wave/models"
+	"github.com/jinzhu/gorm"
 )
 
 //
 // Ensure that a request is authenticated
 //
-func Authentication() gin.HandlerFunc {
+func Authentication(db gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		if !PublicEndpoint(c.Request.URL.Path) {
-			if !ActiveSession() {
+			session_cookie, present := c.Request.Header["wavesession"]
+			if !present || len(session_cookie) != 1 {
+				c.Redirect(302, "/login")
+				c.Abort()
+			} else if !ActiveSession(session_cookie[0], db) {
 				c.Redirect(302, "/login")
 				c.Abort()
 			} else if !HasRole() {
@@ -35,15 +41,19 @@ func PublicEndpoint(url string) bool {
 		return true
 	case "/frames":
 		return true
+	case "/login":
+		return true
 	}
 	return false
 }
 
 //
-// See if the provided session cookie is valid in
-// the database.
+// See if the provided session cookie is valid in the database.
 //
-func ActiveSession() bool {
+func ActiveSession(id string, db gorm.DB) bool {
+	//Session.where(id: id).nil?
+	session := &models.Session{}
+	db.Where(&models.Session{Cookie: id}).First(&session)
 	return true
 }
 

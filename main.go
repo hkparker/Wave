@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/hkparker/Wave/controllers"
 	"github.com/hkparker/Wave/middleware"
+	"github.com/hkparker/Wave/models"
 	"github.com/jinzhu/gorm"
 	_ "github.com/lib/pq"
 )
@@ -23,6 +24,7 @@ func initDB() {
 			"error": err.Error(),
 		}).Fatal("unable to connect to postgres")
 	}
+	models.SetDB(db)
 	wave.DB = db
 }
 
@@ -47,7 +49,7 @@ func NewRouter() *gin.Engine {
 	log.SetFormatter(&log.JSONFormatter{})
 	initDB()
 	router := gin.Default()
-	router.Use(middleware.Authentication())
+	router.Use(middleware.Authentication(wave.DB))
 	router.Use(static.Serve("/", static.LocalFile("static", false)))
 	router.GET("/", renderWebpack)
 

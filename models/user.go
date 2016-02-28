@@ -2,16 +2,19 @@ package models
 
 import (
 	"crypto"
+	"crypto/rand"
+	"encoding/base64"
 	"github.com/jinzhu/gorm"
 	"github.com/sec51/twofactor"
 	"golang.org/x/crypto/bcrypt"
+	"time"
 )
 
 type User struct {
 	gorm.Model
 	Name            string
 	Password        []byte
-	Email           string
+	Email           string `sql:"not null;unique"`
 	Sessions        []Session
 	OTPData         []byte
 	OTPReset        bool
@@ -55,10 +58,33 @@ func (user *User) SetPassword(password string) (err error) {
 	return
 }
 
-func (user *User) ResetTwoFactor() {
+func (user *User) ResetAuthentication() {
 	// user will need to setup new two factor code next time it is asked for
 }
 
-func (user *User) Login() {
+func (user *User) ValidAuthentication(email, password, token string) bool {
+	return false
+}
 
+func (user *User) NewSession() (wave_session string, err error) {
+	session_bytes := make([]byte, 32)
+	_, err = rand.Read(session_bytes)
+	if err != nil {
+		return
+	}
+	wave_session = base64.StdEncoding.EncodeToString(session_bytes)
+	session := Session{
+		LastUsed: time.Now(),
+		Cookie:   wave_session,
+	}
+	user.Sessions = append(user.Sessions, session)
+	db.Save(&user)
+	return
+}
+
+func (user *User) DestroySession(cookie string) {
+
+}
+
+func (user *User) DestroyAllSessions() {
 }

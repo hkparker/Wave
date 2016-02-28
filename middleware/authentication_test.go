@@ -28,14 +28,14 @@ func seedAuthenticationTests() gorm.DB {
 	return db
 }
 
-func TestPublicResourcesUnrestricted(t *testing.T) {
-	user := models.User{}
-	db.First(&user)
-	if user.Name != "Joe Hackerman" {
-		t.Fatal("postgres test db didn't seed")
-	}
-}
+//func TestPublicResourcesUnrestricted(t *testing.T) {
+//	user := models.User{}
+//	db.First(&user)
+//	if user.Name != "Joe Hackerman" {
+//		t.Fatal("postgres test db didn't seed")
+//	}
+//}
 
-func TestSessionCreatedWhenLoggedIn(t *testing.T) {
+func TestActiveSessionTrueWithSessionAndUpdatesTime(t *testing.T) {
 
 }

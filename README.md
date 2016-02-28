@@ -6,7 +6,7 @@ Wave is a wireless Intrusion Detection System and 802.11 visualizer.  Wireless d
 Goals
 -----
 
-The primary goal of Wave is to detect wireless attacks and alert relevent parties over email.  Performing wireless intrusion detection requires storing captures wireless frames for a short period of time for analysis.  During this analysis, it is also possible to construct a rich graph of live activity and relationships between devices from the wireless metadata.  Wave aims to present the information in the air as a useful and powerful graph.
+The primary goal of Wave is to detect wireless attacks and alert relevent parties.  Performing wireless intrusion detection requires storing captures wireless frames for a short period of time for analysis.  During this analysis, it is also possible to construct a rich graph of live activity and relationships between devices from the wireless metadata.  Wave aims to present the information in the air as a powerful interactive graph.
 
 Status
 ------
