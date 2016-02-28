@@ -6,7 +6,8 @@ import (
 
 type Session struct {
 	gorm.Model
-	Cookie string
+	Cookie   string
+	LastUsed string
 }
 
 func CreateNewSession() {}

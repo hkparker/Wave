@@ -21,7 +21,7 @@ func seedAuthenticationTests() gorm.DB {
 	db.CreateTable(&models.User{})
 	user := models.User{
 		Name:     "Joe Hackerman",
-		Password: "bcrypt",
+		Password: []byte{},
 		Email:    "joehacker@example.com",
 	}
 	db.Create(&user)

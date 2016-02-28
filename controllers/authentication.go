@@ -13,3 +13,7 @@ func Login(c *gin.Context) {
 func SubmitTwoFactor(c *gin.Context) {
 
 }
+
+func PasswordReset(c *gin.Context) {
+
+}

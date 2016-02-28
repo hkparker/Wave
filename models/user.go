@@ -9,14 +9,16 @@ import (
 
 type User struct {
 	gorm.Model
-	Username string
-	Password []byte
-	Email    string
-	Sessions []Session
-	OTPData  []byte
+	Name            string
+	Password        []byte
+	Email           string
+	Sessions        []Session
+	OTPData         []byte
+	OTPReset        bool
+	PasswordResetID string
 }
 
-func RegisterUser(username, email string) (err error) {
+func RegisterUser(email string) (err error) {
 	// if the email already exists, return an error
 	otp, err := twofactor.NewTOTP(email, "Wave", crypto.SHA512, 8)
 	if err != nil {
@@ -27,11 +29,10 @@ func RegisterUser(username, email string) (err error) {
 		return
 	}
 	_ = User{
-		Username: username,
-		Email:    email,
-		OTPData:  otp_data,
-		// indicate password change required
-		// indicate 2fa setup needed
+		Email:           email,
+		OTPData:         otp_data,
+		OTPReset:        true,
+		PasswordResetID: "",
 	}
 	//db.Create(&user)
 	// email the user the register link
@@ -56,4 +57,8 @@ func (user *User) SetPassword(password string) (err error) {
 
 func (user *User) ResetTwoFactor() {
 	// user will need to setup new two factor code next time it is asked for
+}
+
+func (user *User) Login() {
+
 }
