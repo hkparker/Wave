@@ -12,25 +12,25 @@ The primary goal of Wave is to detect wireless attacks and alert relevent partie
 Installation
 ------------
 
-# Dependencies
+**Dependencies**
 
 ```
 make deps
 ```
 
-# Testing
+**Testing**
 
 ```
 make test
 ```
 
-# Building
+**Building**
 
 ```
 make
 ```
 
-# Usage
+**Usage**
 
 ```
 ./Wave -help
