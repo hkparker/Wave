@@ -3,6 +3,7 @@ package middleware
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/hkparker/Wave/helpers"
+	"path/filepath"
 )
 
 func EmbeddedAssets() gin.HandlerFunc {
@@ -41,5 +42,22 @@ func renderWebpack(c *gin.Context) {
 }
 
 func contentType(file string) string {
-	return "text/plain"
+	extension := filepath.Ext(file)
+	switch extension {
+	case ".js":
+		return "application/javascript"
+	case ".svg":
+		return "image/svg+xml"
+	case ".ico":
+		return "image/x-icon"
+	case ".woff":
+		return "application/font-woff"
+	case ".woff2":
+		return "application/font-woff"
+	case ".ttf":
+		return "application/font-sfnt"
+	case ".eot":
+		return "application/vnd.ms-fontobject"
+	}
+	return "application/octet-stream"
 }

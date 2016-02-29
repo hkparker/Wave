@@ -33,12 +33,6 @@ func Authentication(db *gorm.DB) gin.HandlerFunc {
 //
 func PublicEndpoint(url string) bool {
 	switch url {
-	case "/":
-		return true
-	case "/bundle.js":
-		return true
-	case "/wave.svg":
-		return true
 	case "/frames":
 		return true
 	case "/login":
