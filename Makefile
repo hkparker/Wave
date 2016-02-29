@@ -7,7 +7,7 @@ all:
 	go build
 
 test:
-	go test ./... -cover -race
+	go test ./... -cover
 
 deps:
 	go get golang.org/x/crypto/bcrypt
