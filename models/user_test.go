@@ -4,6 +4,7 @@ import (
 	"flag"
 	"github.com/hkparker/Wave/helpers"
 	_ "github.com/lib/pq"
+	"github.com/stretchr/testify/assert"
 	"os"
 	"testing"
 )
@@ -25,14 +26,10 @@ func TestNewSessionCreatesSession(t *testing.T) {
 	user := User{}
 	helpers.DB().Where(User{Email: "usertest@example.com"}).First(&user)
 	cookie, err := user.NewSession()
-	if err != nil {
-		t.Fatal("error creating session:", err)
-	}
+	assert.Nil(t, err)
 	session := Session{}
 	helpers.DB().Where(Session{Cookie: cookie}).First(&session)
-	if session.UserID != user.ID {
-		t.Fatal("NewSession did not create a session with proper information")
-	}
+	assert.Equal(t, session.UserID, user.ID)
 }
 
 func TestSessionCreatedWhenLoggedIn(t *testing.T) {

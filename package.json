@@ -5,6 +5,7 @@
   "main": "index.js",
   "dependencies": {
     "babel": "^6.3.26",
+    "babel-preset-stage-2": "^6.5.0",
     "file-loader": "^0.8.5",
     "jquery": "^2.2.0",
     "react": "^0.14.6",
@@ -12,6 +13,7 @@
     "react-dom": "^0.14.6",
     "react-redux": "^4.4.0",
     "react-router": "^2.0.0-rc5",
+    "react-router-redux": "^4.0.0",
     "redux": "^3.3.1",
     "webpack": "^1.12.11"
   },

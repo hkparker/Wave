@@ -6,6 +6,7 @@ import (
 	"github.com/jinzhu/gorm"
 	_ "github.com/lib/pq"
 	"testing"
+	//"github.com/stretchr/testify/assert"
 )
 
 var db = seedAuthenticationTests()

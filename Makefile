@@ -3,15 +3,10 @@ all:
 	webpack assets/* static/bundle.js
 	go build
 
-backend-tests:
+test:
 	go test ./... -cover -race
 
-frontend-tests:
-	echo "frontend tests missing!"
-
-test: backend-tests frontend-tests
-
-setup-env:
+deps:
 	npm install
 
 clean:

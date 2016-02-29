@@ -1,15 +1,23 @@
 import { Router, Route, RouteHandler, Link, browserHistory, IndexRoute } from 'react-router';
 import { Nav, Navbar, NavItem, NavDropdown, MenuItem, Button, Input, Glyphicon, Badge } from 'react-bootstrap';
 import { Dashboard } from './dashboard.js';
-import { Provider } from 'react-redux'
-import { createStore } from 'redux'
+import { Provider } from 'react-redux';
+import { createStore, combineReducers, applyMiddleware } from 'redux';
+import { syncHistoryWithStore, routerReducer } from 'react-router-redux';
+import * as reducers from './reducers';
 var React = require('react');
 var ReactDOM = require('react-dom');
 require("./wave.css");
 require('expose?$!expose?jQuery!jquery');
 require("bootstrap-webpack");
 
-let store = createStore((state = {}, action) => { return state })
+const store = createStore(
+	combineReducers({
+		...reducers,
+		routing: routerReducer
+	})
+)
+const history = syncHistoryWithStore(browserHistory, store)
 
 var App = (props) => (
 	<div>
@@ -41,15 +49,14 @@ var App = (props) => (
 	</div>
 )
 
-ReactDOM.render((
+ReactDOM.render(
 	<Provider store={store}>
-		<Router history={browserHistory}>
+		<Router history={history}>
 			<Route path="/" component={App}>
 				<IndexRoute component={Dashboard}/>
-				<Route path="/dashboard" component={Dashboard} />
+				<Route path="dashboard" component={Dashboard} />
 			</Route>
 		</Router>
-	</Provider>
-	),
+	</Provider>,
 	document.getElementById('content')
 )

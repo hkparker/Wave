@@ -8,8 +8,33 @@ Goals
 
 The primary goal of Wave is to detect wireless attacks and alert relevent parties.  Performing wireless intrusion detection requires storing captures wireless frames for a short period of time for analysis.  During this analysis, it is also possible to construct a rich graph of live activity and relationships between devices from the wireless metadata.  Wave aims to present the information in the air as a powerful interactive graph.
 
-Status
-------
+
+Installation
+------------
+
+# Dependencies
+
+```
+make deps
+```
+
+# Testing
+
+```
+make test
+```
+
+# Building
+
+```
+make
+```
+
+# Usage
+
+```
+./Wave -help
+```
 
 Stack
 -----
@@ -26,6 +51,7 @@ Stack
 * [react-dom](): react interface to browser DOM
 * [react-router](): front end router for react
 * [react-redux](): react binding for the redux state container
+* [react-router-redux](): state synchronization between redux and react-router
 * [react-bootstrap](https://github.com/react-bootstrap/react-bootstrap): bootstrap markup library built with react
 * [d3](https://github.com/mbostock/d3): javascript graphing library
 
@@ -43,34 +69,6 @@ package.json		npm project file
 README.md			this file
 /visualizer			logic for updating frontend visualization
 Wave				compiled binary
-```
-
-Installing Dependencies
------------------------
-
-```
-make setup-env
-```
-
-Testing
--------
-
-```
-make test
-```
-
-Building
---------
-
-```
-make
-```
-
-Usage
------
-
-```
-./Wave -help
 ```
 
 License
