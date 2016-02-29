@@ -12,6 +12,8 @@ The primary goal of Wave is to detect wireless attacks and alert relevent partie
 Installation
 ------------
 
+You must have `go` and `npm` available.
+
 **Dependencies**
 
 ```
@@ -35,6 +37,8 @@ make
 ```
 ./Wave -help
 ```
+
+Binaries will also be available on the releases tab.
 
 Stack
 -----

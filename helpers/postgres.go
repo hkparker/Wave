@@ -25,3 +25,19 @@ func DB() *gorm.DB {
 	}
 	return pg
 }
+
+func SeedUserTests() {
+
+}
+
+func TeardownUserTests() {
+
+}
+
+func SeedAuthenticationTests() {
+
+}
+
+func TeardownAuthenticationTests() {
+
+}

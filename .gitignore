@@ -1,6 +1,6 @@
 static/bundle.js
 node_modules
 .*.sw?
-bin
 Wave
 assets/*.js
+helpers/bindata.go

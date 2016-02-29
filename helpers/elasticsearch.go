@@ -1,17 +1,15 @@
 package helpers
 
 import (
+	log "github.com/Sirupsen/logrus"
 	"gopkg.in/olivere/elastic.v3"
-	"log"
-	"os"
 	"time"
 )
 
 var elasticsearch *elastic.Client
 
 func SetupElasticsearch() {
-	errorlog := log.New(os.Stdout, "Wave ", log.LstdFlags)
-	client, err := elastic.NewClient(elastic.SetErrorLog(errorlog))
+	client, err := elastic.NewClient() // pass logrus logger
 	if err != nil {
 		log.Println(err)
 		elasticsearch = client
