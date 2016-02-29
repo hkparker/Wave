@@ -16,8 +16,8 @@ var help = flag.Bool("help", false, "display help message")
 
 func NewRouter() *gin.Engine {
 	router := gin.Default()
-	router.Use(middleware.Authentication(helpers.DB()))
 	router.Use(middleware.EmbeddedAssets())
+	router.Use(middleware.Authentication(helpers.DB()))
 
 	// Authentication routes
 	router.POST("/login", controllers.Login)
