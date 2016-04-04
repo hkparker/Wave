@@ -12,7 +12,7 @@ func TestMain(m *testing.M) {
 	flag.Parse()
 	seedModelsTests()
 	exitcode := m.Run()
-	//teardownUserTests()
+	teardownModelsTests()
 	os.Exit(exitcode)
 }
 
@@ -21,15 +21,15 @@ func seedModelsTests() {
 	helpers.DB().CreateTable(&User{})
 	helpers.DB().CreateTable(&Session{})
 	user := User{
-		Name:     "Joe Hackerman",
-		Password: []byte{},
-		Email:    "usertest@example.com",
+		Name:  "Joe Hackerman",
+		Email: "modeltest1@example.com",
 	}
 	helpers.DB().Create(&user)
-	user2 := User{
-		Name:     "Joe Hackerman",
-		Password: []byte{},
-		Email:    "joehacker@example.com",
-	}
-	helpers.DB().Create(&user2)
+}
+
+func teardownModelsTests() {
+	helpers.DB().Unscoped().Where(
+		"email LIKE ?",
+		"modeltest%",
+	).Delete(User{})
 }

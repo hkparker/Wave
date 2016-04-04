@@ -1,0 +1,4 @@
+pg:
+  image: postgres
+es:
+  image: elasticsearch

@@ -1,27 +1,4 @@
-all:
-	babel frontend --out-dir assets
-	webpack assets/* static/bundle.js
-	go-bindata static/
-	sed -i -e 's/package main/package helpers/g' bindata.go
-	mv bindata.go helpers
-	go build
-
-test:
-	go test ./... -cover
-
-deps:
-	go get golang.org/x/crypto/bcrypt
-	go get gopkg.in/olivere/elastic.v3
-	go get github.com/jinzhu/gorm
-	go get github.com/sec51/twofactor
-	go get github.com/stretchr/testify
-	go get github.com/gin-gonic/gin
-	go get github.com/gorilla/websocket
-	go get github.com/Sirupsen/logrus
-	go get github.com/lib/pq
-	go get github.com/jteeuwen/go-bindata
-	go install github.com/jteeuwen/go-bindata
-	npm install
+all: clean test build
 
 clean:
 	rm -f Wave
@@ -33,3 +10,35 @@ clean:
 	rm -f static/f4769f9bdb7466be65088239c12046d1.eot
 	rm -f static/fa2772327f55d8198301fdb8bcfc8158.woff
 	rm -f helpers/bindata.go
+	rm -f bin/*
+
+embed-assets:
+	go-bindata -pkg=helpers -o=helpers/bindata.go static/
+
+develop: clean build
+	WAVE_ENV=development ./Wave
+	# hot reloading react, redux dev tools, etc
+	# rebuild and restart Wave when go files change
+
+test-frontend:
+
+test-backend: embed-assets
+	go test ./... -cover
+
+test: test-frontend test-backend
+
+build-frontend:
+	babel frontend --out-dir assets
+	webpack assets/* static/bundle.js
+
+build-backend: embed-assets
+	go build
+
+build: build-frontend build-backend
+
+release: clean test
+	GOOS=linux GOARCH=amd64 go build -o bin/Wave-linux
+	GOOS=linux GOARCH=arm go build -o bin/Wave-linux-arm
+	GOOS=freebsd GOARCH=amd64 go build -o bin/Wave-freebsd
+	GOOS=darwin GOARCH=amd64 go build -o bin/Wave-da
+	GOOS=windows GOARCH=amd64 go build -o bin/Wave-windows.exe

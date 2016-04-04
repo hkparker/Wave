@@ -14,7 +14,7 @@ func EmbeddedAssets() gin.HandlerFunc {
 			renderWebpack(c)
 		default:
 			data, err := helpers.Asset("static" + path)
-			if err == nil {
+			if err == nil && helpers.Production() {
 				c.Writer.Header().Set("Content-Type", contentType(path))
 				c.String(200, string(data))
 				c.Abort()

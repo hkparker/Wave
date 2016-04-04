@@ -22,6 +22,8 @@ func DB() *gorm.DB {
 	return ProductionDB()
 }
 
+// InitTestDB  // connect to the test database and create all tables
+// TeardownTestDB()
 func TestDB() *gorm.DB {
 	if testpg == nil {
 		db, err := gorm.Open("postgres", "user=postgres dbname=wave_test sslmode=disable")
