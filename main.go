@@ -38,7 +38,6 @@ func main() {
 	}
 	log.SetFormatter(&log.JSONFormatter{})
 	gin.SetMode(gin.ReleaseMode)
-	helpers.SetEnv("production")
 	helpers.SetupElasticsearch()
 	helpers.DB()
 	NewRouter().Run(":8080")

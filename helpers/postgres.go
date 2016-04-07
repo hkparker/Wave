@@ -2,31 +2,18 @@ package helpers
 
 import (
 	log "github.com/Sirupsen/logrus"
+	_ "github.com/erikstmartin/go-testdb"
 	"github.com/jinzhu/gorm"
 	"os"
 )
 
-var env = "production"
 var pg *gorm.DB
 var testpg *gorm.DB
 
-func SetEnv(newenv string) {
-	env = newenv
-}
-
-func DB() *gorm.DB {
-	switch env {
-	case "testing":
-		return TestDB()
-	}
-	return ProductionDB()
-}
-
 // InitTestDB  // connect to the test database and create all tables
-// TeardownTestDB()
 func TestDB() *gorm.DB {
 	if testpg == nil {
-		db, err := gorm.Open("postgres", "user=postgres dbname=wave_test sslmode=disable")
+		db, err := gorm.Open("testdb", "")
 		if err != nil {
 			log.WithFields(log.Fields{
 				"error": err.Error(),
@@ -38,7 +25,7 @@ func TestDB() *gorm.DB {
 	return testpg
 }
 
-func ProductionDB() *gorm.DB {
+func DB() *gorm.DB {
 	if pg == nil {
 		db, err := gorm.Open("postgres", "user=postgres dbname=wave sslmode=disable")
 		if err != nil {

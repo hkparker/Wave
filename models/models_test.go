@@ -1,7 +1,9 @@
 package models
 
 import (
+	"database/sql/driver"
 	"flag"
+	"github.com/erikstmartin/go-testdb"
 	"github.com/hkparker/Wave/helpers"
 	_ "github.com/lib/pq"
 	"os"
@@ -12,24 +14,33 @@ func TestMain(m *testing.M) {
 	flag.Parse()
 	seedModelsTests()
 	exitcode := m.Run()
-	teardownModelsTests()
 	os.Exit(exitcode)
 }
 
 func seedModelsTests() {
-	helpers.SetEnv("testing")
-	helpers.DB().CreateTable(&User{})
-	helpers.DB().CreateTable(&Session{})
+	helpers.TestDB().CreateTable(&User{})
+	helpers.TestDB().CreateTable(&Session{})
 	user := User{
 		Name:  "Joe Hackerman",
 		Email: "modeltest1@example.com",
 	}
-	helpers.DB().Create(&user)
+	helpers.TestDB().Create(&user)
+
+	testdb.SetQueryFunc(func(query string) (driver.Rows, error) {
+		columns := []string{"id", "name"}
+		result := `
+		1,Tim
+		2,Joe
+		3,Bob
+		`
+		return testdb.RowsFromCSVString(columns, result), nil
+	})
 }
 
-func teardownModelsTests() {
-	helpers.DB().Unscoped().Where(
-		"email LIKE ?",
-		"modeltest%",
-	).Delete(User{})
+func TestDatabaseSeeded(t *testing.T) {
+	var users []User
+	helpers.TestDB().Find(&users)
+	if (users[0].Name != "Tim") || len(users) != 3 {
+		t.Errorf("Unexcepted result returned")
+	}
 }
