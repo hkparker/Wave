@@ -1,7 +1,7 @@
 package models
 
 import (
-	"github.com/hkparker/Wave/helpers"
+	"github.com/hkparker/Wave/database"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -11,7 +11,7 @@ func TestNewSessionCreatesSession(t *testing.T) {
 	cookie, err := user.NewSession()
 	assert.Nil(t, err)
 	session := Session{}
-	helpers.TestDB().Where(Session{Cookie: cookie}).First(&session)
+	database.TestDB().Where(Session{Cookie: cookie}).First(&session)
 	if assert.NotNil(t, session.UserID) {
 		assert.Equal(t, session.UserID, user.ID)
 	}

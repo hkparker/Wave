@@ -15,3 +15,7 @@ func Env() string {
 func Production() bool {
 	return Env() == "production"
 }
+
+func Development() bool {
+	return Env() == "development"
+}

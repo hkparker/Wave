@@ -3,7 +3,7 @@ package controllers
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
-	. "github.com/hkparker/Wave/helpers"
+	"github.com/hkparker/Wave/database"
 	"net/http"
 )
 
@@ -24,7 +24,7 @@ func PollCollector(c *gin.Context) {
 				break
 			}
 			//frame := string(frame_bytes)
-			ElasticacheFrame(frame_bytes)
+			database.ElasticacheFrame(frame_bytes)
 			// update visualizer
 		}
 	}

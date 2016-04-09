@@ -1,4 +1,4 @@
-package helpers
+package database
 
 import (
 	log "github.com/Sirupsen/logrus"

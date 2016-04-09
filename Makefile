@@ -16,7 +16,7 @@ embed-assets:
 	go-bindata -pkg=helpers -o=helpers/bindata.go static/
 
 develop: clean build
-	WAVE_ENV=development ./Wave
+	#WAVE_ENV=development ./Wave
 	# hot reloading react, redux dev tools, etc
 	# rebuild and restart Wave when go files change
 
