@@ -5,13 +5,6 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
-func productionDB() *gorm.DB {
-	if productiondb == nil {
-		productiondb = createProductionDatabase()
-	}
-	return productiondb
-}
-
 func createProductionDatabase() (db *gorm.DB) {
 	db, err := gorm.Open("postgres", "user=postgres dbname=wave sslmode=disable")
 	if err != nil {
@@ -20,4 +13,11 @@ func createProductionDatabase() (db *gorm.DB) {
 		}).Fatal("unable to connect to production postgres database")
 	}
 	return
+}
+
+func productionDB() *gorm.DB {
+	if productiondb == nil {
+		productiondb = createProductionDatabase()
+	}
+	return productiondb
 }

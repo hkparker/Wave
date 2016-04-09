@@ -6,17 +6,19 @@ import (
 	"testing"
 )
 
-func TestNewSessionCreatesSession(t *testing.T) {
-	user := CreateUser([]string{})
-	cookie, err := user.NewSession()
-	assert.Nil(t, err)
-	session := Session{}
-	database.TestDB().Where(Session{Cookie: cookie}).First(&session)
-	if assert.NotNil(t, session.UserID) {
-		assert.Equal(t, session.UserID, user.ID)
-	}
+func TestRegisterUserCreatesUserInCorrectState(t *testing.T) {
+
 }
 
-func TestSessionCreatedWhenLoggedIn(t *testing.T) {
+func TestNewSessionCreatesSession(t *testing.T) {
+	assert := assert.New(t)
 
+	user := CreateUser([]string{})
+	cookie, err := user.NewSession()
+	assert.Nil(err)
+	session := Session{}
+	database.TestDB().Where(Session{Cookie: cookie}).First(&session)
+	if assert.NotNil(session.UserID) {
+		assert.Equal(session.UserID, user.ID)
+	}
 }
