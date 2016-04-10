@@ -2,12 +2,12 @@ package controllers
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/hkparker/Wave/models"
+	"github.com/hkparker/Wave/database"
 )
 
 func CreateUser(c *gin.Context) {
 	//c.Params()
-	err := models.CreateUser("fixit")
+	err := database.CreateUser("fixit")
 	if err == nil {
 		c.JSON(200, gin.H{"success": "true"})
 	} else {

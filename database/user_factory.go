@@ -1,8 +1,4 @@
-package models
-
-import (
-	"github.com/hkparker/Wave/database"
-)
+package database
 
 func TestUser(traits []string) (user User) {
 	user = User{
@@ -10,6 +6,6 @@ func TestUser(traits []string) (user User) {
 		Email: "bighat@example.com",
 	}
 	// apply each trait
-	database.DB().Create(&user)
+	DB().Create(&user)
 	return user
 }

@@ -1,9 +1,8 @@
-package models
+package database
 
 import (
 	"crypto"
 	"crypto/rand"
-	"github.com/hkparker/Wave/database"
 	"github.com/jbenet/go-base58"
 	"github.com/jinzhu/gorm"
 	"github.com/sec51/twofactor"
@@ -38,7 +37,7 @@ func CreateUser(email string) (err error) {
 		OTPReset:           true,
 		PasswordResetToken: "",
 	}
-	database.DB().Create(&user)
+	DB().Create(&user)
 	// email the user the register link
 	return
 }
@@ -81,7 +80,7 @@ func (user *User) NewSession() (wave_session string, err error) {
 		Cookie:            wave_session,
 	}
 	user.Sessions = append(user.Sessions, session)
-	database.DB().Save(&user)
+	DB().Save(&user)
 	return
 }
 

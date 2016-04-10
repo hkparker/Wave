@@ -57,7 +57,7 @@ In another terminal start the development environment.
 /assets				styles, libraries, and compiled javascript for webpack
 /bin				self-contained binaries for Linux, OSX, and Windows, present on release branches
 /controllers		controller logic
-/database			functions for configuring and connecting to databases
+/database			models and functions for configuring and connecting to databases
 /frontend			jsx source, consumed by babel and saved in assets
 /helpers			common functions for application configuration and environment
 /ids				logic for intrusion detection

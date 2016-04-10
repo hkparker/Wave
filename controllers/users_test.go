@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/hkparker/Wave/database"
-	"github.com/hkparker/Wave/models"
 	"github.com/stretchr/testify/assert"
 	"net/http"
 	"strings"
@@ -13,7 +12,7 @@ import (
 
 func TestCreateUserCreatesUser(t *testing.T) {
 	assert := assert.New(t)
-	admin := models.TestUser([]string{"admin"})
+	admin := database.TestUser([]string{"admin"})
 	session_id, _ := admin.NewSession()
 	req, err := http.NewRequest(
 		"POST",
@@ -37,7 +36,7 @@ func TestCreateUserCreatesUser(t *testing.T) {
 			assert.Equal("true", params["success"])
 		}
 	}
-	var created_user models.User
-	database.DB().Where(models.User{Email: "fixit"}).First(&created_user)
+	var created_user database.User
+	database.DB().Where(database.User{Email: "fixit"}).First(&created_user)
 	assert.Equal(true, created_user.OTPReset)
 }

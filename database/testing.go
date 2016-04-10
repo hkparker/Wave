@@ -14,7 +14,8 @@ func createTestDatabase() (db *gorm.DB) {
 		}).Fatal("error creating in-memory sqlite testing database")
 	}
 
-	//db.CreateTable(models.User{})
+	db.CreateTable(User{})
+	db.CreateTable(Session{})
 
 	return
 }
