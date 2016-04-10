@@ -11,7 +11,7 @@ func EmbeddedAssets() gin.HandlerFunc {
 		path := c.Request.URL.Path
 		switch path {
 		case "/":
-			renderWebpack(c)
+			RenderWebpack(c)
 		default:
 			data, err := helpers.Asset("static" + path)
 			if err == nil {
@@ -23,7 +23,7 @@ func EmbeddedAssets() gin.HandlerFunc {
 	}
 }
 
-func renderWebpack(c *gin.Context) {
+func RenderWebpack(c *gin.Context) {
 	c.Writer.Header().Set("Content-Type", "text/html")
 	c.String(200,
 		`<html>

@@ -15,16 +15,22 @@ var version = flag.Bool("version", false, "version")
 
 func main() {
 	flag.Parse()
+
 	if *version {
 		fmt.Println("Wave 0.0.0")
 		os.Exit(0)
 	}
-	if helpers.Production() {
-		log.SetFormatter(&log.JSONFormatter{})
-		gin.SetMode(gin.ReleaseMode)
-	}
+
+	// if reseed db
+
 	database.SetupElasticsearch()
 	database.DB()
 
-	controllers.NewRouter().Run(":8080")
+	if helpers.Production() {
+		log.SetFormatter(&log.JSONFormatter{})
+		gin.SetMode(gin.ReleaseMode)
+		controllers.NewRouter().Run(":80")
+	} else if helpers.Development() {
+		controllers.NewRouter().Run(":8080")
+	}
 }

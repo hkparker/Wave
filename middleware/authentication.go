@@ -68,9 +68,18 @@ func AdminProtected(url string) bool {
 	return false
 }
 
-func ActiveSession(id string) (bool, database.User) {
-	//Session.where(id: id).nil?
-	//session := &models.Session{}
-	//db.Where(&models.Session{Cookie: id}).First(&session)
-	return true, database.User{Admin: true}
+func ActiveSession(id string) (present bool, user database.User) {
+	present = false
+
+	session := &database.Session{}
+	database.DB().Where(&database.Session{Cookie: id}).First(&session)
+	// ensure session exists
+	// ensure session hasn't expired
+
+	user = database.User{}
+	database.DB().Find(&database.User{ID: session.UserID}).First(&user)
+
+	log.Warn("active session for", user, id, session)
+	present = true
+	return
 }
