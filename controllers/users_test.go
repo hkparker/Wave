@@ -18,10 +18,11 @@ func TestCreateUserCreatesUser(t *testing.T) {
 		"POST",
 		testing_endpoint+"/users/create",
 		strings.NewReader(fmt.Sprintf(
-			"{\"wave_session\": \"%s\", \"email\": \"newuser@example.com\"}",
+			"{\"email\": \"newuser@example.com\"}",
 			session_id,
 		)),
 	)
+	req.Header.Set("wave_session", session_id)
 	assert.Nil(err)
 	resp, err := testing_client.Do(req)
 	assert.Nil(err)
@@ -37,6 +38,6 @@ func TestCreateUserCreatesUser(t *testing.T) {
 		}
 	}
 	var created_user database.User
-	database.DB().Where(database.User{Email: "fixit"}).First(&created_user)
+	database.DB().Where(database.User{Email: "newuser@example.com"}).First(&created_user)
 	assert.Equal(true, created_user.OTPReset)
 }

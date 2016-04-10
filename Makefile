@@ -40,5 +40,5 @@ release: clean test
 	GOOS=linux GOARCH=amd64 go build -o bin/Wave-linux
 	GOOS=linux GOARCH=arm go build -o bin/Wave-linux-arm
 	GOOS=freebsd GOARCH=amd64 go build -o bin/Wave-freebsd
-	GOOS=darwin GOARCH=amd64 go build -o bin/Wave-da
+	GOOS=darwin GOARCH=amd64 go build -o bin/Wave-osx
 	GOOS=windows GOARCH=amd64 go build -o bin/Wave-windows.exe

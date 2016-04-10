@@ -2,8 +2,8 @@ package database
 
 import (
 	log "github.com/Sirupsen/logrus"
-	//"github.com/hkparker/Wave/models"
 	"github.com/jinzhu/gorm"
+	_ "github.com/jinzhu/gorm/dialects/sqlite"
 )
 
 func createTestDatabase() (db *gorm.DB) {

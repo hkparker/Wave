@@ -3,6 +3,7 @@ package database
 import (
 	log "github.com/Sirupsen/logrus"
 	"github.com/jinzhu/gorm"
+	_ "github.com/lib/pq"
 )
 
 func createProductionDatabase() (db *gorm.DB) {

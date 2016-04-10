@@ -7,7 +7,7 @@ import (
 
 func NewRouter() *gin.Engine {
 	router := gin.Default()
-	router.Use(middleware.EmbeddedAssets())
+	router.Use(middleware.EmbeddedAssets()) // if in development, serve static from /static as /
 	router.Use(middleware.Authentication())
 
 	// Authentication routes

@@ -5,7 +5,14 @@ func TestUser(traits []string) (user User) {
 		Name:  "Turd Ferguson",
 		Email: "bighat@example.com",
 	}
-	// apply each trait
+
+	for _, trait := range traits {
+		switch trait {
+		case "admin":
+			user.Admin = true
+		}
+	}
+
 	DB().Create(&user)
 	return user
 }

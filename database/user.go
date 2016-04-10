@@ -15,6 +15,7 @@ type User struct {
 	Name               string
 	Password           []byte
 	Email              string `sql:"not null;unique"`
+	Admin              bool
 	Sessions           []Session
 	OTPData            []byte
 	OTPReset           bool

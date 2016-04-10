@@ -3,7 +3,12 @@ package database
 import (
 	log "github.com/Sirupsen/logrus"
 	"github.com/jinzhu/gorm"
+	_ "github.com/lib/pq"
 )
+
+func ReseedDevelopmentDatabase() {
+
+}
 
 func createDevelopmentDatabase() (db *gorm.DB) {
 	db, err := gorm.Open("postgres", "user=postgres dbname=wave_dev sslmode=disable")

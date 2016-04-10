@@ -7,8 +7,6 @@ import (
 )
 
 var (
-	//server           *httptest.Server
-	//reader           io.Reader
 	testing_endpoint string
 	testing_client   http.Client
 )
