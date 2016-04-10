@@ -22,7 +22,7 @@ type User struct {
 	PasswordResetToken string
 }
 
-func RegisterUser(email string) (err error) {
+func CreateUser(email string) (err error) {
 	// if the email already exists, return an error
 	otp, err := twofactor.NewTOTP(email, "Wave", crypto.SHA512, 8)
 	if err != nil {

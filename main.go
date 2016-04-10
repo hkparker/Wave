@@ -8,27 +8,10 @@ import (
 	"github.com/hkparker/Wave/controllers"
 	"github.com/hkparker/Wave/database"
 	"github.com/hkparker/Wave/helpers"
-	"github.com/hkparker/Wave/middleware"
 	"os"
 )
 
 var version = flag.Bool("version", false, "version")
-
-func NewRouter() *gin.Engine {
-	router := gin.Default()
-	router.Use(middleware.EmbeddedAssets())
-	router.Use(middleware.Authentication(database.DB()))
-
-	// Authentication routes
-	router.POST("/login", controllers.Login)
-	router.POST("/2fa", controllers.SubmitTwoFactor)
-	router.GET("/reset/:id", controllers.PasswordReset)
-
-	// Collector
-	router.GET("/frames", controllers.PollCollector)
-
-	return router
-}
 
 func main() {
 	flag.Parse()
@@ -42,5 +25,6 @@ func main() {
 	}
 	database.SetupElasticsearch()
 	database.DB()
-	NewRouter().Run(":8080")
+
+	controllers.NewRouter(database.DB()).Run(":8080")
 }

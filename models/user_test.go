@@ -13,7 +13,7 @@ func TestRegisterUserCreatesUserInCorrectState(t *testing.T) {
 func TestNewSessionCreatesSession(t *testing.T) {
 	assert := assert.New(t)
 
-	user := CreateUser([]string{})
+	user := TestUser([]string{})
 	cookie, err := user.NewSession()
 	assert.Nil(err)
 	session := Session{}
