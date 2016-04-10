@@ -3,13 +3,12 @@ package controllers
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/hkparker/Wave/middleware"
-	"github.com/jinzhu/gorm"
 )
 
-func NewRouter(database *gorm.DB) *gin.Engine {
+func NewRouter() *gin.Engine {
 	router := gin.Default()
 	router.Use(middleware.EmbeddedAssets())
-	router.Use(middleware.Authentication(database))
+	router.Use(middleware.Authentication())
 
 	// Authentication routes
 	router.POST("/login", Login)

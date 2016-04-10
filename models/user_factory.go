@@ -10,6 +10,6 @@ func TestUser(traits []string) (user User) {
 		Email: "bighat@example.com",
 	}
 	// apply each trait
-	database.TestDB().Create(&user)
+	database.DB().Create(&user)
 	return user
 }

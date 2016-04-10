@@ -26,5 +26,5 @@ func main() {
 	database.SetupElasticsearch()
 	database.DB()
 
-	controllers.NewRouter(database.DB()).Run(":8080")
+	controllers.NewRouter().Run(":8080")
 }

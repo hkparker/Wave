@@ -2,27 +2,27 @@ package middleware
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/hkparker/Wave/models"
+	//"github.com/hkparker/Wave/models"
 	"github.com/jinzhu/gorm"
 )
 
 //
 // Ensure that a request is authenticated
 //
-func Authentication(db *gorm.DB) gin.HandlerFunc {
+func Authentication() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		if !PublicEndpoint(c.Request.URL.Path) {
-			session_cookie, present := c.Request.Header["wavesession"]
-			if !present || len(session_cookie) != 1 {
-				c.Redirect(302, "/login")
-				c.Abort()
-			} else if !ActiveSession(session_cookie[0], db) {
-				c.Redirect(302, "/login")
-				c.Abort()
-			} else if !HasRole() {
-				// JSON permission denied
-			}
-		}
+		//	if !PublicEndpoint(c.Request.URL.Path) {
+		//		session_cookie, present := c.Request.Header["wave_session"]
+		//		if !present {
+		//			c.Redirect(302, "/login")
+		//			c.Abort()
+		//		} else if !ActiveSession(session_cookie[0], db) {
+		//			c.Redirect(302, "/login")
+		//			c.Abort()
+		//		} else if !HasRole() {
+		//			c.JSON(401, gin.H{"error": "permission denied"})
+		//		}
+		//	}
 	}
 }
 
@@ -46,8 +46,8 @@ func PublicEndpoint(url string) bool {
 //
 func ActiveSession(id string, db *gorm.DB) bool {
 	//Session.where(id: id).nil?
-	session := &models.Session{}
-	db.Where(&models.Session{Cookie: id}).First(&session)
+	//session := &models.Session{}
+	//db.Where(&models.Session{Cookie: id}).First(&session)
 	return true
 }
 

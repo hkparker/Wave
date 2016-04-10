@@ -19,3 +19,7 @@ func Production() bool {
 func Development() bool {
 	return Env() == "development"
 }
+
+func Testing() bool {
+	return Env() == "testing"
+}

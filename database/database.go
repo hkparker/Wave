@@ -12,21 +12,21 @@ var productiondb *gorm.DB
 var developmentdb *gorm.DB
 var testdb *gorm.DB
 
+//func SetupDevelopment() {}
+//func SetupProduction() {}
+//func SetupTesting() {}
+
 func ReseedDevelopmentDatabase() {
 
 }
 
-func TestDB() *gorm.DB {
-	if testdb == nil {
-		testdb = createTestDatabase()
-	}
-	return testdb
-}
 func DB() *gorm.DB {
 	if helpers.Production() {
 		return productionDB()
 	} else if helpers.Development() {
 		return developmentDB()
+	} else if helpers.Testing() {
+		return testDB()
 	}
 	log.WithFields(log.Fields{
 		"environment": helpers.Env(),

@@ -17,7 +17,7 @@ func TestNewSessionCreatesSession(t *testing.T) {
 	cookie, err := user.NewSession()
 	assert.Nil(err)
 	session := Session{}
-	database.TestDB().Where(Session{Cookie: cookie}).First(&session)
+	database.DB().Where(Session{Cookie: cookie}).First(&session)
 	if assert.NotNil(session.UserID) {
 		assert.Equal(session.UserID, user.ID)
 	}

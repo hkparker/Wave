@@ -1,7 +1,9 @@
 package controllers
 
 import (
+	"encoding/json"
 	"fmt"
+	"github.com/hkparker/Wave/database"
 	"github.com/hkparker/Wave/models"
 	"github.com/stretchr/testify/assert"
 	"net/http"
@@ -22,6 +24,20 @@ func TestCreateUserCreatesUser(t *testing.T) {
 		)),
 	)
 	assert.Nil(err)
-	assert.NotNil(req)
-	// expect user in the db
+	resp, err := testing_client.Do(req)
+	assert.Nil(err)
+	decoder := json.NewDecoder(resp.Body)
+	var params map[string]string
+	err = decoder.Decode(&params)
+	if !assert.Nil(err) {
+		assert.Nil(err.Error())
+	}
+	if assert.NotNil(params) {
+		if assert.NotNil(params["success"]) {
+			assert.Equal("true", params["success"])
+		}
+	}
+	var created_user models.User
+	database.DB().Where(models.User{Email: "fixit"}).First(&created_user)
+	assert.Equal(true, created_user.OTPReset)
 }

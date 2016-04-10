@@ -1,19 +1,21 @@
 package controllers
 
 import (
-	"github.com/hkparker/Wave/database"
-	//"io"
+	"net/http"
 	"net/http/httptest"
+	"os"
 )
 
 var (
 	//server           *httptest.Server
 	//reader           io.Reader
 	testing_endpoint string
-	testing_client   string
+	testing_client   http.Client
 )
 
 func init() {
-	server := httptest.NewServer(NewRouter(database.TestDB()))
+	os.Setenv("WAVE_ENV", "testing")
+	server := httptest.NewServer(NewRouter())
 	testing_endpoint = server.URL
+	testing_client = http.Client{}
 }
