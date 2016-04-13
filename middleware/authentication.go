@@ -4,6 +4,7 @@ import (
 	log "github.com/Sirupsen/logrus"
 	"github.com/gin-gonic/gin"
 	"github.com/hkparker/Wave/database"
+	"time"
 )
 
 //
@@ -14,6 +15,7 @@ func Authentication() gin.HandlerFunc {
 		endpoint := c.Request.URL.Path
 		if !PublicEndpoint(endpoint) {
 			session_cookies, present := c.Request.Header["wave_session"]
+
 			if !present {
 				c.Redirect(302, "/login")
 				c.Abort()
@@ -21,21 +23,43 @@ func Authentication() gin.HandlerFunc {
 					"at":     "middleware.Authentication",
 					"reason": "missing wave_session header",
 				}).Info("redirecting unauthenticated request")
-			} else if len(session_cookies) != 1 {
+				return
+			}
+
+			if len(session_cookies) != 1 {
 				c.Redirect(302, "/login")
 				c.Abort()
 				log.WithFields(log.Fields{
 					"at":     "middleware.Authentication",
 					"reason": "wave_session headers does not contain exactly one string",
 				}).Info("redirecting unauthenticated request")
-			} else if user, err := ActiveSession(session_cookies[0]); err != nil {
+				return
+			}
+
+			var user database.User
+			if session, err := database.SessionFromID(session_cookies[0]); err == nil {
+				session.LastUsed = time.Now()
+				database.DB().Save(&session)
+				if user, err = session.ActiveUser(); err != nil {
+					c.Redirect(302, "/login")
+					c.Abort()
+					log.WithFields(log.Fields{
+						"at":     "middleware.Authentication",
+						"reason": "could not find user for session",
+					}).Info("redirecting unauthenticated request")
+					return
+				}
+			} else {
 				c.Redirect(302, "/login")
 				c.Abort()
 				log.WithFields(log.Fields{
 					"at":     "middleware.Authentication",
-					"reason": "wave_session header is not an active session",
+					"reason": "wave_session header does not exist in session record",
 				}).Info("redirecting unauthenticated request")
-			} else if AdminProtected(endpoint) && !user.Admin {
+				return
+			}
+
+			if AdminProtected(endpoint) && !user.Admin {
 				c.JSON(401, gin.H{"error": "permission denied"})
 				log.WithFields(log.Fields{
 					"at":             "middleware.Authentication",
@@ -43,6 +67,7 @@ func Authentication() gin.HandlerFunc {
 					"user_id":        user.ID,
 					"session_cookie": session_cookies[0],
 				}).Warn("blocking unauthenticated request")
+				return
 			}
 		}
 	}
@@ -66,28 +91,4 @@ func AdminProtected(url string) bool {
 		return true
 	}
 	return false
-}
-
-func ActiveSession(id string) (user database.User, err error) {
-	session := &database.Session{}
-	db_err := database.DB().First(&session, "Cookie = ?", id)
-	err = db_err.Error
-	if err != nil {
-		log.WithFields(log.Fields{
-			"at":    "middleware.ActiveSession",
-			"error": err.Error(),
-		}).Warn("error looking up session")
-		return
-	}
-	// ensure session hasn't expired
-
-	db_err = database.DB().Model(&session).Related(&user)
-	err = db_err.Error
-	if err != nil {
-		log.WithFields(log.Fields{
-			"at":    "middleware.ActiveSession",
-			"error": err.Error(),
-		}).Warn("error finding related user for session")
-	}
-	return
 }

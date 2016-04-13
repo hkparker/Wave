@@ -55,7 +55,7 @@ func (user *User) SetPassword(password string) (err error) {
 		return
 	}
 	user.Password = pw_data
-	//db.Save(&user)
+	DB().Save(&user)
 	return
 }
 
