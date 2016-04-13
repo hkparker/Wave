@@ -12,3 +12,11 @@ type Session struct {
 	OriginallyCreated time.Time
 	LastUsed          time.Time
 }
+
+func FromCookie(cookie string) (session Session) {
+	return
+}
+
+func ActiveSession() {
+
+}

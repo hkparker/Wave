@@ -4,15 +4,14 @@ import (
 	"crypto"
 	"crypto/rand"
 	"github.com/jbenet/go-base58"
-	_ "github.com/jinzhu/gorm"
+	"github.com/jinzhu/gorm"
 	"github.com/sec51/twofactor"
 	"golang.org/x/crypto/bcrypt"
 	"time"
 )
 
 type User struct {
-	//gorm.Model
-	ID                 uint `gorm:"primary_key"`
+	gorm.Model
 	Name               string
 	Password           []byte
 	Email              string `sql:"not null;unique"`
@@ -82,9 +81,8 @@ func (user *User) NewSession() (wave_session string, err error) {
 		LastUsed:          now,
 		Cookie:            wave_session,
 	}
-	//user.Sessions = append(user.Sessions, session)
-	//DB().Save(&user)
-	DB().Save(&session)
+	user.Sessions = append(user.Sessions, session)
+	DB().Save(&user)
 	return
 }
 

@@ -17,6 +17,7 @@ func TestUser(traits []string) (user User) {
 		switch trait {
 		case "admin":
 			user.Name = "Wifi Jackson"
+			user.Email = "ughbluergna@murf.mnrgg"
 			user.Admin = true
 		}
 	}

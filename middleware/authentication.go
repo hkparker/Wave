@@ -28,7 +28,7 @@ func Authentication() gin.HandlerFunc {
 					"at":     "middleware.Authentication",
 					"reason": "wave_session headers does not contain exactly one string",
 				}).Info("redirecting unauthenticated request")
-			} else if active, user := ActiveSession(session_cookies[0]); !active {
+			} else if user, err := ActiveSession(session_cookies[0]); err != nil {
 				c.Redirect(302, "/login")
 				c.Abort()
 				log.WithFields(log.Fields{
@@ -68,18 +68,26 @@ func AdminProtected(url string) bool {
 	return false
 }
 
-func ActiveSession(id string) (present bool, user database.User) {
-	present = false
-
+func ActiveSession(id string) (user database.User, err error) {
 	session := &database.Session{}
-	database.DB().Where(&database.Session{Cookie: id}).First(&session)
-	// ensure session exists
+	db_err := database.DB().First(&session, "Cookie = ?", id)
+	err = db_err.Error
+	if err != nil {
+		log.WithFields(log.Fields{
+			"at":    "middleware.ActiveSession",
+			"error": err.Error(),
+		}).Warn("error looking up session")
+		return
+	}
 	// ensure session hasn't expired
 
-	user = database.User{}
-	database.DB().Find(&database.User{ID: session.UserID}).First(&user)
-
-	log.Warn("active session for", user, id, session)
-	present = true
+	db_err = database.DB().Model(&session).Related(&user)
+	err = db_err.Error
+	if err != nil {
+		log.WithFields(log.Fields{
+			"at":    "middleware.ActiveSession",
+			"error": err.Error(),
+		}).Warn("error finding related user for session")
+	}
 	return
 }

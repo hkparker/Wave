@@ -39,7 +39,7 @@ func TestAdminCanCreateUser(t *testing.T) {
 		}
 	}
 	var created_user database.User
-	database.DB().Where(database.User{Email: "newuser@example.com"}).First(&created_user)
+	database.DB().First(&created_user, "Email = ? ", "newuser@example.com")
 	assert.Equal(true, created_user.OTPReset)
 }
 
