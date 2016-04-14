@@ -74,8 +74,7 @@ func Authentication() gin.HandlerFunc {
 }
 
 //
-// All endpoints that can be accessed without authentication need to be
-// explicitly called out here.  Static content
+// Given an endpoint, return if the endpoint is accessible without authentication.
 //
 func PublicEndpoint(url string) bool {
 	switch url {
@@ -85,6 +84,10 @@ func PublicEndpoint(url string) bool {
 	return false
 }
 
+//
+// Given an endpoint, return if the endpoint can only be accessed by users
+// with the admin role.
+//
 func AdminProtected(url string) bool {
 	switch url {
 	case "/users/create":
