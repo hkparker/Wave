@@ -23,6 +23,7 @@ func TestUser(traits []string) (user User) {
 		case "admin":
 			user.Name = "Wifi Jackson"
 			user.Admin = true
+		case "with_password_reset":
 		}
 	}
 

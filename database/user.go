@@ -18,12 +18,10 @@ type User struct {
 	Admin              bool
 	Sessions           []Session
 	OTPData            []byte
-	OTPReset           bool
 	PasswordResetToken string
 }
 
 func CreateUser(email string) (err error) {
-	// if the email already exists, return an error
 	otp, err := twofactor.NewTOTP(email, "Wave", crypto.SHA512, 8)
 	if err != nil {
 		return
@@ -35,7 +33,6 @@ func CreateUser(email string) (err error) {
 	user := User{
 		Email:              email,
 		OTPData:            otp_data,
-		OTPReset:           true,
 		PasswordResetToken: "",
 	}
 	DB().Create(&user)
@@ -44,7 +41,7 @@ func CreateUser(email string) (err error) {
 }
 
 func (user *User) ResetPassword() {
-	// invalidate all sessions
+	user.DestroyAllSessions()
 	// setup one time password page
 	// email user
 }
@@ -59,11 +56,26 @@ func (user *User) SetPassword(password string) (err error) {
 	return
 }
 
-func (user *User) ResetAuthentication() {
-	// user will need to setup new two factor code next time it is asked for
+func (user *User) ResetTwoFactor() {
+	otp, err := twofactor.NewTOTP(user.Email, "Wave", crypto.SHA512, 8)
+	if err != nil {
+		return
+	}
+	otp_data, err := otp.ToBytes()
+	if err != nil {
+		return
+	}
+	user.OTPData = otp_data
+	// create a database record for impending reset link
+	DB().Save(&user)
+	// email the user
 }
 
-func (user *User) ValidAuthentication(email, password, token string) bool {
+func ValidAuthentication(email, password, token string) bool {
+	// wrap in constant time block
+	// lookup user by email in db
+	// check password
+	// check otp data
 	return false
 }
 
@@ -84,10 +96,6 @@ func (user *User) NewSession() (wave_session string, err error) {
 	user.Sessions = append(user.Sessions, session)
 	DB().Save(&user)
 	return
-}
-
-func (user *User) DestroySession(cookie string) {
-
 }
 
 func (user *User) DestroyAllSessions() {

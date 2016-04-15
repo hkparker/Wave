@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func TestRegisterUserCreatesUserInCorrectState(t *testing.T) {
+func TestCreateUserCreatesUserInCorrectState(t *testing.T) {
 
 }
 
