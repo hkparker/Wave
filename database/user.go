@@ -85,11 +85,11 @@ func (user *User) ResetPassword() (err error) {
 		}).Warn("error_saving_user")
 		err = db_err.Error
 	} else {
+		//user.EmailPasswordReset(user.PasswordResetToken)
 		log.WithFields(log.Fields{
 			"UserID": user.ID,
 			"email":  "password_reset",
 		}).Info("email_sent")
-		// email user
 	}
 	log.WithFields(log.Fields{
 		"UserID": user.ID,
@@ -153,7 +153,6 @@ func (user *User) NewSession() (wave_session string, err error) {
 	DB().Save(&user)
 	log.WithFields(log.Fields{
 		"UserID": user.ID,
-		"Time":   now,
 		"Cookie": wave_session,
 	}).Info("session_created")
 	return
