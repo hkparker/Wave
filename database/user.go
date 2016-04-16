@@ -132,12 +132,29 @@ func (user *User) ResetTwoFactor() (err error) {
 	return
 }
 
-func ValidAuthentication(email, password, token string) bool {
-	// wrap in constant time block
-	// lookup user by email in db
-	// check password
-	// check otp data
-	return false
+func ValidAuthentication(email, password, token string) (valid bool) {
+	valid = false
+	minimum_time := 1 * time.Second
+	start := time.Now()
+
+	var user User
+	db_err := DB().First(&user, "Email = ?", email)
+	if db_err.Error == nil {
+		err := bcrypt.CompareHashAndPassword(user.Password, []byte(password))
+		if err == nil {
+			otp, err := twofactor.TOTPFromBytes(user.OTPData, "Wave")
+			err = otp.Validate(token)
+			if err == nil {
+				valid = true
+			}
+		}
+	}
+
+	duration := time.Since(start)
+	if duration < minimum_time {
+		time.Sleep(minimum_time - duration)
+	}
+	return
 }
 
 func (user *User) NewSession() (wave_session string, err error) {
@@ -159,4 +176,9 @@ func (user *User) NewSession() (wave_session string, err error) {
 }
 
 func (user *User) DestroyAllSessions() {
+	user.Sessions = []Session{}
+	DB().Save(&user)
+	for session := range user.Sessions {
+		DB().Unscoped().Delete(&session)
+	}
 }

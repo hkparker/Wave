@@ -11,3 +11,4 @@ assets/*.js
 helpers/bindata.go
 bin/
 controllers/keys
+database/keys

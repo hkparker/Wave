@@ -19,8 +19,9 @@ func SessionFromID(id string) (session Session, err error) {
 	err = db_err.Error
 	if err != nil {
 		log.WithFields(log.Fields{
-			"at":    "database.SessionFromID",
-			"error": err.Error(),
+			"at":         "database.SessionFromID",
+			"session_id": id,
+			"error":      err.Error(),
 		}).Warn("error looking up session")
 	}
 	return
