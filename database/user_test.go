@@ -61,6 +61,13 @@ func TestResetTwoFactorResetsTwoFactor(t *testing.T) {
 }
 
 func TestValidAuthenticationWithValidAuthentication(t *testing.T) {
+	//assert := assert.New(t)
+
+	//user := TestUser([]string{})
+	//password := "flahblahblah"
+	//user.SetPassword(password)
+	//two_factor_code := user.currentTwoFactorCode()
+	//ValidAuthentication(user.Email, password, two_factor_code)
 
 }
 
@@ -73,7 +80,14 @@ func TestValidAuthenticationWithBadPassword(t *testing.T) {
 }
 
 func TestValidAuthenticationWithBadTwoFactor(t *testing.T) {
+	assert := assert.New(t)
 
+	user := TestUser([]string{})
+	password := "flahblahblah"
+	user.SetPassword(password)
+	valid := ValidAuthentication(user.Email, password, "00000000")
+
+	assert.Equal(false, valid)
 }
 
 func TestNewSessionCreatesSession(t *testing.T) {

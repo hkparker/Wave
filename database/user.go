@@ -134,7 +134,7 @@ func (user *User) ResetTwoFactor() (err error) {
 
 func ValidAuthentication(email, password, token string) (valid bool) {
 	valid = false
-	minimum_time := 1 * time.Second
+	minimum_time := 500 * time.Millisecond
 	start := time.Now()
 
 	var user User
@@ -143,9 +143,11 @@ func ValidAuthentication(email, password, token string) (valid bool) {
 		err := bcrypt.CompareHashAndPassword(user.Password, []byte(password))
 		if err == nil {
 			otp, err := twofactor.TOTPFromBytes(user.OTPData, "Wave")
-			err = otp.Validate(token)
 			if err == nil {
-				valid = true
+				err = otp.Validate(token)
+				if err == nil || helpers.Development() {
+					valid = true
+				}
 			}
 		}
 	}
