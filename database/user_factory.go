@@ -1,18 +1,11 @@
 package database
 
 import (
-	"crypto/rand"
-	log "github.com/Sirupsen/logrus"
-	"github.com/jbenet/go-base58"
+	"github.com/hkparker/Wave/helpers"
 )
 
 func TestUser(traits []string) (user User) {
-	email_bytes := make([]byte, 32)
-	rand.Read(email_bytes)
-	email := base58.Encode(email_bytes) + "@example.com"
-	log.WithFields(log.Fields{
-		"traits": traits,
-	}).Info("creating test user")
+	email := helpers.RandomString() + "@example.com"
 	user = User{
 		Name:  "Turd Ferguson",
 		Email: email,
@@ -24,6 +17,7 @@ func TestUser(traits []string) (user User) {
 			user.Name = "Wifi Jackson"
 			user.Admin = true
 		case "with_password_reset":
+			user.ResetPassword()
 		}
 	}
 
