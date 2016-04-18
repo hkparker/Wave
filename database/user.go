@@ -3,9 +3,9 @@ package database
 import (
 	"crypto"
 	log "github.com/Sirupsen/logrus"
+	"github.com/Wave-IDS/twofactor"
 	"github.com/hkparker/Wave/helpers"
 	"github.com/jinzhu/gorm"
-	"github.com/sec51/twofactor"
 	"golang.org/x/crypto/bcrypt"
 	"time"
 )
@@ -28,7 +28,7 @@ func CreateUser(email string) (err error) {
 	if err != nil {
 		return
 	}
-	otp_data, err := otp.ToBytes()
+	otp_data, err := otp.ToBytes(DB())
 	if err != nil {
 		return
 	}
@@ -107,7 +107,7 @@ func (user *User) ResetTwoFactor() (err error) {
 		}).Warn("otp_error")
 		return
 	}
-	otp_data, err := otp.ToBytes()
+	otp_data, err := otp.ToBytes(DB())
 	if err != nil {
 		log.WithFields(log.Fields{
 			"UserID": user.ID,
@@ -134,28 +134,28 @@ func (user *User) ResetTwoFactor() (err error) {
 
 func ValidAuthentication(email, password, token string) (valid bool) {
 	valid = false
-	minimum_time := 500 * time.Millisecond
-	start := time.Now()
 
 	var user User
 	db_err := DB().First(&user, "Email = ?", email)
-	if db_err.Error == nil {
-		err := bcrypt.CompareHashAndPassword(user.Password, []byte(password))
-		if err == nil {
-			otp, err := twofactor.TOTPFromBytes(user.OTPData, "Wave")
-			if err == nil {
-				err = otp.Validate(token)
-				if err == nil || helpers.Development() {
-					valid = true
-				}
-			}
-		}
+	if db_err.Error != nil {
+		return
 	}
 
-	duration := time.Since(start)
-	if duration < minimum_time {
-		time.Sleep(minimum_time - duration)
+	err := bcrypt.CompareHashAndPassword(user.Password, []byte(password))
+	if err != nil {
+		return
 	}
+
+	otp, err := twofactor.TOTPFromBytes(user.OTPData, "Wave", DB())
+	if err != nil {
+		return
+	}
+
+	err = otp.Validate(token)
+	if err == nil || helpers.Development() {
+		valid = true
+	}
+
 	return
 }
 
