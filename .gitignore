@@ -10,5 +10,3 @@ static/fa2772327f55d8198301fdb8bcfc8158.woff
 assets/*.js
 helpers/bindata.go
 bin/
-controllers/keys
-database/keys
