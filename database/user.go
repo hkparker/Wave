@@ -20,7 +20,8 @@ type User struct {
 
 func CreateUser(email string) (err error) {
 	user := User{
-		Email: email,
+		Email:              email,
+		PasswordResetToken: helpers.RandomString(),
 	}
 	db_err := DB().Create(&user)
 	if db_err.Error != nil {
@@ -30,7 +31,7 @@ func CreateUser(email string) (err error) {
 			"error":  err,
 		}).Warn("error_saving_user")
 	} else {
-		// user.AccountSetupEmail() // reset password and email the link with a welcome message
+		// user.EmailAccountSetup()
 		log.WithFields(log.Fields{
 			"UserID": user.ID,
 			"email":  "account_register",
@@ -70,7 +71,7 @@ func (user *User) ResetPassword() (err error) {
 		}).Warn("error_saving_user")
 		err = db_err.Error
 	} else {
-		//user.EmailPasswordReset(user.PasswordResetToken)
+		// user.EmailPasswordReset()
 		log.WithFields(log.Fields{
 			"UserID": user.ID,
 			"email":  "password_reset",
