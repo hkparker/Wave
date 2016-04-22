@@ -18,7 +18,7 @@ func TestCreateUserCreatesUserInCorrectState(t *testing.T) {
 	db_err := DB().First(&user, "Email = ?", email)
 	assert.Nil(db_err.Error)
 
-	assert.NotEqual("", user.AccountSetupToken)
+	assert.Equal(false, user.Admin)
 }
 
 func TestSetPasswordSetsPassword(t *testing.T) {
@@ -46,48 +46,31 @@ func TestResetPasswordResetsPassword(t *testing.T) {
 	assert.NotEqual("", user.PasswordResetToken)
 }
 
-func TestResetTwoFactorResetsTwoFactor(t *testing.T) {
-	assert := assert.New(t)
-
-	user := TestUser([]string{})
-	user.NewSession()
-	otp_data := user.OTPData
-	err := user.ResetTwoFactor()
-	assert.Nil(err)
-
-	assert.Equal(0, len(user.Sessions))
-	assert.NotEqual(user.OTPData, otp_data)
-	assert.Equal(true, user.OTPResetNextLogin)
-}
-
 func TestValidAuthenticationWithValidAuthentication(t *testing.T) {
-	//assert := assert.New(t)
-
-	//user := TestUser([]string{})
-	//password := "flahblahblah"
-	//user.SetPassword(password)
-	//two_factor_code := user.currentTwoFactorCode()
-	//ValidAuthentication(user.Email, password, two_factor_code)
-
-}
-
-func TestValidAuthenticationWithBadEmail(t *testing.T) {
-
-}
-
-func TestValidAuthenticationWithBadPassword(t *testing.T) {
-
-}
-
-func TestValidAuthenticationWithBadTwoFactor(t *testing.T) {
 	assert := assert.New(t)
 
 	user := TestUser([]string{})
 	password := "flahblahblah"
 	user.SetPassword(password)
-	valid := ValidAuthentication(user.Email, password, "00000000")
+	assert.Equal(true, ValidAuthentication(user.Email, password))
+}
 
-	assert.Equal(false, valid)
+func TestValidAuthenticationWithBadEmail(t *testing.T) {
+	assert := assert.New(t)
+
+	user := TestUser([]string{})
+	password := "flahblahblah"
+	user.SetPassword(password)
+	assert.Equal(false, ValidAuthentication("thisdoesntexist@example.com", password))
+}
+
+func TestValidAuthenticationWithBadPassword(t *testing.T) {
+	assert := assert.New(t)
+
+	user := TestUser([]string{})
+	password := "flahblahblah"
+	user.SetPassword(password)
+	assert.Equal(false, ValidAuthentication(user.Email, "flooblublu"))
 }
 
 func TestNewSessionCreatesSession(t *testing.T) {

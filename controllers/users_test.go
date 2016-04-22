@@ -39,8 +39,8 @@ func TestAdminCanCreateUser(t *testing.T) {
 		}
 	}
 	var created_user database.User
-	database.DB().First(&created_user, "Email = ? ", "newuser@example.com")
-	assert.NotNil(created_user.OTPData)
+	db_err := database.DB().First(&created_user, "Email = ? ", "newuser@example.com")
+	assert.Nil(db_err.Error)
 }
 
 func TestUserCannotCreateUser(t *testing.T) {

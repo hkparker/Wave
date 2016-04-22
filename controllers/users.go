@@ -29,7 +29,6 @@ func CreateUser(c *gin.Context) {
 		return
 	}
 
-	// ensure user doesn't already exist
 	err = database.CreateUser(email)
 	if err == nil {
 		c.JSON(200, gin.H{"success": "true"})

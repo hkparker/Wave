@@ -1,9 +1,7 @@
 package database
 
 import (
-	"crypto"
 	log "github.com/Sirupsen/logrus"
-	"github.com/Wave-IDS/twofactor"
 	"github.com/hkparker/Wave/helpers"
 	"github.com/jinzhu/gorm"
 	"golang.org/x/crypto/bcrypt"
@@ -17,25 +15,12 @@ type User struct {
 	Email              string `sql:"not null;unique"`
 	Admin              bool
 	Sessions           []Session
-	OTPData            []byte
 	PasswordResetToken string
-	AccountSetupToken  string
-	OTPResetNextLogin  bool
 }
 
 func CreateUser(email string) (err error) {
-	otp, err := twofactor.NewTOTP(email, "Wave", crypto.SHA512, 8)
-	if err != nil {
-		return
-	}
-	otp_data, err := otp.ToBytes(DB())
-	if err != nil {
-		return
-	}
 	user := User{
-		Email:             email,
-		OTPData:           otp_data,
-		AccountSetupToken: helpers.RandomString(),
+		Email: email,
 	}
 	db_err := DB().Create(&user)
 	if db_err.Error != nil {
@@ -45,7 +30,7 @@ func CreateUser(email string) (err error) {
 			"error":  err,
 		}).Warn("error_saving_user")
 	} else {
-		//user.EmailRegistration()
+		// user.AccountSetupEmail() // reset password and email the link with a welcome message
 		log.WithFields(log.Fields{
 			"UserID": user.ID,
 			"email":  "account_register",
@@ -97,42 +82,7 @@ func (user *User) ResetPassword() (err error) {
 	return
 }
 
-func (user *User) ResetTwoFactor() (err error) {
-	user.DestroyAllSessions()
-	otp, err := twofactor.NewTOTP(user.Email, "Wave", crypto.SHA512, 8)
-	if err != nil {
-		log.WithFields(log.Fields{
-			"UserID": user.ID,
-			"error":  err,
-		}).Warn("otp_error")
-		return
-	}
-	otp_data, err := otp.ToBytes(DB())
-	if err != nil {
-		log.WithFields(log.Fields{
-			"UserID": user.ID,
-			"error":  err,
-		}).Warn("otp_error")
-		return
-	}
-	user.OTPData = otp_data
-	user.OTPResetNextLogin = true
-	db_err := DB().Save(&user)
-	if db_err.Error != nil {
-		err = db_err.Error
-		log.WithFields(log.Fields{
-			"UserID": user.ID,
-			"error":  err,
-		}).Warn("error_saving_user")
-		return
-	}
-	log.WithFields(log.Fields{
-		"UserID": user.ID,
-	}).Info("two_factor_reset")
-	return
-}
-
-func ValidAuthentication(email, password, token string) (valid bool) {
+func ValidAuthentication(email, password string) (valid bool) {
 	valid = false
 
 	var user User
@@ -146,16 +96,7 @@ func ValidAuthentication(email, password, token string) (valid bool) {
 		return
 	}
 
-	otp, err := twofactor.TOTPFromBytes(user.OTPData, "Wave", DB())
-	if err != nil {
-		return
-	}
-
-	err = otp.Validate(token)
-	if err == nil || helpers.Development() {
-		valid = true
-	}
-
+	valid = true
 	return
 }
 

@@ -10,8 +10,6 @@ func TestUser(traits []string) (user User) {
 		Name:  "Turd Ferguson",
 		Email: email,
 	}
-	user.ResetTwoFactor()
-	user.OTPResetNextLogin = false
 	user.SetPassword(helpers.RandomString())
 
 	for _, trait := range traits {
