@@ -72,3 +72,35 @@ func TestUserCannotCreateUser(t *testing.T) {
 		}
 	}
 }
+
+func UserCanChangeTheirName(t *testing.T) {
+	assert := assert.New(t)
+
+	user := database.TestUser([]string{})
+	session_id, _ := user.NewSession()
+	req, err := http.NewRequest(
+		"POST",
+		testing_endpoint+"/users/name",
+		strings.NewReader(fmt.Sprintf(
+			"{\"name\": \"Foober Doober\"}",
+			session_id,
+		)),
+	)
+	req.Header.Set("wave_session", session_id)
+	assert.Nil(err)
+	resp, err := testing_client.Do(req)
+	assert.Nil(err)
+	assert.Equal(200, resp.StatusCode)
+	decoder := json.NewDecoder(resp.Body)
+	var params map[string]string
+	err = decoder.Decode(&params)
+	if !assert.Nil(err) {
+		assert.Nil(err.Error())
+	}
+	if assert.NotNil(params) {
+		if assert.NotNil(params["success"]) {
+			assert.Equal("true", params["success"])
+		}
+	}
+	assert.Equal("Foober Doober", user.Name)
+}

@@ -1,7 +1,9 @@
 package database
 
 import (
+	"errors"
 	log "github.com/Sirupsen/logrus"
+	"github.com/gin-gonic/gin"
 	"github.com/hkparker/Wave/helpers"
 	"github.com/jinzhu/gorm"
 	"golang.org/x/crypto/bcrypt"
@@ -42,6 +44,25 @@ func CreateUser(email string) (err error) {
 		"email":  user.Email,
 	}).Info("user_created")
 	return
+}
+
+func CurrentUser(c *gin.Context) (user User, err error) {
+	sess_ids, present := c.Request.Header["wave_session"]
+	if !present {
+		err = errors.New("no wave session header")
+		// log
+		return
+	}
+	if len(sess_ids) != 1 {
+		err = errors.New("")
+		return
+	}
+	session, err := SessionFromID(sess_ids[0])
+	if err != nil {
+		// log
+		return
+	}
+	return session.ActiveUser()
 }
 
 func (user *User) SetPassword(password string) (err error) {

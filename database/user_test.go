@@ -21,6 +21,10 @@ func TestCreateUserCreatesUserInCorrectState(t *testing.T) {
 	assert.Equal(false, user.Admin)
 }
 
+func TestCurrentUserGetsUserForSession(t *testing.T) {
+
+}
+
 func TestSetPasswordSetsPassword(t *testing.T) {
 	assert := assert.New(t)
 
