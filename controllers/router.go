@@ -23,6 +23,7 @@ func NewRouter() *gin.Engine {
 
 	// Users routes
 	router.POST("/users/create", CreateUser)
+	router.POST("/users/name", UpdateUserName)
 
 	// Collector
 	router.GET("/frames", PollCollector)

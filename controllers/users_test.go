@@ -51,7 +51,7 @@ func TestUserCannotCreateUser(t *testing.T) {
 		"POST",
 		testing_endpoint+"/users/create",
 		strings.NewReader(fmt.Sprintf(
-			"{\"email\": \"newuser@example.com\"}",
+			"{\"email\": \"notallowed@example.com\"}",
 			session_id,
 		)),
 	)
@@ -73,7 +73,7 @@ func TestUserCannotCreateUser(t *testing.T) {
 	}
 }
 
-func UserCanChangeTheirName(t *testing.T) {
+func TestUserCanChangeTheirName(t *testing.T) {
 	assert := assert.New(t)
 
 	user := database.TestUser([]string{})
@@ -102,5 +102,9 @@ func UserCanChangeTheirName(t *testing.T) {
 			assert.Equal("true", params["success"])
 		}
 	}
+	user.Reload()
 	assert.Equal("Foober Doober", user.Name)
 }
+
+//func TestUserCanLogin() {}
+//func TestNoSessionWIthBadLogin() {}

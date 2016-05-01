@@ -61,11 +61,13 @@ func Authentication() gin.HandlerFunc {
 
 			if AdminProtected(endpoint) && !user.Admin {
 				c.JSON(401, gin.H{"error": "permission denied"})
+				c.Abort()
 				log.WithFields(log.Fields{
 					"at":             "middleware.Authentication",
 					"reason":         "user is not administrator",
 					"user_id":        user.ID,
 					"session_cookie": session_cookies[0],
+					"endpoint":       endpoint,
 				}).Warn("blocking unauthenticated request")
 				return
 			}

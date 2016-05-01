@@ -4,6 +4,7 @@ import (
 	log "github.com/Sirupsen/logrus"
 	"github.com/gin-gonic/gin"
 	"github.com/hkparker/Wave/database"
+	"net/http"
 )
 
 func CreateUser(c *gin.Context) {
@@ -75,22 +76,46 @@ func UpdateUserName(c *gin.Context) {
 		log.WithFields(log.Fields{
 			"at":    "controllers.UpdateUserName",
 			"error": err.Error,
-		}).Error("")
+		}).Error("error getting current user")
 		return
 	}
 
 	user.Name = name
 	db_err := database.DB().Save(&user)
-	if db_err.Error == nil {
+	if db_err.Error != nil {
 		c.JSON(500, gin.H{"error": db_err.Error})
 		log.WithFields(log.Fields{
 			"at":    "controllers.UpdateUserName",
 			"error": db_err.Error,
-		}).Error("")
+		}).Error("error updating user")
 	} else {
 		c.JSON(200, gin.H{"success": "true"})
 		log.WithFields(log.Fields{
 			"at": "controllers.UpdateUserName",
-		}).Info("")
+		}).Info("user name updated")
 	}
+}
+
+func Login(c *gin.Context) {
+	user, err := database.CurrentUser(c)
+	if err == nil {
+		wave_session, err := user.NewSession()
+		if err == nil {
+			http.SetCookie(
+				c.Writer,
+				&http.Cookie{
+					Name:  "wave_session",
+					Value: wave_session,
+				},
+			)
+		} else {
+			// log
+		}
+	} else {
+		// unauthorized
+	}
+}
+
+func PasswordReset(c *gin.Context) {
+
 }

@@ -50,7 +50,10 @@ func CurrentUser(c *gin.Context) (user User, err error) {
 	sess_ids, present := c.Request.Header["wave_session"]
 	if !present {
 		err = errors.New("no wave session header")
-		// log
+		log.WithFields(log.Fields{
+			"at":    "database.CurrentUser",
+			"error": err,
+		}).Error("session_missing")
 		return
 	}
 	if len(sess_ids) != 1 {
@@ -59,7 +62,10 @@ func CurrentUser(c *gin.Context) (user User, err error) {
 	}
 	session, err := SessionFromID(sess_ids[0])
 	if err != nil {
-		// log
+		log.WithFields(log.Fields{
+			"at":    "database.CurrentUser",
+			"error": err,
+		}).Error("session_missing")
 		return
 	}
 	return session.ActiveUser()
@@ -146,4 +152,8 @@ func (user *User) DestroyAllSessions() {
 	for session := range user.Sessions {
 		DB().Unscoped().Delete(&session)
 	}
+}
+
+func (user *User) Reload() {
+	DB().First(&user, "Email = ?", user.Email)
 }
