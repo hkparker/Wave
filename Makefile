@@ -1,5 +1,18 @@
-all: clean test build
+all: clean test release
 
+#
+# Assuming only `go` and `npm` available, install all required utilities
+#
+deps:
+	go get github.com/cespare/reflex
+	go get github.com/stretchr/testify/assert
+	go get -u github.com/ddollar/forego
+	sudo npm install -g babel-cli
+	sudo npm install -g webpack
+
+#
+# Remove all ignored files generated during build
+#
 clean:
 	@rm -f Wave
 	@rm -f assets/*.js
@@ -12,13 +25,21 @@ clean:
 	@rm -f helpers/bindata.go
 	@rm -f bin/*
 
+#
+# Run go-bindata to create embedded assets for single-binary deployment
+#
 embed-assets:
 	go-bindata -pkg=helpers -o=helpers/bindata.go static/
 
-develop: clean build
-	# WAVE_ENV=development ./Wave
-	# hot reloading react, redux dev tools, etc
-	# rebuild and restart Wave when go files change
+#
+# Run the Procfile for development
+#
+develop: clean
+	forego start
+
+#
+# Testing utilities
+#
 
 test-frontend:
 
@@ -26,6 +47,10 @@ test-backend: embed-assets
 	go test ./... -cover
 
 test: test-frontend test-backend
+
+#
+# Building Utilities
+#
 
 build-frontend:
 	babel frontend --out-dir assets
@@ -36,6 +61,9 @@ build-backend: embed-assets
 
 build: build-frontend build-backend
 
+#
+# Build all Versions of Wave in the bin directory
+#
 release: clean test
 	GOOS=linux GOARCH=amd64 go build -o bin/Wave-linux
 	GOOS=linux GOARCH=arm go build -o bin/Wave-linux-arm
