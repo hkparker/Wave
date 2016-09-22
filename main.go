@@ -11,20 +11,24 @@ import (
 	"os"
 )
 
-var version = flag.Bool("version", false, "version")
-
 func main() {
+	var version bool
+	var initdb bool
+	flag.BoolVar(&version, "version", false, "version")
+	flag.BoolVar(&initdb, "initdb", false, "reset the Wave database")
 	flag.Parse()
 
-	if *version {
+	if version {
 		fmt.Println("Wave 0.0.0")
 		os.Exit(0)
 	}
 
-	// if reseed db
+	database.Connect()
+	//database.SetupElasticsearch()
 
-	database.SetupElasticsearch()
-	database.DB()
+	if initdb {
+		database.Init()
+	}
 
 	if helpers.Production() {
 		log.SetFormatter(&log.JSONFormatter{})

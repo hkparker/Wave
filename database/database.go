@@ -23,3 +23,16 @@ func DB() *gorm.DB {
 	}).Fatal("unknown database environment")
 	return nil
 }
+
+func Connect() {
+	_, err := gorm.Open("postgres", "user=postgres sslmode=disable")
+	if err != nil {
+		log.WithFields(log.Fields{
+			"error": err.Error(),
+		}).Fatal("unable to connect to postgres server")
+	}
+}
+
+func Init() {
+	// create databases
+}

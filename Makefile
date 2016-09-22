@@ -5,8 +5,8 @@ all: clean test release
 #
 deps:
 	go get github.com/cespare/reflex
-	go get github.com/stretchr/testify/assert
-	go get -u github.com/ddollar/forego
+	go get github.com/ddollar/forego
+	go get -t
 	sudo npm install -g babel-cli
 	sudo npm install -g webpack
 
@@ -34,7 +34,7 @@ embed-assets:
 #
 # Run the Procfile for development
 #
-develop: clean
+develop: clean embed-assets
 	forego start
 
 #
@@ -64,7 +64,7 @@ build: build-frontend build-backend
 #
 # Build all Versions of Wave in the bin directory
 #
-release: clean test
+release: clean test embed-assets
 	GOOS=linux GOARCH=amd64 go build -o bin/Wave-linux
 	GOOS=linux GOARCH=arm go build -o bin/Wave-linux-arm
 	GOOS=freebsd GOARCH=amd64 go build -o bin/Wave-freebsd
