@@ -39,7 +39,7 @@ func Authentication() gin.HandlerFunc {
 			var user database.User
 			if session, err := database.SessionFromID(session_cookies[0]); err == nil {
 				session.LastUsed = time.Now()
-				database.DB().Save(&session)
+				database.Orm.Save(&session)
 				if user, err = session.ActiveUser(); err != nil {
 					c.Redirect(302, "/login")
 					c.Abort()

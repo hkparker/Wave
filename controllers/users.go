@@ -119,3 +119,21 @@ func Login(c *gin.Context) {
 func PasswordReset(c *gin.Context) {
 
 }
+
+func validAuthentication(email, password string) (valid bool) {
+	valid = false
+
+	var user User
+	db_err := DB().First(&user, "Email = ?", email)
+	if db_err.Error != nil {
+		return
+	}
+
+	err := bcrypt.CompareHashAndPassword(user.Password, []byte(password))
+	if err != nil {
+		return
+	}
+
+	valid = true
+	return
+}

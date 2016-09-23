@@ -14,8 +14,18 @@ import (
 func main() {
 	var version bool
 	var initdb bool
+	var port int
+	var db_username string
+	var db_password string
+	var db_name string
+	var db_ssl string
 	flag.BoolVar(&version, "version", false, "version")
 	flag.BoolVar(&initdb, "initdb", false, "reset the Wave database")
+	flag.IntVar(&port, "port", 80, "port to listen on")
+	flag.StringVar(&db_username, "db_username", "", "username for Wave database")
+	flag.StringVar(&db_password, "db_password", "", "password for Wave database")
+	flag.StringVar(&db_name, "db_name", "wave_development", "database name to use")
+	flag.StringVar(&db_ssl, "db_ssl", "disabled", "database connection over ssl")
 	flag.Parse()
 
 	if version {
@@ -23,8 +33,13 @@ func main() {
 		os.Exit(0)
 	}
 
-	database.Connect()
-	//database.SetupElasticsearch()
+	database.Connect(
+		db_username,
+		db_password,
+		db_name,
+		db_ssl,
+	)
+	//cache.Connect()
 
 	if initdb {
 		database.Init()
@@ -33,8 +48,8 @@ func main() {
 	if helpers.Production() {
 		log.SetFormatter(&log.JSONFormatter{})
 		gin.SetMode(gin.ReleaseMode)
-		controllers.NewRouter().Run(":80")
+		controllers.NewRouter().Run(":" + port)
 	} else if helpers.Development() {
-		controllers.NewRouter().Run(":8080")
+		controllers.NewRouter().Run(":" + port)
 	}
 }

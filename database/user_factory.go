@@ -20,6 +20,6 @@ func TestUser(traits []string) (user User) {
 		}
 	}
 
-	DB().Create(&user)
+	//	DB().Create(&user)
 	return
 }

@@ -1,38 +1,53 @@
 package database
 
 import (
+	"fmt"
 	log "github.com/Sirupsen/logrus"
 	"github.com/hkparker/Wave/helpers"
 	"github.com/jinzhu/gorm"
 )
 
-var productiondb *gorm.DB
-var developmentdb *gorm.DB
-var testdb *gorm.DB
+var Orm *gorm.DB
 
-func DB() *gorm.DB {
-	if helpers.Production() {
-		return productionDB()
-	} else if helpers.Development() {
-		return developmentDB()
+func Connect(db_username, db_password, db_name, db_ssl string) {
+	var db_type string
+	var db_args string
+	if helpers.Production() || helpers.Development() {
+		db_type = "postgres"
+		db_args = fmt.Sprintf(
+			"user=%s password=%s sslmode=%s",
+			db_username,
+			db_password,
+			db_name,
+			db_ssl,
+		)
 	} else if helpers.Testing() {
-		return testDB()
+		db_type = "sqlite3"
+		db_args = ":memory:"
+	} else {
+		log.WithFields(log.Fields{
+			"environment": helpers.Env(),
+		}).Fatal("unknown database environment")
 	}
-	log.WithFields(log.Fields{
-		"environment": helpers.Env(),
-	}).Fatal("unknown database environment")
-	return nil
-}
-
-func Connect() {
-	_, err := gorm.Open("postgres", "user=postgres sslmode=disable")
+	var err error
+	Orm, err = gorm.Open(db_type, db_args)
 	if err != nil {
 		log.WithFields(log.Fields{
+			"type":  db_type,
+			"user":  db_username,
+			"ssl":   db_ssl,
 			"error": err.Error(),
-		}).Fatal("unable to connect to postgres server")
+		}).Fatal("unable to connect to database server")
+	}
+
+	// create the table if missing?
+
+	if helpers.Testing() {
+		Init()
 	}
 }
 
 func Init() {
-	// create databases
+	Orm.CreateTable(User{})
+	Orm.CreateTable(Session{})
 }
