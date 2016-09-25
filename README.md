@@ -8,6 +8,20 @@ You'll need `npm`, `go`, and `docker-compose` available.
 
 ### Installing dependencies
 
+Install reflex, forego, and go-bindata, run `go-get`, install babel-cli and webpack.
+
+```
+go get github.com/cespare/reflex
+go get github.com/ddollar/forego
+go get -u github.com/jteeuwen/go-bindata/...
+make embed-assets
+go get -t
+sudo npm install -g babel-cli
+sudo npm install -g webpack
+```
+
+Or just:
+
 ```
 make deps
 ```

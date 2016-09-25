@@ -4,10 +4,10 @@ all: clean test release
 # Assuming only `go` and `npm` available, install all required utilities
 #
 deps:
-	go get -u github.com/jteeuwen/go-bindata/...
-	make embed-assets
 	go get github.com/cespare/reflex
 	go get github.com/ddollar/forego
+	go get -u github.com/jteeuwen/go-bindata/...
+	make embed-assets
 	go get -t
 	sudo npm install -g babel-cli
 	sudo npm install -g webpack
