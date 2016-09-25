@@ -21,8 +21,9 @@ type User struct {
 }
 
 func init() {
-	if !database.Orm.HasTable(User{}) {
+	if database.Orm != nil && !database.Orm.HasTable(User{}) {
 		database.Orm.CreateTable(User{})
+		log.Info("creating missing user table")
 	}
 }
 

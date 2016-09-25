@@ -27,7 +27,7 @@ func main() {
 	flag.StringVar(&db_username, "db_username", "", "username for Wave database")
 	flag.StringVar(&db_password, "db_password", "", "password for Wave database")
 	flag.StringVar(&db_name, "db_name", "wave_development", "database name to use")
-	flag.StringVar(&db_ssl, "db_ssl", "disabled", "database connection over ssl")
+	flag.StringVar(&db_ssl, "db_ssl", "disable", "database connection over ssl")
 	flag.Parse()
 
 	if version {

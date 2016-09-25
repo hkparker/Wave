@@ -17,7 +17,7 @@ type Session struct {
 }
 
 func init() {
-	if !database.Orm.HasTable(Session{}) {
+	if database.Orm != nil && !database.Orm.HasTable(Session{}) {
 		database.Orm.CreateTable(Session{})
 	}
 }

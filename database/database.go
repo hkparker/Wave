@@ -28,8 +28,8 @@ func Connect(db_username, db_password, db_name, db_ssl string) {
 		"user=%s password=%s sslmode=%s",
 		db_username,
 		db_password,
-		db_name,
 		db_ssl,
+		//db_name,
 	)
 	var err error
 	Orm, err = gorm.Open("postgres", db_args)
