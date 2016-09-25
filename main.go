@@ -15,6 +15,7 @@ func main() {
 	var version bool
 	var initdb bool
 	var port int
+	var address string
 	var db_username string
 	var db_password string
 	var db_name string
@@ -22,6 +23,7 @@ func main() {
 	flag.BoolVar(&version, "version", false, "version")
 	flag.BoolVar(&initdb, "initdb", false, "reset the Wave database")
 	flag.IntVar(&port, "port", 80, "port to listen on")
+	flag.StringVar(&address, "address", "0.0.0.0", "ip address to bind to")
 	flag.StringVar(&db_username, "db_username", "", "username for Wave database")
 	flag.StringVar(&db_password, "db_password", "", "password for Wave database")
 	flag.StringVar(&db_name, "db_name", "wave_development", "database name to use")
@@ -41,15 +43,13 @@ func main() {
 	)
 	//cache.Connect()
 
-	if initdb {
-		database.Init()
-	}
-
 	if helpers.Production() {
 		log.SetFormatter(&log.JSONFormatter{})
 		gin.SetMode(gin.ReleaseMode)
-		controllers.NewRouter().Run(":" + port)
-	} else if helpers.Development() {
-		controllers.NewRouter().Run(":" + port)
 	}
+	controllers.NewRouter().Run(fmt.Sprintf(
+		"%s:%d",
+		address,
+		port,
+	))
 }

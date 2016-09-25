@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/hkparker/Wave/database"
+	"github.com/hkparker/Wave/models"
 	"github.com/stretchr/testify/assert"
 	"net/http"
 	"strings"
@@ -12,7 +13,7 @@ import (
 
 func TestAdminCanCreateUser(t *testing.T) {
 	assert := assert.New(t)
-	admin := database.TestUser([]string{"admin"})
+	admin := models.TestUser([]string{"admin"})
 	session_id, _ := admin.NewSession()
 	req, err := http.NewRequest(
 		"POST",
@@ -38,14 +39,14 @@ func TestAdminCanCreateUser(t *testing.T) {
 			assert.Equal("true", params["success"])
 		}
 	}
-	var created_user database.User
-	db_err := database.DB().First(&created_user, "Email = ? ", "newuser@example.com")
+	var created_user models.User
+	db_err := database.Orm.First(&created_user, "Email = ? ", "newuser@example.com")
 	assert.Nil(db_err.Error)
 }
 
 func TestUserCannotCreateUser(t *testing.T) {
 	assert := assert.New(t)
-	user := database.TestUser([]string{})
+	user := models.TestUser([]string{})
 	session_id, _ := user.NewSession()
 	req, err := http.NewRequest(
 		"POST",
@@ -76,7 +77,7 @@ func TestUserCannotCreateUser(t *testing.T) {
 func TestUserCanChangeTheirName(t *testing.T) {
 	assert := assert.New(t)
 
-	user := database.TestUser([]string{})
+	user := models.TestUser([]string{})
 	session_id, _ := user.NewSession()
 	req, err := http.NewRequest(
 		"POST",
@@ -102,7 +103,6 @@ func TestUserCanChangeTheirName(t *testing.T) {
 			assert.Equal("true", params["success"])
 		}
 	}
-	user.Reload()
 	assert.Equal("Foober Doober", user.Name)
 }
 

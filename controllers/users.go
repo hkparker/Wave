@@ -4,6 +4,8 @@ import (
 	log "github.com/Sirupsen/logrus"
 	"github.com/gin-gonic/gin"
 	"github.com/hkparker/Wave/database"
+	"github.com/hkparker/Wave/models"
+	"golang.org/x/crypto/bcrypt"
 	"net/http"
 )
 
@@ -30,7 +32,7 @@ func CreateUser(c *gin.Context) {
 		return
 	}
 
-	err = database.CreateUser(email)
+	err = models.CreateUser(email)
 	if err == nil {
 		c.JSON(200, gin.H{"success": "true"})
 		log.WithFields(log.Fields{
@@ -70,7 +72,7 @@ func UpdateUserName(c *gin.Context) {
 		return
 	}
 
-	user, err := database.CurrentUser(c)
+	user, err := models.CurrentUser(c)
 	if err != nil {
 		c.JSON(500, gin.H{"error": err.Error})
 		log.WithFields(log.Fields{
@@ -81,7 +83,7 @@ func UpdateUserName(c *gin.Context) {
 	}
 
 	user.Name = name
-	db_err := database.DB().Save(&user)
+	db_err := database.Orm.Save(&user)
 	if db_err.Error != nil {
 		c.JSON(500, gin.H{"error": db_err.Error})
 		log.WithFields(log.Fields{
@@ -97,7 +99,7 @@ func UpdateUserName(c *gin.Context) {
 }
 
 func Login(c *gin.Context) {
-	user, err := database.CurrentUser(c)
+	user, err := models.CurrentUser(c)
 	if err == nil {
 		wave_session, err := user.NewSession()
 		if err == nil {
@@ -123,8 +125,8 @@ func PasswordReset(c *gin.Context) {
 func validAuthentication(email, password string) (valid bool) {
 	valid = false
 
-	var user User
-	db_err := DB().First(&user, "Email = ?", email)
+	var user models.User
+	db_err := database.Orm.First(&user, "Email = ?", email)
 	if db_err.Error != nil {
 		return
 	}
@@ -137,3 +139,30 @@ func validAuthentication(email, password string) (valid bool) {
 	valid = true
 	return
 }
+
+//func validateNewUser(c *gin.Context) (map[string]string, bool) {
+//	var user_info map[string]string
+//	err := c.BindJSON(&user_info)
+//	if err != nil {
+//		c.JSON(500, gin.H{"error": err.Error()})
+//		log.WithFields(log.Fields{
+//			"at":    "controllers.CreateUser",
+//			"error": err,
+//		}).Error("error parsing request")
+//		return user_info, false
+//	}
+//
+//	_, ok := user_info["email"]
+//	if !ok {
+//		email_error := "no email provided"
+//		c.JSON(500, gin.H{"error": email_error})
+//		log.WithFields(log.Fields{
+//			"at":    "controllers.CreateUser",
+//			"error": email_error,
+//		}).Error("error creating user")
+//		return user_info, false
+//	}
+//
+//	// ensure uniqueness of email
+//	return user_info, true
+//}

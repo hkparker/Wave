@@ -1,9 +1,10 @@
-package database
+package models
 
 import (
 	"errors"
 	log "github.com/Sirupsen/logrus"
 	"github.com/gin-gonic/gin"
+	"github.com/hkparker/Wave/database"
 	"github.com/hkparker/Wave/helpers"
 	"github.com/jinzhu/gorm"
 	"golang.org/x/crypto/bcrypt"
@@ -20,31 +21,37 @@ type User struct {
 	PasswordResetToken string
 }
 
-//func CreateUser(email string) (err error) {
-//	user := User{
-//		Email:              email,
-//		PasswordResetToken: helpers.RandomString(),
-//	}
-//	db_err := DB().Create(&user)
-//	if db_err.Error != nil {
-//		err = db_err.Error
-//		log.WithFields(log.Fields{
-//			"UserID": user.ID,
-//			"error":  err,
-//		}).Warn("error_saving_user")
-//	} else {
-//		// user.EmailAccountSetup()
-//		log.WithFields(log.Fields{
-//			"UserID": user.ID,
-//			"email":  "account_register",
-//		}).Info("email_sent")
-//	}
-//	log.WithFields(log.Fields{
-//		"UserID": user.ID,
-//		"email":  user.Email,
-//	}).Info("user_created")
-//	return
-//}
+func init() {
+	if !database.Orm.HasTable(User{}) {
+		database.Orm.CreateTable(User{})
+	}
+}
+
+func CreateUser(email string) (err error) {
+	user := User{
+		Email:              email,
+		PasswordResetToken: helpers.RandomString(),
+	}
+	db_err := database.Orm.Create(&user)
+	if db_err.Error != nil {
+		err = db_err.Error
+		log.WithFields(log.Fields{
+			"UserID": user.ID,
+			"error":  err,
+		}).Warn("error_saving_user")
+	} else {
+		// user.EmailAccountSetup()
+		log.WithFields(log.Fields{
+			"UserID": user.ID,
+			"email":  "account_register",
+		}).Info("email_sent")
+	}
+	log.WithFields(log.Fields{
+		"UserID": user.ID,
+		"email":  user.Email,
+	}).Info("user_created")
+	return
+}
 
 func CurrentUser(c *gin.Context) (user User, err error) {
 	sess_ids, present := c.Request.Header["wave_session"]
@@ -81,6 +88,8 @@ func (user *User) SetPassword(password string) (err error) {
 		return
 	}
 	user.Password = pw_data
+	database.Orm.Save(&user)
+	// err
 	log.WithFields(log.Fields{
 		"UserID": user.ID,
 	}).Info("user_password_set")
@@ -88,20 +97,21 @@ func (user *User) SetPassword(password string) (err error) {
 }
 
 func (user *User) ResetPassword() (err error) {
-	//user.DestroyAllSessions()
+	user.DestroyAllSessions()
 	user.PasswordResetToken = helpers.RandomString()
-	//if db_err.Error != nil {
-	//	log.WithFields(log.Fields{
-	//		"UserID": user.ID,
-	//	}).Warn("error_saving_user")
-	//	err = db_err.Error
-	//} else {
-	//	// user.EmailPasswordReset()
-	//	log.WithFields(log.Fields{
-	//		"UserID": user.ID,
-	//		"email":  "password_reset",
-	//	}).Info("email_sent")
-	//}
+	db_err := database.Orm.Save(&user)
+	if db_err.Error != nil {
+		log.WithFields(log.Fields{
+			"UserID": user.ID,
+		}).Warn("error_saving_user")
+		err = db_err.Error
+	} else {
+		// user.EmailPasswordReset()
+		log.WithFields(log.Fields{
+			"UserID": user.ID,
+			"email":  "password_reset",
+		}).Info("email_sent")
+	}
 	log.WithFields(log.Fields{
 		"UserID": user.ID,
 	}).Info("user_password_reset")
@@ -118,6 +128,7 @@ func (user *User) NewSession() (wave_session string, err error) {
 		Cookie:            wave_session,
 	}
 	user.Sessions = append(user.Sessions, session)
+	database.Orm.Save(&user)
 	log.WithFields(log.Fields{
 		"UserID": user.ID,
 		"Cookie": wave_session,
@@ -125,10 +136,10 @@ func (user *User) NewSession() (wave_session string, err error) {
 	return
 }
 
-//func (user *User) DestroyAllSessions() {
-//	user.Sessions = []Session{}
-//	DB().Save(&user)
-//	for session := range user.Sessions {
-//		DB().Unscoped().Delete(&session)
-//	}
-//}
+func (user *User) DestroyAllSessions() {
+	user.Sessions = []Session{}
+	database.Orm.Save(&user)
+	for session := range user.Sessions {
+		database.Orm.Unscoped().Delete(&session)
+	}
+}

@@ -4,6 +4,7 @@ import (
 	log "github.com/Sirupsen/logrus"
 	"github.com/gin-gonic/gin"
 	"github.com/hkparker/Wave/database"
+	"github.com/hkparker/Wave/models"
 	"time"
 )
 
@@ -36,8 +37,8 @@ func Authentication() gin.HandlerFunc {
 				return
 			}
 
-			var user database.User
-			if session, err := database.SessionFromID(session_cookies[0]); err == nil {
+			var user models.User
+			if session, err := models.SessionFromID(session_cookies[0]); err == nil {
 				session.LastUsed = time.Now()
 				database.Orm.Save(&session)
 				if user, err = session.ActiveUser(); err != nil {

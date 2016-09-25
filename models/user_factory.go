@@ -1,4 +1,4 @@
-package database
+package models
 
 import (
 	"github.com/hkparker/Wave/helpers"
@@ -20,6 +20,5 @@ func TestUser(traits []string) (user User) {
 		}
 	}
 
-	//	DB().Create(&user)
 	return
 }
