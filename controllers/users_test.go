@@ -23,7 +23,12 @@ func TestAdminCanCreateUser(t *testing.T) {
 			session_id,
 		)),
 	)
-	req.Header.Set("wave_session", session_id)
+
+	session, err := models.SessionFromID(session_id)
+	assert.Nil(err)
+	cookie := session.HTTPCookie()
+	req.AddCookie(&cookie)
+
 	assert.Nil(err)
 	resp, err := testing_client.Do(req)
 	assert.Nil(err)
@@ -56,7 +61,12 @@ func TestUserCannotCreateUser(t *testing.T) {
 			session_id,
 		)),
 	)
-	req.Header.Set("wave_session", session_id)
+
+	session, err := models.SessionFromID(session_id)
+	assert.Nil(err)
+	cookie := session.HTTPCookie()
+	req.AddCookie(&cookie)
+
 	assert.Nil(err)
 	resp, err := testing_client.Do(req)
 	assert.Nil(err)
@@ -87,7 +97,12 @@ func TestUserCanChangeTheirName(t *testing.T) {
 			session_id,
 		)),
 	)
-	req.Header.Set("wave_session", session_id)
+
+	session, err := models.SessionFromID(session_id)
+	assert.Nil(err)
+	cookie := session.HTTPCookie()
+	req.AddCookie(&cookie)
+
 	assert.Nil(err)
 	resp, err := testing_client.Do(req)
 	assert.Nil(err)
@@ -103,8 +118,9 @@ func TestUserCanChangeTheirName(t *testing.T) {
 			assert.Equal("true", params["success"])
 		}
 	}
+	user.Reload()
 	assert.Equal("Foober Doober", user.Name)
 }
 
 //func TestUserCanLogin() {}
-//func TestNoSessionWIthBadLogin() {}
+//func TestNoSessionWithBadLogin() {}

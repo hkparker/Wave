@@ -4,6 +4,7 @@ import (
 	log "github.com/Sirupsen/logrus"
 	"github.com/hkparker/Wave/database"
 	"github.com/jinzhu/gorm"
+	"net/http"
 	"time"
 )
 
@@ -21,14 +22,31 @@ func init() {
 	}
 }
 
+func (session Session) HTTPCookie() http.Cookie {
+	expire := time.Now().AddDate(1, 0, 1)
+	cookie := http.Cookie{
+		"wave_session",
+		session.Cookie,
+		"/",
+		".domain.com",
+		expire,
+		expire.Format(time.UnixDate),
+		41472000,
+		false,
+		false,
+		"wave_session=" + session.Cookie,
+		[]string{"wave_session=" + session.Cookie},
+	}
+	return cookie
+}
+
 func SessionFromID(id string) (session Session, err error) {
 	db_err := database.Orm.First(&session, "Cookie = ?", id)
 	err = db_err.Error
 	if err != nil {
 		log.WithFields(log.Fields{
-			"at":         "database.SessionFromID",
-			"session_id": id,
-			"error":      err.Error(),
+			"at":    "database.SessionFromID",
+			"error": err.Error(),
 		}).Warn("error looking up session")
 	}
 	return

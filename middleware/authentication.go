@@ -15,30 +15,21 @@ func Authentication() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		endpoint := c.Request.URL.Path
 		if !PublicEndpoint(endpoint) {
-			session_cookies, present := c.Request.Header["wave_session"]
+			session_cookie, err := c.Request.Cookie("wave_session")
 
-			if !present {
+			if err != nil {
 				c.Redirect(302, "/login")
 				c.Abort()
 				log.WithFields(log.Fields{
 					"at":     "middleware.Authentication",
-					"reason": "missing wave_session header",
-				}).Info("redirecting unauthenticated request")
-				return
-			}
-
-			if len(session_cookies) != 1 {
-				c.Redirect(302, "/login")
-				c.Abort()
-				log.WithFields(log.Fields{
-					"at":     "middleware.Authentication",
-					"reason": "wave_session headers does not contain exactly one string",
+					"reason": "missing wave_session cookie",
+					"error":  err.Error(),
 				}).Info("redirecting unauthenticated request")
 				return
 			}
 
 			var user models.User
-			if session, err := models.SessionFromID(session_cookies[0]); err == nil {
+			if session, err := models.SessionFromID(session_cookie.Value); err == nil {
 				session.LastUsed = time.Now()
 				database.Orm.Save(&session)
 				if user, err = session.ActiveUser(); err != nil {
@@ -64,11 +55,10 @@ func Authentication() gin.HandlerFunc {
 				c.JSON(401, gin.H{"error": "permission denied"})
 				c.Abort()
 				log.WithFields(log.Fields{
-					"at":             "middleware.Authentication",
-					"reason":         "user is not administrator",
-					"user_id":        user.ID,
-					"session_cookie": session_cookies[0],
-					"endpoint":       endpoint,
+					"at":       "middleware.Authentication",
+					"reason":   "user is not administrator",
+					"user_id":  user.ID,
+					"endpoint": endpoint,
 				}).Warn("blocking unauthenticated request")
 				return
 			}

@@ -74,10 +74,10 @@ func UpdateUserName(c *gin.Context) {
 
 	user, err := models.CurrentUser(c)
 	if err != nil {
-		c.JSON(500, gin.H{"error": err.Error})
+		c.JSON(500, gin.H{"error": err.Error()})
 		log.WithFields(log.Fields{
 			"at":    "controllers.UpdateUserName",
-			"error": err.Error,
+			"error": err.Error(),
 		}).Error("error getting current user")
 		return
 	}
@@ -85,11 +85,12 @@ func UpdateUserName(c *gin.Context) {
 	user.Name = name
 	db_err := database.Orm.Save(&user)
 	if db_err.Error != nil {
-		c.JSON(500, gin.H{"error": db_err.Error})
+		c.JSON(500, gin.H{"error": db_err.Error.Error()})
 		log.WithFields(log.Fields{
 			"at":    "controllers.UpdateUserName",
-			"error": db_err.Error,
+			"error": db_err.Error.Error(),
 		}).Error("error updating user")
+		return
 	} else {
 		c.JSON(200, gin.H{"success": "true"})
 		log.WithFields(log.Fields{

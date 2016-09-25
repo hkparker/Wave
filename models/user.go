@@ -1,7 +1,6 @@
 package models
 
 import (
-	"errors"
 	log "github.com/Sirupsen/logrus"
 	"github.com/gin-gonic/gin"
 	"github.com/hkparker/Wave/database"
@@ -54,20 +53,16 @@ func CreateUser(email string) (err error) {
 }
 
 func CurrentUser(c *gin.Context) (user User, err error) {
-	sess_ids, present := c.Request.Header["wave_session"]
-	if !present {
-		err = errors.New("no wave session header")
+	session_cookie, err := c.Request.Cookie("wave_session")
+	if err != nil {
 		log.WithFields(log.Fields{
 			"at":    "database.CurrentUser",
-			"error": err,
+			"error": err.Error(),
 		}).Error("session_missing")
 		return
 	}
-	if len(sess_ids) != 1 {
-		err = errors.New("")
-		return
-	}
-	session, err := SessionFromID(sess_ids[0])
+
+	session, err := SessionFromID(session_cookie.Value)
 	if err != nil {
 		log.WithFields(log.Fields{
 			"at":    "database.CurrentUser",
@@ -131,7 +126,6 @@ func (user *User) NewSession() (wave_session string, err error) {
 	database.Orm.Save(&user)
 	log.WithFields(log.Fields{
 		"UserID": user.ID,
-		"Cookie": wave_session,
 	}).Info("session_created")
 	return
 }
@@ -142,4 +136,8 @@ func (user *User) DestroyAllSessions() {
 	for session := range user.Sessions {
 		database.Orm.Unscoped().Delete(&session)
 	}
+}
+
+func (user *User) Reload() {
+	database.Orm.First(&user, "Email = ?", user.Email)
 }
