@@ -3,7 +3,6 @@ package controllers
 import (
 	"net/http"
 	"net/http/httptest"
-	"os"
 )
 
 var (
@@ -12,7 +11,6 @@ var (
 )
 
 func init() {
-	os.Setenv("WAVE_ENV", "testing")
 	server := httptest.NewServer(NewRouter())
 	testing_endpoint = server.URL
 	testing_client = http.Client{}

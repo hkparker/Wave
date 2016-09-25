@@ -3,6 +3,7 @@ package database
 import (
 	"fmt"
 	log "github.com/Sirupsen/logrus"
+	"github.com/hkparker/Wave/helpers"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
@@ -11,7 +12,7 @@ import (
 var Orm *gorm.DB
 
 func init() {
-	if Orm == nil { //helpers.Testing() {
+	if helpers.Testing() && Orm == nil {
 		var err error
 		Orm, err = gorm.Open("sqlite3", ":memory:")
 		if err != nil {
