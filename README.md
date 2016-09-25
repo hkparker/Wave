@@ -4,9 +4,9 @@ Wave is a wireless Intrusion Detection System and 802.11 visualizer.  Wireless d
 
 ## Developing
 
-### Installing dependencies
+You'll need `npm`, `go`, and `docker-compose` available.
 
-Requires only `npm` and `go`
+### Installing dependencies
 
 ```
 make deps
@@ -14,7 +14,7 @@ make deps
 
 ### Start instance
 
-Run `make develop` to start elasticsearch and postgres as well as an auto restarting instance of Wave.
+Run `make develop` to start elasticsearch and postgres as well as an auto-rebuilding instance of Wave.
 
 ### Running tests
 

@@ -8,10 +8,6 @@ import (
 	"testing"
 )
 
-func init() {
-	test = true
-}
-
 func TestCreateUserCreatesUserInCorrectState(t *testing.T) {
 	//assert := assert.New(t)
 
