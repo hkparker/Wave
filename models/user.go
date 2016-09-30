@@ -13,7 +13,7 @@ type User struct {
 	gorm.Model
 	Name               string
 	Password           []byte
-	Email              string `sql:"not null;unique"`
+	Username           string `sql:"not null;unique"`
 	Admin              bool
 	Sessions           []Session
 	PasswordResetToken string
@@ -28,7 +28,7 @@ func init() {
 
 func CreateUser(email string) (password_reset_link string, err error) {
 	user := User{
-		Email:              email,
+		Username:           email,
 		PasswordResetToken: helpers.RandomString(),
 	}
 	db_err := database.Orm.Create(&user)
@@ -41,7 +41,7 @@ func CreateUser(email string) (password_reset_link string, err error) {
 	} else {
 		log.WithFields(log.Fields{
 			"UserID": user.ID,
-			"email":  user.Email,
+			"email":  user.Username,
 		}).Info("user_created")
 		password_reset_link = ""
 		// create password reset link
@@ -78,7 +78,7 @@ func (user *User) ResetPassword() (err error) {
 		}).Warn("error_saving_user")
 		err = db_err.Error
 	} else {
-		// user.EmailPasswordReset()
+		// user.UsernamePasswordReset()
 		log.WithFields(log.Fields{
 			"UserID": user.ID,
 			"email":  "password_reset",
@@ -116,7 +116,7 @@ func (user *User) DestroyAllSessions() {
 }
 
 func (user *User) Reload() {
-	database.Orm.First(&user, "Email = ?", user.Email)
+	database.Orm.First(&user, "Username = ?", user.Username)
 }
 
 func (user User) ValidAuthentication(password string) (valid bool) {

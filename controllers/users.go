@@ -20,7 +20,7 @@ func CreateUser(c *gin.Context) {
 		return
 	}
 
-	email, ok := user_info["email"]
+	email, ok := user_info["username"]
 	if !ok {
 		email_error := "no email provided"
 		c.JSON(500, gin.H{"error": email_error})
@@ -122,33 +122,6 @@ func Login(c *gin.Context) {
 func PasswordReset(c *gin.Context) {
 
 }
-
-//func validateNewUser(c *gin.Context) (map[string]string, bool) {
-//	var user_info map[string]string
-//	err := c.BindJSON(&user_info)
-//	if err != nil {
-//		c.JSON(500, gin.H{"error": err.Error()})
-//		log.WithFields(log.Fields{
-//			"at":    "controllers.CreateUser",
-//			"error": err,
-//		}).Error("error parsing request")
-//		return user_info, false
-//	}
-//
-//	_, ok := user_info["email"]
-//	if !ok {
-//		email_error := "no email provided"
-//		c.JSON(500, gin.H{"error": email_error})
-//		log.WithFields(log.Fields{
-//			"at":    "controllers.CreateUser",
-//			"error": email_error,
-//		}).Error("error creating user")
-//		return user_info, false
-//	}
-//
-//	// ensure uniqueness of email
-//	return user_info, true
-//}
 
 func currentUser(c *gin.Context) (user models.User, err error) {
 	session_cookie, err := c.Request.Cookie("wave_session")

@@ -18,7 +18,7 @@ func NewRouter() *gin.Engine {
 	router.Use(middleware.Authentication())
 
 	// Authentication routes
-	router.POST("/login", Login)
+	router.POST("/login", newSession)
 	router.GET("/reset/:id", PasswordReset)
 
 	// Users routes

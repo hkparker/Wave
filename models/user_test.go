@@ -17,7 +17,7 @@ func TestCreateUserCreatesUserInCorrectState(t *testing.T) {
 	assert.Equal("", reset_link)
 
 	var user User
-	db_err := database.Orm.First(&user, "Email = ?", email)
+	db_err := database.Orm.First(&user, "Username = ?", email)
 	assert.Nil(db_err.Error)
 
 	assert.Equal(false, user.Admin)

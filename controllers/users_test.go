@@ -19,7 +19,7 @@ func TestAdminCanCreateUser(t *testing.T) {
 		"POST",
 		testing_endpoint+"/users/create",
 		strings.NewReader(fmt.Sprintf(
-			"{\"email\": \"newuser@example.com\"}",
+			"{\"username\": \"samsepi0l\"}",
 			session_id,
 		)),
 	)
@@ -45,7 +45,7 @@ func TestAdminCanCreateUser(t *testing.T) {
 		}
 	}
 	var created_user models.User
-	db_err := database.Orm.First(&created_user, "Email = ? ", "newuser@example.com")
+	db_err := database.Orm.First(&created_user, "Username = ? ", "samsepi0l")
 	assert.Nil(db_err.Error)
 }
 

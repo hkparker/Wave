@@ -7,8 +7,8 @@ import (
 func TestUser(traits []string) (user User) {
 	email := helpers.RandomString() + "@example.com"
 	user = User{
-		Name:  "Turd Ferguson",
-		Email: email,
+		Name:     "Turd Ferguson",
+		Username: email,
 	}
 	user.SetPassword(helpers.RandomString())
 
