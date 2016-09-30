@@ -9,8 +9,7 @@ deps:
 	go get -u github.com/jteeuwen/go-bindata/...
 	make embed-assets
 	go get -t
-	sudo npm install -g babel-cli
-	sudo npm install -g webpack
+	npm install
 
 #
 # Remove all ignored files generated during build
@@ -44,6 +43,7 @@ develop: clean embed-assets
 #
 
 test-frontend:
+	npm test
 
 test-backend: embed-assets
 	go test ./... -cover
@@ -55,8 +55,8 @@ test: test-frontend test-backend
 #
 
 build-frontend:
-	babel frontend --out-dir assets
-	webpack assets/* static/bundle.js
+	./node_modules/babel-cli/bin/babel.js frontend --out-dir assets
+	./node_modules/webpack/bin/webpack.js assets/* static/bundle.js
 
 build-backend: embed-assets
 	go build

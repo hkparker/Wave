@@ -5,7 +5,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/hkparker/Wave/database"
 	"github.com/hkparker/Wave/models"
-	"golang.org/x/crypto/bcrypt"
 	"net/http"
 )
 
@@ -121,24 +120,6 @@ func Login(c *gin.Context) {
 
 func PasswordReset(c *gin.Context) {
 
-}
-
-func validAuthentication(email, password string) (valid bool) {
-	valid = false
-
-	var user models.User
-	db_err := database.Orm.First(&user, "Email = ?", email)
-	if db_err.Error != nil {
-		return
-	}
-
-	err := bcrypt.CompareHashAndPassword(user.Password, []byte(password))
-	if err != nil {
-		return
-	}
-
-	valid = true
-	return
 }
 
 //func validateNewUser(c *gin.Context) (map[string]string, bool) {

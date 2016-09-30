@@ -142,3 +142,15 @@ func (user *User) DestroyAllSessions() {
 func (user *User) Reload() {
 	database.Orm.First(&user, "Email = ?", user.Email)
 }
+
+func (user User) ValidAuthentication(password string) (valid bool) {
+	valid = false
+
+	err := bcrypt.CompareHashAndPassword(user.Password, []byte(password))
+	if err != nil {
+		return
+	}
+
+	valid = true
+	return
+}
