@@ -2,7 +2,6 @@ package models
 
 import (
 	log "github.com/Sirupsen/logrus"
-	"github.com/gin-gonic/gin"
 	"github.com/hkparker/Wave/database"
 	"github.com/hkparker/Wave/helpers"
 	"github.com/jinzhu/gorm"
@@ -27,7 +26,7 @@ func init() {
 	}
 }
 
-func CreateUser(email string) (err error) {
+func CreateUser(email string) (password_reset_link string, err error) {
 	user := User{
 		Email:              email,
 		PasswordResetToken: helpers.RandomString(),
@@ -40,38 +39,15 @@ func CreateUser(email string) (err error) {
 			"error":  err,
 		}).Warn("error_saving_user")
 	} else {
-		// user.EmailAccountSetup()
 		log.WithFields(log.Fields{
 			"UserID": user.ID,
-			"email":  "account_register",
-		}).Info("email_sent")
+			"email":  user.Email,
+		}).Info("user_created")
+		password_reset_link = ""
+		// create password reset link
+		// return "https://wave/" + "/setpassword/<>"
 	}
-	log.WithFields(log.Fields{
-		"UserID": user.ID,
-		"email":  user.Email,
-	}).Info("user_created")
 	return
-}
-
-func CurrentUser(c *gin.Context) (user User, err error) {
-	session_cookie, err := c.Request.Cookie("wave_session")
-	if err != nil {
-		log.WithFields(log.Fields{
-			"at":    "database.CurrentUser",
-			"error": err.Error(),
-		}).Error("session_missing")
-		return
-	}
-
-	session, err := SessionFromID(session_cookie.Value)
-	if err != nil {
-		log.WithFields(log.Fields{
-			"at":    "database.CurrentUser",
-			"error": err,
-		}).Error("session_missing")
-		return
-	}
-	return session.ActiveUser()
 }
 
 func (user *User) SetPassword(password string) (err error) {

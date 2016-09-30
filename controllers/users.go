@@ -31,12 +31,13 @@ func CreateUser(c *gin.Context) {
 		return
 	}
 
-	err = models.CreateUser(email)
+	reset_link, err := models.CreateUser(email)
 	if err == nil {
 		c.JSON(200, gin.H{"success": "true"})
 		log.WithFields(log.Fields{
-			"at":    "controllers.CreateUser",
-			"email": email,
+			"at":         "controllers.CreateUser",
+			"email":      email,
+			"reset_link": reset_link,
 		}).Info("created user")
 	} else {
 		c.JSON(500, gin.H{"error": err.Error()})
@@ -71,7 +72,7 @@ func UpdateUserName(c *gin.Context) {
 		return
 	}
 
-	user, err := models.CurrentUser(c)
+	user, err := currentUser(c)
 	if err != nil {
 		c.JSON(500, gin.H{"error": err.Error()})
 		log.WithFields(log.Fields{
@@ -99,7 +100,7 @@ func UpdateUserName(c *gin.Context) {
 }
 
 func Login(c *gin.Context) {
-	user, err := models.CurrentUser(c)
+	user, err := currentUser(c)
 	if err == nil {
 		wave_session, err := user.NewSession()
 		if err == nil {
@@ -148,3 +149,24 @@ func PasswordReset(c *gin.Context) {
 //	// ensure uniqueness of email
 //	return user_info, true
 //}
+
+func currentUser(c *gin.Context) (user models.User, err error) {
+	session_cookie, err := c.Request.Cookie("wave_session")
+	if err != nil {
+		log.WithFields(log.Fields{
+			"at":    "database.currentUser",
+			"error": err.Error(),
+		}).Error("session_missing")
+		return
+	}
+
+	session, err := models.SessionFromID(session_cookie.Value)
+	if err != nil {
+		log.WithFields(log.Fields{
+			"at":    "database.currentUser",
+			"error": err,
+		}).Error("session_missing")
+		return
+	}
+	return session.ActiveUser()
+}

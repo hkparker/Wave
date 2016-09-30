@@ -12,8 +12,9 @@ func TestCreateUserCreatesUserInCorrectState(t *testing.T) {
 	assert := assert.New(t)
 
 	email := helpers.RandomString() + "@example.com"
-	err := CreateUser(email)
+	reset_link, err := CreateUser(email)
 	assert.Nil(err)
+	assert.Equal("", reset_link)
 
 	var user User
 	db_err := database.Orm.First(&user, "Email = ?", email)
