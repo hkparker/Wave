@@ -30,6 +30,9 @@ func SessionFromID(id string) (session Session, err error) {
 			"at":    "database.SessionFromID",
 			"error": err.Error(),
 		}).Warn("error looking up session")
+	} else {
+		session.LastUsed = time.Now()
+		err = session.Save()
 	}
 	return
 }
@@ -37,22 +40,23 @@ func SessionFromID(id string) (session Session, err error) {
 func (session Session) HTTPCookie() http.Cookie {
 	expire := time.Now().AddDate(1, 0, 1)
 	cookie := http.Cookie{
-		"wave_session",
-		session.Cookie,
-		"/",
-		".domain.com",
-		expire,
-		expire.Format(time.UnixDate),
-		41472000,
-		false,
-		false,
-		"wave_session=" + session.Cookie,
-		[]string{"wave_session=" + session.Cookie},
+		Name:       "wave_session",
+		Value:      session.Cookie,
+		Path:       "/",
+		Domain:     "wave",
+		Expires:    expire,
+		RawExpires: expire.Format(time.UnixDate),
+		MaxAge:     41472000,
+		Secure:     false,
+		HttpOnly:   false,
+		Raw:        "wave_session=" + session.Cookie,
+		Unparsed:   []string{"wave_session=" + session.Cookie},
 	}
+
 	return cookie
 }
 
-func (session Session) ActiveUser() (user User, err error) {
+func (session Session) User() (user User, err error) {
 	db_err := database.Orm.Model(&session).Related(&user)
 	err = db_err.Error
 	if err != nil {
@@ -62,4 +66,8 @@ func (session Session) ActiveUser() (user User, err error) {
 		}).Warn("error finding related user for session")
 	}
 	return
+}
+
+func (session *Session) Save() error {
+	return database.Orm.Save(&session).Error
 }

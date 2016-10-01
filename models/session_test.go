@@ -31,7 +31,9 @@ func TestSessionFromIDDoesntLoadInvalidSession(t *testing.T) {
 	assert.Equal("", session.Cookie)
 }
 
-func TestActiveUserReturnsUserWithSession(t *testing.T) {
+// TestHTTPCookie
+
+func TestUserReturnsUserWithSession(t *testing.T) {
 	assert := assert.New(t)
 
 	user := TestUser([]string{})
@@ -41,7 +43,7 @@ func TestActiveUserReturnsUserWithSession(t *testing.T) {
 	session, err := SessionFromID(cookie)
 	assert.Nil(err)
 
-	active, err := session.ActiveUser()
+	active, err := session.User()
 	assert.Nil(err)
 
 	assert.Equal(active.ID, user.ID)

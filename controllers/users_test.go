@@ -84,6 +84,9 @@ func TestUserCannotCreateUser(t *testing.T) {
 	}
 }
 
+// test create user with non-json
+// test create user with missing username key
+
 func TestUserCanChangeTheirName(t *testing.T) {
 	assert := assert.New(t)
 
@@ -122,5 +125,22 @@ func TestUserCanChangeTheirName(t *testing.T) {
 	assert.Equal("Foober Doober", user.Name)
 }
 
-//func TestUserCanLogin() {}
-//func TestNoSessionWithBadLogin() {}
+// test change name with non-json
+// test change name with missing username key
+
+// test user can use password reset link
+// test password reset links expires in 24 hours
+// test err when password reset token data is bad
+
+// test user can password reset
+// test password reset with non-json
+// test password reset with missing password key
+
+// test destroy user removes user
+// test user cannot destroy other accounts
+// test admin can destroy other accounts
+// test err when admin provides bad data
+
+// test current user with valid session
+// test current user with bad session data
+// test current user with no session cookie

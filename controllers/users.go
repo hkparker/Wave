@@ -7,14 +7,8 @@ import (
 )
 
 func createUser(c *gin.Context) {
-	var user_info map[string]string
-	err := c.BindJSON(&user_info)
+	user_info, err := requestJSON(c)
 	if err != nil {
-		c.JSON(500, gin.H{"error": err.Error()})
-		log.WithFields(log.Fields{
-			"at":    "controllers.CreateUser",
-			"error": err,
-		}).Error("error parsing request")
 		return
 	}
 
@@ -48,14 +42,8 @@ func createUser(c *gin.Context) {
 }
 
 func updateUserName(c *gin.Context) {
-	var user_info map[string]string
-	err := c.BindJSON(&user_info)
+	user_info, err := requestJSON(c)
 	if err != nil {
-		c.JSON(500, gin.H{"error": err.Error()})
-		log.WithFields(log.Fields{
-			"at":    "controllers.UpdateUserName",
-			"error": err,
-		}).Error("error parsing request")
 		return
 	}
 
@@ -102,24 +90,74 @@ func passwordReset(c *gin.Context) {
 }
 
 func updateUserPassword(c *gin.Context) {
+	user_info, err := requestJSON(c)
+	if err != nil {
+		return
+	}
+	user, err := currentUser(c)
+	if err != nil {
+		c.JSON(500, gin.H{"error": err.Error()})
+		return
+	}
 
+	old_password, ok := user_info["old_password"]
+	if !ok {
+		// no old password provided
+	}
+
+	// ensure old password correct password
+	if !user.ValidAuthentication(old_password) {
+
+	}
+
+	new_password, ok := user_info["new_password"]
+	if !ok {
+		name_error := "no name provided"
+		c.JSON(500, gin.H{"error": name_error})
+		log.WithFields(log.Fields{
+			"at":    "controllers.UpdateUserName",
+			"error": name_error,
+		}).Error("error updating user's name")
+		return
+	}
+
+	// Set new password
+	err = user.SetPassword(new_password)
+	if err != nil {
+		c.JSON(500, gin.H{"error": err.Error()})
+		log.WithFields(log.Fields{
+			"at":    "controllers.UpdateUserPassword",
+			"error": err.Error(),
+		}).Error("err setting user password")
+		return
+	} else {
+		c.JSON(200, gin.H{"success": "true"})
+		log.WithFields(log.Fields{
+			"at": "controllers.UpdateUserName",
+		}).Info("user password updated")
+	}
 }
 
 func destroyUser(c *gin.Context) {
 
 }
 
+//
+//
+//
+//
+
 func currentUser(c *gin.Context) (user models.User, err error) {
-	session_cookie, err := c.Request.Cookie("wave_session")
+	session_cookie, err := sessionCookie(c)
 	if err != nil {
-		log.WithFields(log.Fields{
-			"at":    "database.currentUser",
-			"error": err.Error(),
-		}).Error("session_missing")
 		return
 	}
+	user, err = userFromSessionCookie(session_cookie)
+	return
+}
 
-	session, err := models.SessionFromID(session_cookie.Value)
+func userFromSessionCookie(session_cookie string) (user models.User, err error) {
+	session, err := models.SessionFromID(session_cookie)
 	if err != nil {
 		log.WithFields(log.Fields{
 			"at":    "database.currentUser",
@@ -127,5 +165,20 @@ func currentUser(c *gin.Context) (user models.User, err error) {
 		}).Error("session_missing")
 		return
 	}
-	return session.ActiveUser()
+	user, err = session.User()
+	//
+	return
+}
+
+func requestJSON(c *gin.Context) (json map[string]string, err error) {
+	err = c.BindJSON(&json)
+	if err != nil {
+		c.JSON(500, gin.H{"error": err.Error()})
+		c.Abort()
+		log.WithFields(log.Fields{
+			"at":    "controllers.requestJSON",
+			"error": err,
+		}).Error("error parsing request")
+	}
+	return
 }

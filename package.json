@@ -28,7 +28,7 @@
     "style-loader": "^0.13.0"
   },
   "scripts": {
-    "test": "echo \"no test specified\" && exit 0"
+    "test": "echo \"no test specified\""
   },
   "repository": {
     "type": "git",

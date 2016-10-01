@@ -3,9 +3,7 @@ package middleware
 import (
 	log "github.com/Sirupsen/logrus"
 	"github.com/gin-gonic/gin"
-	"github.com/hkparker/Wave/database"
 	"github.com/hkparker/Wave/models"
-	"time"
 )
 
 //
@@ -30,9 +28,7 @@ func Authentication() gin.HandlerFunc {
 
 			var user models.User
 			if session, err := models.SessionFromID(session_cookie.Value); err == nil {
-				session.LastUsed = time.Now()
-				database.Orm.Save(&session)
-				if user, err = session.ActiveUser(); err != nil {
+				if user, err = session.User(); err != nil {
 					c.Redirect(302, "/login")
 					c.Abort()
 					log.WithFields(log.Fields{

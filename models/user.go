@@ -82,12 +82,12 @@ func (user *User) ResetPassword() (err error) {
 	user.DestroyAllSessions()
 	user.SetPassword(helpers.RandomString())
 	user.PasswordResetToken = helpers.RandomString()
-	db_err := database.Orm.Save(&user)
-	if db_err.Error != nil {
+	err = user.Save()
+	if err != nil {
 		log.WithFields(log.Fields{
+			"at":     "user.ResetPassword",
 			"UserID": user.ID,
 		}).Warn("error_saving_user")
-		err = db_err.Error
 		return
 	}
 	log.WithFields(log.Fields{
@@ -118,7 +118,8 @@ func (user *User) NewSession() (wave_session string, err error) {
 		Cookie:            wave_session,
 	}
 	user.Sessions = append(user.Sessions, session)
-	database.Orm.Save(&user)
+	user.Save()
+	// err
 	log.WithFields(log.Fields{
 		"UserID": user.ID,
 	}).Info("session_created")
@@ -127,14 +128,20 @@ func (user *User) NewSession() (wave_session string, err error) {
 
 func (user *User) DestroyAllSessions() {
 	user.Sessions = []Session{}
-	database.Orm.Save(&user)
+	err := user.Save()
+	if err != nil {
+
+	}
 	for session := range user.Sessions {
-		database.Orm.Unscoped().Delete(&session)
+		err := database.Orm.Unscoped().Delete(&session)
+		if err != nil {
+
+		}
 	}
 }
 
-func (user *User) Reload() {
-	database.Orm.First(&user, "Username = ?", user.Username)
+func (user *User) Reload() error {
+	return database.Orm.First(&user, "Username = ?", user.Username).Error
 }
 
 func (user *User) Save() error {
