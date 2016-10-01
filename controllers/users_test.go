@@ -57,7 +57,7 @@ func TestUserCannotCreateUser(t *testing.T) {
 		"POST",
 		testing_endpoint+"/users/create",
 		strings.NewReader(fmt.Sprintf(
-			"{\"email\": \"notallowed@example.com\"}",
+			"{\"username\": \"notallowed@example.com\"}",
 			session_id,
 		)),
 	)

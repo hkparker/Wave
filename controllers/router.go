@@ -17,13 +17,15 @@ func NewRouter() *gin.Engine {
 	}
 	router.Use(middleware.Authentication())
 
-	// Authentication routes
+	// Session routes
 	router.POST("/login", newSession)
-	router.GET("/reset/:id", PasswordReset)
 
-	// Users routes
-	router.POST("/users/create", CreateUser)
-	router.POST("/users/name", UpdateUserName)
+	// User routes
+	router.POST("/users/create", createUser)
+	router.POST("/users/name", updateUserName)
+	router.GET("/users/password/:id", passwordReset)
+	router.POST("/users/password", updateUserPassword)
+	router.POST("/users/destroy", destroyUser)
 
 	// Collector
 	router.GET("/frames", PollCollector)

@@ -5,10 +5,10 @@ import (
 )
 
 func TestUser(traits []string) (user User) {
-	email := helpers.RandomString() + "@example.com"
+	username := helpers.RandomString()
 	user = User{
 		Name:     "Turd Ferguson",
-		Username: email,
+		Username: username,
 	}
 	user.SetPassword(helpers.RandomString())
 

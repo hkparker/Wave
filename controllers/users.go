@@ -3,12 +3,10 @@ package controllers
 import (
 	log "github.com/Sirupsen/logrus"
 	"github.com/gin-gonic/gin"
-	"github.com/hkparker/Wave/database"
 	"github.com/hkparker/Wave/models"
-	"net/http"
 )
 
-func CreateUser(c *gin.Context) {
+func createUser(c *gin.Context) {
 	var user_info map[string]string
 	err := c.BindJSON(&user_info)
 	if err != nil {
@@ -20,36 +18,36 @@ func CreateUser(c *gin.Context) {
 		return
 	}
 
-	email, ok := user_info["username"]
+	username, ok := user_info["username"]
 	if !ok {
-		email_error := "no email provided"
-		c.JSON(500, gin.H{"error": email_error})
+		username_error := "no username provided"
+		c.JSON(500, gin.H{"error": username_error})
 		log.WithFields(log.Fields{
 			"at":    "controllers.CreateUser",
-			"error": email_error,
+			"error": username_error,
 		}).Error("error creating user")
 		return
 	}
 
-	reset_link, err := models.CreateUser(email)
+	reset_link, err := models.CreateUser(username)
 	if err == nil {
 		c.JSON(200, gin.H{"success": "true"})
 		log.WithFields(log.Fields{
 			"at":         "controllers.CreateUser",
-			"email":      email,
+			"username":   username,
 			"reset_link": reset_link,
 		}).Info("created user")
 	} else {
 		c.JSON(500, gin.H{"error": err.Error()})
 		log.WithFields(log.Fields{
-			"at":    "controllers.CreateUser",
-			"email": email,
-			"error": err.Error(),
+			"at":       "controllers.CreateUser",
+			"username": username,
+			"error":    err.Error(),
 		}).Error("error creating user")
 	}
 }
 
-func UpdateUserName(c *gin.Context) {
+func updateUserName(c *gin.Context) {
 	var user_info map[string]string
 	err := c.BindJSON(&user_info)
 	if err != nil {
@@ -83,12 +81,12 @@ func UpdateUserName(c *gin.Context) {
 	}
 
 	user.Name = name
-	db_err := database.Orm.Save(&user)
-	if db_err.Error != nil {
-		c.JSON(500, gin.H{"error": db_err.Error.Error()})
+	db_err := user.Save()
+	if db_err != nil {
+		c.JSON(500, gin.H{"error": db_err.Error()})
 		log.WithFields(log.Fields{
 			"at":    "controllers.UpdateUserName",
-			"error": db_err.Error.Error(),
+			"error": db_err.Error(),
 		}).Error("error updating user")
 		return
 	} else {
@@ -99,27 +97,15 @@ func UpdateUserName(c *gin.Context) {
 	}
 }
 
-func Login(c *gin.Context) {
-	user, err := currentUser(c)
-	if err == nil {
-		wave_session, err := user.NewSession()
-		if err == nil {
-			http.SetCookie(
-				c.Writer,
-				&http.Cookie{
-					Name:  "wave_session",
-					Value: wave_session,
-				},
-			)
-		} else {
-			// log
-		}
-	} else {
-		// unauthorized
-	}
+func passwordReset(c *gin.Context) {
+
 }
 
-func PasswordReset(c *gin.Context) {
+func updateUserPassword(c *gin.Context) {
+
+}
+
+func destroyUser(c *gin.Context) {
 
 }
 

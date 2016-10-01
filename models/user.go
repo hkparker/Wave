@@ -17,6 +17,7 @@ type User struct {
 	Admin              bool
 	Sessions           []Session
 	PasswordResetToken string
+	//PasswordResetTime
 }
 
 func init() {
@@ -26,26 +27,35 @@ func init() {
 	}
 }
 
-func CreateUser(email string) (password_reset_link string, err error) {
+func CreateUser(username string) (password_reset_link string, err error) {
 	user := User{
-		Username:           email,
+		Username:           username,
 		PasswordResetToken: helpers.RandomString(),
 	}
-	db_err := database.Orm.Create(&user)
-	if db_err.Error != nil {
-		err = db_err.Error
+	db_err := database.Orm.Create(&user).Error
+	if db_err != nil {
+		err = db_err
 		log.WithFields(log.Fields{
 			"UserID": user.ID,
 			"error":  err,
 		}).Warn("error_saving_user")
 	} else {
 		log.WithFields(log.Fields{
-			"UserID": user.ID,
-			"email":  user.Username,
+			"UserID":   user.ID,
+			"username": user.Username,
 		}).Info("user_created")
-		password_reset_link = ""
-		// create password reset link
-		// return "https://wave/" + "/setpassword/<>"
+
+		password_reset_token := helpers.RandomString()
+		user.PasswordResetToken = password_reset_token
+		db_err = user.Save()
+		if db_err != nil {
+			log.WithFields(log.Fields{
+				"UserID": user.ID,
+			}).Warn("error_saving_user")
+			err = db_err
+			return
+		}
+		password_reset_link = "http://wave/users/reset/" + password_reset_token
 	}
 	return
 }
@@ -60,7 +70,7 @@ func (user *User) SetPassword(password string) (err error) {
 		return
 	}
 	user.Password = pw_data
-	database.Orm.Save(&user)
+	user.Save()
 	// err
 	log.WithFields(log.Fields{
 		"UserID": user.ID,
@@ -70,6 +80,7 @@ func (user *User) SetPassword(password string) (err error) {
 
 func (user *User) ResetPassword() (err error) {
 	user.DestroyAllSessions()
+	user.SetPassword(helpers.RandomString())
 	user.PasswordResetToken = helpers.RandomString()
 	db_err := database.Orm.Save(&user)
 	if db_err.Error != nil {
@@ -77,16 +88,23 @@ func (user *User) ResetPassword() (err error) {
 			"UserID": user.ID,
 		}).Warn("error_saving_user")
 		err = db_err.Error
-	} else {
-		// user.UsernamePasswordReset()
-		log.WithFields(log.Fields{
-			"UserID": user.ID,
-			"email":  "password_reset",
-		}).Info("email_sent")
+		return
 	}
 	log.WithFields(log.Fields{
 		"UserID": user.ID,
 	}).Info("user_password_reset")
+	return
+}
+
+func (user User) ValidAuthentication(password string) (valid bool) {
+	valid = false
+
+	err := bcrypt.CompareHashAndPassword(user.Password, []byte(password))
+	if err != nil {
+		return
+	}
+
+	valid = true
 	return
 }
 
@@ -119,14 +137,6 @@ func (user *User) Reload() {
 	database.Orm.First(&user, "Username = ?", user.Username)
 }
 
-func (user User) ValidAuthentication(password string) (valid bool) {
-	valid = false
-
-	err := bcrypt.CompareHashAndPassword(user.Password, []byte(password))
-	if err != nil {
-		return
-	}
-
-	valid = true
-	return
+func (user *User) Save() error {
+	return database.Orm.Save(&user).Error
 }
