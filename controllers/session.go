@@ -7,14 +7,17 @@ import (
 	"net/http"
 )
 
+// Handle login requests
 func newSession(c *gin.Context) {
+	// Ensure the request is valid JSON
 	user_info, err := requestJSON(c)
 	if err != nil {
 		return
 	}
 
+	// Ensure the JSON contains a username key with data
 	username, ok := user_info["username"]
-	if !ok {
+	if !ok || username == "" {
 		err := "no user provided"
 		c.JSON(400, gin.H{"error": err})
 		log.WithFields(log.Fields{
@@ -24,6 +27,7 @@ func newSession(c *gin.Context) {
 		return
 	}
 
+	// Ensure the JSON contains a password key
 	password, ok := user_info["password"]
 	if !ok {
 		err := "no password provided"
@@ -36,9 +40,11 @@ func newSession(c *gin.Context) {
 		return
 	}
 
+	// Ensure the user exists
 	user, err := models.UserByUsername(username)
 	if err != nil {
 		err := "user does not exist"
+		// Do not reveal if the username was a valid account
 		c.JSON(401, gin.H{"error": "incorrect authentication"})
 		log.WithFields(log.Fields{
 			"at":       "controllers.newSession",
@@ -49,16 +55,31 @@ func newSession(c *gin.Context) {
 
 	}
 
+	// Check if the provided password is correct
 	if user.ValidAuthentication(password) {
+		// Create a new sessions
 		session_cookie, err := user.NewSession()
 		if err != nil {
-
+			c.JSON(500, gin.H{"error": err.Error()})
+			log.WithFields(log.Fields{
+				"at":       "controllers.newSession",
+				"error":    err,
+				"username": username,
+			}).Error("error creating session")
+			return
 		}
 		session, err := models.SessionFromID(session_cookie)
 		if err != nil {
-
+			c.JSON(500, gin.H{"error": err.Error()})
+			log.WithFields(log.Fields{
+				"at":       "controllers.newSession",
+				"error":    err,
+				"username": username,
+			}).Error("error looking up new sessions")
+			return
 		}
 
+		// Set the wave_session cookie
 		cookie := session.HTTPCookie()
 		http.SetCookie(c.Writer, &cookie)
 		c.JSON(200, gin.H{"authentication": "success"})
