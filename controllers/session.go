@@ -8,6 +8,11 @@ import (
 
 func newSession(c *gin.Context) {}
 
+//
+//
+//
+//
+
 func sessionCookie(c *gin.Context) (session_cookie string, err error) {
 	var session_cookie_obj *http.Cookie
 	session_cookie_obj, err = c.Request.Cookie("wave_session")

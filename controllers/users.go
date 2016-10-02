@@ -11,6 +11,10 @@ func createUser(c *gin.Context) {
 	if err != nil {
 		return
 	}
+	admin, err := currentUser(c)
+	if err != nil {
+		return
+	}
 
 	username, ok := user_info["username"]
 	if !ok {
@@ -19,6 +23,7 @@ func createUser(c *gin.Context) {
 		log.WithFields(log.Fields{
 			"at":    "controllers.CreateUser",
 			"error": username_error,
+			"admin": admin.Username,
 		}).Error("error creating user")
 		return
 	}
@@ -30,6 +35,7 @@ func createUser(c *gin.Context) {
 			"at":         "controllers.CreateUser",
 			"username":   username,
 			"reset_link": reset_link,
+			"admin":      admin.Username,
 		}).Info("created user")
 	} else {
 		c.JSON(500, gin.H{"error": err.Error()})
@@ -37,12 +43,17 @@ func createUser(c *gin.Context) {
 			"at":       "controllers.CreateUser",
 			"username": username,
 			"error":    err.Error(),
+			"admin":    admin.Username,
 		}).Error("error creating user")
 	}
 }
 
 func updateUserName(c *gin.Context) {
 	user_info, err := requestJSON(c)
+	if err != nil {
+		return
+	}
+	user, err := currentUser(c)
 	if err != nil {
 		return
 	}
@@ -55,16 +66,6 @@ func updateUserName(c *gin.Context) {
 			"at":    "controllers.UpdateUserName",
 			"error": name_error,
 		}).Error("error updating user's name")
-		return
-	}
-
-	user, err := currentUser(c)
-	if err != nil {
-		c.JSON(500, gin.H{"error": err.Error()})
-		log.WithFields(log.Fields{
-			"at":    "controllers.UpdateUserName",
-			"error": err.Error(),
-		}).Error("error getting current user")
 		return
 	}
 
@@ -86,7 +87,6 @@ func updateUserName(c *gin.Context) {
 }
 
 func passwordReset(c *gin.Context) {
-
 }
 
 func updateUserPassword(c *gin.Context) {
@@ -96,32 +96,41 @@ func updateUserPassword(c *gin.Context) {
 	}
 	user, err := currentUser(c)
 	if err != nil {
-		c.JSON(500, gin.H{"error": err.Error()})
 		return
 	}
 
 	old_password, ok := user_info["old_password"]
 	if !ok {
-		// no old password provided
-	}
-
-	// ensure old password correct password
-	if !user.ValidAuthentication(old_password) {
-
+		err := "no old password provided"
+		c.JSON(500, gin.H{"error": err})
+		log.WithFields(log.Fields{
+			"at":    "controllers.updateUserPassword",
+			"error": err,
+		}).Error("error updating user password")
+		return
 	}
 
 	new_password, ok := user_info["new_password"]
 	if !ok {
-		name_error := "no name provided"
-		c.JSON(500, gin.H{"error": name_error})
+		err := "no new password provided"
+		c.JSON(500, gin.H{"error": err})
 		log.WithFields(log.Fields{
-			"at":    "controllers.UpdateUserName",
-			"error": name_error,
-		}).Error("error updating user's name")
+			"at":    "controllers.updateUserPassword",
+			"error": err,
+		}).Error("error updating user password")
 		return
 	}
 
-	// Set new password
+	if !user.ValidAuthentication(old_password) {
+		err := "old password incorrect"
+		c.JSON(500, gin.H{"error": err})
+		log.WithFields(log.Fields{
+			"at":    "controllers.updateUserPassword",
+			"error": err,
+		}).Error("error updating user password")
+		return
+	}
+
 	err = user.SetPassword(new_password)
 	if err != nil {
 		c.JSON(500, gin.H{"error": err.Error()})
@@ -131,6 +140,7 @@ func updateUserPassword(c *gin.Context) {
 		}).Error("err setting user password")
 		return
 	} else {
+		user.DestroyAllOtherSessions(c)
 		c.JSON(200, gin.H{"success": "true"})
 		log.WithFields(log.Fields{
 			"at": "controllers.UpdateUserName",
@@ -138,7 +148,78 @@ func updateUserPassword(c *gin.Context) {
 	}
 }
 
-func destroyUser(c *gin.Context) {
+func deleteUser(c *gin.Context) {
+	user_info, err := requestJSON(c)
+	if err != nil {
+		return
+	}
+	admin, err := currentUser(c)
+	if err != nil {
+		return
+	}
+
+	username, ok := user_info["username"]
+	if !ok {
+		err := "no old password provided"
+		c.JSON(500, gin.H{"error": err})
+		log.WithFields(log.Fields{
+			"at":    "controllers.deleteUser",
+			"error": err,
+			"admin": admin.Username,
+		}).Error("error updating user password")
+		return
+	}
+
+	user, err := models.UserByUsername(username)
+	if err != nil {
+		c.JSON(500, gin.H{"error": err.Error()})
+		log.WithFields(log.Fields{
+			"at":    "controllers.deleteUser",
+			"error": err.Error(),
+			"admin": admin.Username,
+		}).Error("error looking up user to delete")
+		return
+	}
+
+	only_admin, err := user.OnlyAdmin()
+	if err != nil {
+		c.JSON(500, gin.H{"error": err.Error()})
+		log.WithFields(log.Fields{
+			"at":    "controllers.deleteUser",
+			"error": err.Error(),
+			"admin": admin.Username,
+		}).Error("error checking admin status of user to delete")
+		return
+	}
+	if only_admin {
+		err := "user is only remaining admin"
+		c.JSON(500, gin.H{"error": err})
+		log.WithFields(log.Fields{
+			"at":    "controllers.deleteUser",
+			"error": err,
+			"admin": admin.Username,
+		}).Error("error updating user password")
+		return
+	}
+
+	user.DestroyAllSessions()
+	err = user.Delete()
+	if err != nil {
+		c.JSON(500, gin.H{"error": err.Error()})
+		log.WithFields(log.Fields{
+			"at":    "controllers.deleteUser",
+			"error": err.Error(),
+			"admin": admin.Username,
+		}).Error("error deleting user")
+		return
+	} else {
+		c.JSON(200, gin.H{"success": "true"})
+		log.WithFields(log.Fields{
+			"at":       "controllers.deleteUser",
+			"username": username,
+			"admin":    admin.Username,
+		}).Info("deleted user")
+	}
 
 }
 
@@ -153,6 +234,14 @@ func currentUser(c *gin.Context) (user models.User, err error) {
 		return
 	}
 	user, err = userFromSessionCookie(session_cookie)
+	if err != nil {
+		c.JSON(500, gin.H{"error": err.Error()})
+		c.Abort()
+		log.WithFields(log.Fields{
+			"at":    "controllers.UpdateUserName",
+			"error": err.Error(),
+		}).Error("error getting current user")
+	}
 	return
 }
 
@@ -166,7 +255,6 @@ func userFromSessionCookie(session_cookie string) (user models.User, err error) 
 		return
 	}
 	user, err = session.User()
-	//
 	return
 }
 

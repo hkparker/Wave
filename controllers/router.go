@@ -25,7 +25,7 @@ func NewRouter() *gin.Engine {
 	router.POST("/users/name", updateUserName)
 	router.GET("/users/password/:id", passwordReset)
 	router.POST("/users/password", updateUserPassword)
-	router.POST("/users/destroy", destroyUser)
+	router.POST("/users/destroy", deleteUser)
 
 	// Collector
 	router.GET("/frames", PollCollector)

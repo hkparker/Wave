@@ -2,6 +2,7 @@ package models
 
 import (
 	log "github.com/Sirupsen/logrus"
+	"github.com/gin-gonic/gin"
 	"github.com/hkparker/Wave/database"
 	"github.com/hkparker/Wave/helpers"
 	"github.com/jinzhu/gorm"
@@ -126,6 +127,10 @@ func (user *User) NewSession() (wave_session string, err error) {
 	return
 }
 
+func (user *User) DestroyAllOtherSessions(c *gin.Context) {
+
+}
+
 func (user *User) DestroyAllSessions() {
 	user.Sessions = []Session{}
 	err := user.Save()
@@ -140,10 +145,39 @@ func (user *User) DestroyAllSessions() {
 	}
 }
 
+func (user User) OnlyAdmin() (only_admin bool, err error) {
+	only_admin = true
+
+	var admins []User
+	err = database.Orm.Where("Admin = ?", true).Find(&admins).Error
+	if err != nil {
+		return
+	}
+
+	if len(admins) > 1 || !user.Admin {
+		only_admin = false
+	}
+	return
+}
+
 func (user *User) Reload() error {
 	return database.Orm.First(&user, "Username = ?", user.Username).Error
 }
 
 func (user *User) Save() error {
 	return database.Orm.Save(&user).Error
+}
+
+func (user *User) Delete() error {
+	return database.Orm.Delete(&user).Error
+}
+
+//
+//
+//
+//
+
+func UserByUsername(username string) (user User, err error) {
+	err = database.Orm.First("Username = ?", username, &user).Error
+	return
 }
