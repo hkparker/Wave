@@ -6,7 +6,10 @@ import (
 	"github.com/hkparker/Wave/models"
 )
 
+// Handle a request to create a new user
 func createUser(c *gin.Context) {
+	// Ensure the request is valid JSON and get
+	// the user from the current session
 	user_info, err := requestJSON(c)
 	if err != nil {
 		return
@@ -16,12 +19,13 @@ func createUser(c *gin.Context) {
 		return
 	}
 
+	// Ensure the JSON contains a username key with data
 	username, ok := user_info["username"]
-	if !ok {
+	if !ok || username == "" {
 		username_error := "no username provided"
 		c.JSON(500, gin.H{"error": username_error})
 		log.WithFields(log.Fields{
-			"at":    "controllers.CreateUser",
+			"at":    "controllers.createUser",
 			"error": username_error,
 			"admin": admin.Username,
 		}).Error("error creating user")
@@ -35,14 +39,14 @@ func createUser(c *gin.Context) {
 			"reset_link": reset_link,
 		})
 		log.WithFields(log.Fields{
-			"at":       "controllers.CreateUser",
+			"at":       "controllers.createUser",
 			"username": username,
 			"admin":    admin.Username,
 		}).Info("created user")
 	} else {
 		c.JSON(500, gin.H{"error": err.Error()})
 		log.WithFields(log.Fields{
-			"at":       "controllers.CreateUser",
+			"at":       "controllers.createUser",
 			"username": username,
 			"error":    err.Error(),
 			"admin":    admin.Username,
@@ -60,30 +64,36 @@ func updateUserName(c *gin.Context) {
 		return
 	}
 
-	name, ok := user_info["name"]
+	username, ok := user_info["username"]
 	if !ok {
 		name_error := "no name provided"
 		c.JSON(500, gin.H{"error": name_error})
 		log.WithFields(log.Fields{
-			"at":    "controllers.UpdateUserName",
-			"error": name_error,
-		}).Error("error updating user's name")
+			"at":       "controllers.updateUserName",
+			"error":    name_error,
+			"username": username,
+			"user":     user.Name,
+		}).Error("error updating user name")
 		return
 	}
 
-	user.Name = name
+	user.Name = username
 	db_err := user.Save()
 	if db_err != nil {
 		c.JSON(500, gin.H{"error": db_err.Error()})
 		log.WithFields(log.Fields{
-			"at":    "controllers.UpdateUserName",
-			"error": db_err.Error(),
+			"at":       "controllers.updateUserName",
+			"error":    db_err.Error(),
+			"username": username,
+			"user":     user.Name,
 		}).Error("error updating user")
 		return
 	} else {
 		c.JSON(200, gin.H{"success": "true"})
 		log.WithFields(log.Fields{
-			"at": "controllers.UpdateUserName",
+			"at":       "controllers.updateUserName",
+			"username": username,
+			"old_name": user.Name,
 		}).Info("user name updated")
 	}
 }
@@ -220,52 +230,4 @@ func deleteUser(c *gin.Context) {
 		}).Info("deleted user")
 	}
 
-}
-
-//
-//
-//
-//
-
-func currentUser(c *gin.Context) (user models.User, err error) {
-	session_cookie, err := sessionCookie(c)
-	if err != nil {
-		return
-	}
-	user, err = userFromSessionCookie(session_cookie)
-	if err != nil {
-		c.JSON(500, gin.H{"error": err.Error()})
-		c.Abort()
-		log.WithFields(log.Fields{
-			"at":    "controllers.UpdateUserName",
-			"error": err.Error(),
-		}).Error("error getting current user")
-	}
-	return
-}
-
-func userFromSessionCookie(session_cookie string) (user models.User, err error) {
-	session, err := models.SessionFromID(session_cookie)
-	if err != nil {
-		log.WithFields(log.Fields{
-			"at":    "database.currentUser",
-			"error": err,
-		}).Error("session_missing")
-		return
-	}
-	user, err = session.User()
-	return
-}
-
-func requestJSON(c *gin.Context) (json map[string]string, err error) {
-	err = c.BindJSON(&json)
-	if err != nil {
-		c.JSON(400, gin.H{"error": "error parsing json"})
-		c.Abort()
-		log.WithFields(log.Fields{
-			"at":    "controllers.requestJSON",
-			"error": err.Error(),
-		}).Error("error parsing request")
-	}
-	return
 }

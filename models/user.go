@@ -21,13 +21,6 @@ type User struct {
 	//PasswordResetTime
 }
 
-func init() {
-	if database.Orm != nil && !database.Orm.HasTable(User{}) {
-		database.Orm.CreateTable(User{})
-		log.Info("creating missing user table")
-	}
-}
-
 func CreateUser(username string) (password_reset_link string, err error) {
 	user := User{
 		Username:           username,
@@ -172,12 +165,20 @@ func (user *User) Delete() error {
 	return database.Orm.Delete(&user).Error
 }
 
-//
-//
-//
-//
-
 func UserByUsername(username string) (user User, err error) {
 	err = database.Orm.First(&user, "Username = ?", username).Error
+	return
+}
+
+func UserFromSessionCookie(session_cookie string) (user User, err error) {
+	session, err := SessionFromID(session_cookie)
+	if err != nil {
+		log.WithFields(log.Fields{
+			"at":    "database.currentUser",
+			"error": err,
+		}).Error("session_missing")
+		return
+	}
+	user, err = session.User()
 	return
 }

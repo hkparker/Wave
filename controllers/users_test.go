@@ -159,7 +159,7 @@ func TestUserCanChangeTheirName(t *testing.T) {
 		"POST",
 		testing_endpoint+"/users/name",
 		strings.NewReader(fmt.Sprintf(
-			"{\"name\": \"Foober Doober\"}",
+			"{\"username\": \"Foober Doober\"}",
 		)),
 	)
 

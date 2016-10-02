@@ -16,12 +16,6 @@ type Session struct {
 	LastUsed          time.Time
 }
 
-func init() {
-	if database.Orm != nil && !database.Orm.HasTable(Session{}) {
-		database.Orm.CreateTable(Session{})
-	}
-}
-
 func (session Session) HTTPCookie() http.Cookie {
 	expire := time.Now().AddDate(1, 0, 1)
 	cookie := http.Cookie{
@@ -46,7 +40,7 @@ func (session Session) User() (user User, err error) {
 	err = db_err.Error
 	if err != nil {
 		log.WithFields(log.Fields{
-			"at":    "database.Session.Active",
+			"at":    "models.(Session) User",
 			"error": err.Error(),
 		}).Warn("error finding related user for session")
 	}
@@ -57,17 +51,12 @@ func (session *Session) Save() error {
 	return database.Orm.Save(&session).Error
 }
 
-//
-//
-//
-//
-
 func SessionFromID(id string) (session Session, err error) {
 	db_err := database.Orm.First(&session, "Cookie = ?", id)
 	err = db_err.Error
 	if err != nil {
 		log.WithFields(log.Fields{
-			"at":    "database.SessionFromID",
+			"at":    "models.SessionFromID",
 			"error": err.Error(),
 		}).Warn("error looking up session")
 	} else {

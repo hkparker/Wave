@@ -8,6 +8,7 @@ import (
 	"github.com/hkparker/Wave/controllers"
 	"github.com/hkparker/Wave/database"
 	"github.com/hkparker/Wave/helpers"
+	"github.com/hkparker/Wave/models"
 	"os"
 )
 
@@ -42,6 +43,8 @@ func main() {
 		db_ssl,
 	)
 	//cache.Connect()
+
+	models.CreateTables()
 
 	if helpers.Production() {
 		log.SetFormatter(&log.JSONFormatter{})

@@ -19,6 +19,7 @@ func NewRouter() *gin.Engine {
 
 	// Session routes
 	router.POST("/login", newSession)
+	//router.POST("/logout", deleteSession)
 
 	// User routes
 	router.POST("/users/create", createUser)
@@ -26,6 +27,11 @@ func NewRouter() *gin.Engine {
 	//router.GET("/users/password/:id", passwordReset)
 	router.POST("/users/password", updateUserPassword)
 	router.POST("/users/destroy", deleteUser)
+
+	// Signature routes
+	// Incident routes
+	// Device routes
+	// Network routes
 
 	// Collector
 	router.GET("/frames", PollCollector)
