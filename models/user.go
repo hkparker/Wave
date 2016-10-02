@@ -178,6 +178,6 @@ func (user *User) Delete() error {
 //
 
 func UserByUsername(username string) (user User, err error) {
-	err = database.Orm.First("Username = ?", username, &user).Error
+	err = database.Orm.First(&user, "Username = ?", username).Error
 	return
 }

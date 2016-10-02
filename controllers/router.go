@@ -23,7 +23,7 @@ func NewRouter() *gin.Engine {
 	// User routes
 	router.POST("/users/create", createUser)
 	router.POST("/users/name", updateUserName)
-	router.GET("/users/password/:id", passwordReset)
+	//router.GET("/users/password/:id", passwordReset)
 	router.POST("/users/password", updateUserPassword)
 	router.POST("/users/destroy", deleteUser)
 

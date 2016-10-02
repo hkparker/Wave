@@ -22,21 +22,6 @@ func init() {
 	}
 }
 
-func SessionFromID(id string) (session Session, err error) {
-	db_err := database.Orm.First(&session, "Cookie = ?", id)
-	err = db_err.Error
-	if err != nil {
-		log.WithFields(log.Fields{
-			"at":    "database.SessionFromID",
-			"error": err.Error(),
-		}).Warn("error looking up session")
-	} else {
-		session.LastUsed = time.Now()
-		err = session.Save()
-	}
-	return
-}
-
 func (session Session) HTTPCookie() http.Cookie {
 	expire := time.Now().AddDate(1, 0, 1)
 	cookie := http.Cookie{
@@ -70,4 +55,24 @@ func (session Session) User() (user User, err error) {
 
 func (session *Session) Save() error {
 	return database.Orm.Save(&session).Error
+}
+
+//
+//
+//
+//
+
+func SessionFromID(id string) (session Session, err error) {
+	db_err := database.Orm.First(&session, "Cookie = ?", id)
+	err = db_err.Error
+	if err != nil {
+		log.WithFields(log.Fields{
+			"at":    "database.SessionFromID",
+			"error": err.Error(),
+		}).Warn("error looking up session")
+	} else {
+		session.LastUsed = time.Now()
+		err = session.Save()
+	}
+	return
 }

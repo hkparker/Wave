@@ -3,7 +3,6 @@ package controllers
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/hkparker/Wave/database"
 	"github.com/hkparker/Wave/models"
 	"github.com/stretchr/testify/assert"
 	"net/http"
@@ -20,7 +19,6 @@ func TestAdminCanCreateUser(t *testing.T) {
 		testing_endpoint+"/users/create",
 		strings.NewReader(fmt.Sprintf(
 			"{\"username\": \"samsepi0l\"}",
-			session_id,
 		)),
 	)
 
@@ -44,9 +42,8 @@ func TestAdminCanCreateUser(t *testing.T) {
 			assert.Equal("true", params["success"])
 		}
 	}
-	var created_user models.User
-	db_err := database.Orm.First(&created_user, "Username = ? ", "samsepi0l")
-	assert.Nil(db_err.Error)
+	_, db_err := models.UserByUsername("samsepi0l")
+	assert.Nil(db_err)
 }
 
 func TestUserCannotCreateUser(t *testing.T) {
@@ -58,7 +55,6 @@ func TestUserCannotCreateUser(t *testing.T) {
 		testing_endpoint+"/users/create",
 		strings.NewReader(fmt.Sprintf(
 			"{\"username\": \"notallowed@example.com\"}",
-			session_id,
 		)),
 	)
 
@@ -84,8 +80,75 @@ func TestUserCannotCreateUser(t *testing.T) {
 	}
 }
 
-// test create user with non-json
-// test create user with missing username key
+func TestCreateUserWithInvalidData(t *testing.T) {
+	assert := assert.New(t)
+	user := models.TestUser([]string{"admin"})
+	session_id, _ := user.NewSession()
+	req, err := http.NewRequest(
+		"POST",
+		testing_endpoint+"/users/create",
+		strings.NewReader(fmt.Sprintf(
+			"this is not valid json",
+		)),
+	)
+
+	session, err := models.SessionFromID(session_id)
+	assert.Nil(err)
+	cookie := session.HTTPCookie()
+	req.AddCookie(&cookie)
+
+	assert.Nil(err)
+	resp, err := testing_client.Do(req)
+	assert.Nil(err)
+	assert.Equal(400, resp.StatusCode)
+	decoder := json.NewDecoder(resp.Body)
+	var params map[string]string
+	err = decoder.Decode(&params)
+	if !assert.Nil(err) {
+		assert.Nil(err.Error())
+	}
+	if assert.NotNil(params) {
+		if assert.NotNil(params["error"]) {
+			assert.Equal("error parsing json", params["error"])
+		}
+	}
+
+}
+
+func TestCreateUserWithNoData(t *testing.T) {
+	assert := assert.New(t)
+	user := models.TestUser([]string{"admin"})
+	session_id, _ := user.NewSession()
+	req, err := http.NewRequest(
+		"POST",
+		testing_endpoint+"/users/create",
+		strings.NewReader(fmt.Sprintf(
+			"",
+		)),
+	)
+
+	session, err := models.SessionFromID(session_id)
+	assert.Nil(err)
+	cookie := session.HTTPCookie()
+	req.AddCookie(&cookie)
+
+	assert.Nil(err)
+	resp, err := testing_client.Do(req)
+	assert.Nil(err)
+	assert.Equal(400, resp.StatusCode)
+	decoder := json.NewDecoder(resp.Body)
+	var params map[string]string
+	err = decoder.Decode(&params)
+	if !assert.Nil(err) {
+		assert.Nil(err.Error())
+	}
+	if assert.NotNil(params) {
+		if assert.NotNil(params["error"]) {
+			assert.Equal("error parsing json", params["error"])
+		}
+	}
+
+}
 
 func TestUserCanChangeTheirName(t *testing.T) {
 	assert := assert.New(t)
@@ -97,7 +160,6 @@ func TestUserCanChangeTheirName(t *testing.T) {
 		testing_endpoint+"/users/name",
 		strings.NewReader(fmt.Sprintf(
 			"{\"name\": \"Foober Doober\"}",
-			session_id,
 		)),
 	)
 

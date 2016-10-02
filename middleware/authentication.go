@@ -6,15 +6,27 @@ import (
 	"github.com/hkparker/Wave/models"
 )
 
+var public_endpoints map[string]bool
+var admin_endpoints map[string]bool
+
+func init() {
+	public_endpoints = map[string]bool{
+		"/login": true,
+	}
+
+	admin_endpoints = map[string]bool{
+		"/users/create": true,
+	}
+}
+
 //
 // Ensure that a request is authenticated
 //
 func Authentication() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		endpoint := c.Request.URL.Path
-		if !PublicEndpoint(endpoint) {
+		if _, public := public_endpoints[endpoint]; !public {
 			session_cookie, err := c.Request.Cookie("wave_session")
-
 			if err != nil {
 				c.Redirect(302, "/login")
 				c.Abort()
@@ -47,7 +59,7 @@ func Authentication() gin.HandlerFunc {
 				return
 			}
 
-			if AdminProtected(endpoint) && !user.Admin {
+			if _, admin_protected := admin_endpoints[endpoint]; admin_protected && !user.Admin {
 				c.JSON(401, gin.H{"error": "permission denied"})
 				c.Abort()
 				log.WithFields(log.Fields{
@@ -60,27 +72,4 @@ func Authentication() gin.HandlerFunc {
 			}
 		}
 	}
-}
-
-//
-// Given an endpoint, return if the endpoint is accessible without authentication.
-//
-func PublicEndpoint(url string) bool {
-	switch url {
-	case "/login":
-		return true
-	}
-	return false
-}
-
-//
-// Given an endpoint, return if the endpoint can only be accessed by users
-// with the admin role.
-//
-func AdminProtected(url string) bool {
-	switch url {
-	case "/users/create":
-		return true
-	}
-	return false
 }

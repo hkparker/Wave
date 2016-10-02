@@ -30,12 +30,14 @@ func createUser(c *gin.Context) {
 
 	reset_link, err := models.CreateUser(username)
 	if err == nil {
-		c.JSON(200, gin.H{"success": "true"})
-		log.WithFields(log.Fields{
-			"at":         "controllers.CreateUser",
-			"username":   username,
+		c.JSON(200, gin.H{
+			"success":    "true",
 			"reset_link": reset_link,
-			"admin":      admin.Username,
+		})
+		log.WithFields(log.Fields{
+			"at":       "controllers.CreateUser",
+			"username": username,
+			"admin":    admin.Username,
 		}).Info("created user")
 	} else {
 		c.JSON(500, gin.H{"error": err.Error()})
@@ -84,9 +86,6 @@ func updateUserName(c *gin.Context) {
 			"at": "controllers.UpdateUserName",
 		}).Info("user name updated")
 	}
-}
-
-func passwordReset(c *gin.Context) {
 }
 
 func updateUserPassword(c *gin.Context) {
@@ -261,11 +260,11 @@ func userFromSessionCookie(session_cookie string) (user models.User, err error) 
 func requestJSON(c *gin.Context) (json map[string]string, err error) {
 	err = c.BindJSON(&json)
 	if err != nil {
-		c.JSON(500, gin.H{"error": err.Error()})
+		c.JSON(400, gin.H{"error": "error parsing json"})
 		c.Abort()
 		log.WithFields(log.Fields{
 			"at":    "controllers.requestJSON",
-			"error": err,
+			"error": err.Error(),
 		}).Error("error parsing request")
 	}
 	return
