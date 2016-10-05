@@ -42,7 +42,6 @@ func main() {
 		db_name,
 		db_ssl,
 	)
-	//cache.Connect()
 
 	models.CreateTables()
 

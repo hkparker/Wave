@@ -22,8 +22,8 @@ func PollCollector(c *gin.Context) {
 			if err != nil {
 				break
 			}
+			//fmt.Println(string(frame_bytes))
 			//frame := string(frame_bytes)
-			//database.ElasticacheFrame(frame_bytes)
 			// update visualizer
 		}
 	}

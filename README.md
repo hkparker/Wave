@@ -31,7 +31,5 @@ make test
 * [gorilla/websocket](https://github.com/gorilla/websocket): websocket support for gin
 * [gorm](https://github.com/jinzhu/gorm): ORM for go used for postgres
 * [postgres](https://github.com/postgres/postgres): storage of persistent data
-* [elasticsearch](https://github.com/elastic/elasticsearch): storage of ephemeral wireless frames
-* [elastigo](https://github.com/mattbaird/elastigo): go client for elasticsearch
 * [react-bootstrap](https://github.com/react-bootstrap/react-bootstrap): bootstrap markup library built with react
 * [vavigraphjs](https://github.com/anvaka/VivaGraphJS): graphing library with webgl support
