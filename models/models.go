@@ -21,4 +21,9 @@ func CreateTables() {
 		database.Orm.CreateTable(Session{})
 		log.Info("creating missing session table")
 	}
+
+	if !database.Orm.HasTable(Collector{}) {
+		database.Orm.CreateTable(Collector{})
+		log.Info("creating missing collector table")
+	}
 }
