@@ -16,6 +16,7 @@ func main() {
 	var version bool
 	var initdb bool
 	var port int
+	var collector_port int
 	var address string
 	var db_username string
 	var db_password string
@@ -24,6 +25,7 @@ func main() {
 	flag.BoolVar(&version, "version", false, "version")
 	flag.BoolVar(&initdb, "initdb", false, "reset the Wave database")
 	flag.IntVar(&port, "port", 80, "port to listen on")
+	flag.IntVar(&collector_port, "collector-port", 444, "port to listen for collector websockets on")
 	flag.StringVar(&address, "address", "0.0.0.0", "ip address to bind to")
 	flag.StringVar(&db_username, "db_username", "", "username for Wave database")
 	flag.StringVar(&db_password, "db_password", "", "password for Wave database")
@@ -49,6 +51,13 @@ func main() {
 		log.SetFormatter(&log.JSONFormatter{})
 		gin.SetMode(gin.ReleaseMode)
 	}
+	go func() {
+		controllers.NewCollector().Run(fmt.Sprintf(
+			"%s:%d",
+			address,
+			collector_port,
+		))
+	}()
 	controllers.NewRouter().Run(fmt.Sprintf(
 		"%s:%d",
 		address,

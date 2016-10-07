@@ -31,10 +31,15 @@ func NewRouter() *gin.Engine {
 	// Signature routes
 	// Incident routes
 	// Device routes
-	// Network routes
-
-	// Collector
-	router.GET("/frames", PollCollector)
 
 	return router
+}
+
+func NewCollector() *gin.Engine {
+	collector := gin.Default()
+
+	// Collector
+	collector.GET("/frames", pollCollector)
+
+	return collector
 }
