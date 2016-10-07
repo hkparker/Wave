@@ -9,6 +9,7 @@ import (
 	"github.com/hkparker/Wave/database"
 	"github.com/hkparker/Wave/helpers"
 	"github.com/hkparker/Wave/models"
+	"net/http"
 	"os"
 )
 
@@ -18,6 +19,7 @@ func main() {
 	var port int
 	var collector_port int
 	var address string
+	var tls bool
 	var db_username string
 	var db_password string
 	var db_name string
@@ -27,6 +29,7 @@ func main() {
 	flag.IntVar(&port, "port", 80, "port to listen on")
 	flag.IntVar(&collector_port, "collector-port", 444, "port to listen for collector websockets on")
 	flag.StringVar(&address, "address", "0.0.0.0", "ip address to bind to")
+	flag.BoolVar(&tls, "tls", false, "serve over TLS socket")
 	flag.StringVar(&db_username, "db_username", "", "username for Wave database")
 	flag.StringVar(&db_password, "db_password", "", "password for Wave database")
 	flag.StringVar(&db_name, "db_name", "wave_development", "database name to use")
@@ -44,23 +47,35 @@ func main() {
 		db_name,
 		db_ssl,
 	)
-
 	models.CreateTables()
 
 	if helpers.Production() {
 		log.SetFormatter(&log.JSONFormatter{})
 		gin.SetMode(gin.ReleaseMode)
 	}
+
+	// Start Collector server
 	go func() {
-		controllers.NewCollector().Run(fmt.Sprintf(
+		server := &http.Server{
+			Addr: fmt.Sprintf(
+				"%s:%d",
+				address,
+				collector_port,
+			),
+			TLSConfig: models.CollectorTLSConfig(),
+			Handler:   controllers.NewCollector(),
+		}
+		server.ListenAndServeTLS("selfsigned.crt", "selfsigned.key")
+	}()
+
+	// Start Wave API
+	if tls {
+		// RunTLS()
+	} else {
+		controllers.NewRouter().Run(fmt.Sprintf(
 			"%s:%d",
 			address,
-			collector_port,
+			port,
 		))
-	}()
-	controllers.NewRouter().Run(fmt.Sprintf(
-		"%s:%d",
-		address,
-		port,
-	))
+	}
 }

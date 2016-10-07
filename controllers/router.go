@@ -37,9 +37,6 @@ func NewRouter() *gin.Engine {
 
 func NewCollector() *gin.Engine {
 	collector := gin.Default()
-
-	// Collector
 	collector.GET("/frames", pollCollector)
-
 	return collector
 }
