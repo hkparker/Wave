@@ -32,6 +32,15 @@ func NewRouter() *gin.Engine {
 	// Incident routes
 	// Device routes
 
+	// Collector routes
+	//router.GET("/admin/collectors", getCollector)
+	//router.POST("/admin/collectors/create", createCollector)
+	//router.POST("/admin/collectors/delete", deleteCollector)
+
+	// Certificate Management
+	router.GET("/admin/tls", getTLS)
+	router.POST("/admin/tls", setTLS)
+
 	return router
 }
 

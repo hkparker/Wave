@@ -22,3 +22,5 @@ func pollCollector(c *gin.Context) {
 		}
 	}
 }
+
+// create / delete / list

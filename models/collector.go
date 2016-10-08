@@ -1,15 +1,11 @@
 package models
 
 import (
-	log "github.com/Sirupsen/logrus"
-	//"github.com/gin-gonic/gin"
-	"github.com/hkparker/Wave/database"
-	//"github.com/hkparker/Wave/helpers"
-	"github.com/jinzhu/gorm"
-	//"golang.org/x/crypto/bcrypt"
-	//"time"
 	"crypto/tls"
 	"crypto/x509"
+	log "github.com/Sirupsen/logrus"
+	"github.com/hkparker/Wave/database"
+	"github.com/jinzhu/gorm"
 )
 
 type Collector struct {
@@ -41,3 +37,5 @@ func CollectorTLSConfig() *tls.Config {
 	config.BuildNameToCertificate()
 	return config
 }
+
+func newCollector() {}

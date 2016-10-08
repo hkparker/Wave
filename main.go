@@ -65,6 +65,7 @@ func main() {
 			TLSConfig: models.CollectorTLSConfig(),
 			Handler:   controllers.NewCollector(),
 		}
+		//tlsListener := tls.NewListener(tcpKeepAliveListener{ln.(*net.TCPListener)}, config)
 		server.ListenAndServeTLS("selfsigned.crt", "selfsigned.key")
 	}()
 

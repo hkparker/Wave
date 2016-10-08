@@ -26,4 +26,9 @@ func CreateTables() {
 		database.Orm.CreateTable(Collector{})
 		log.Info("creating missing collector table")
 	}
+
+	if !database.Orm.HasTable(TLS{}) {
+		database.Orm.CreateTable(TLS{})
+		log.Info("creating missing tls configuration table")
+	}
 }
