@@ -14,9 +14,6 @@ type TLS struct {
 func TLSConfig() (config TLS, err error) {
 	createTLSIfMissing()
 	err = database.Orm.First(&config).Error
-	if err != nil {
-
-	}
 	return
 }
 

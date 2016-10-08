@@ -31,6 +31,7 @@ func CollectorTLSConfig() *tls.Config {
 
 	// Create client validating TLS config and return
 	config := &tls.Config{
+		//Certificates: ,
 		ClientCAs:  cert_pool,
 		ClientAuth: tls.RequireAndVerifyClientCert,
 	}
