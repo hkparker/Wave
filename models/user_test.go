@@ -26,7 +26,7 @@ func TestCreateUserCreatesUserInCorrectState(t *testing.T) {
 func TestSetPasswordSetsPassword(t *testing.T) {
 	assert := assert.New(t)
 
-	user := TestUser([]string{})
+	user := CreateTestUser([]string{})
 	password := "figgindiggle"
 	err := user.SetPassword(password)
 	assert.Nil(err)
@@ -38,7 +38,7 @@ func TestSetPasswordSetsPassword(t *testing.T) {
 func TestResetPasswordResetsPassword(t *testing.T) {
 	assert := assert.New(t)
 
-	user := TestUser([]string{})
+	user := CreateTestUser([]string{})
 	user.NewSession()
 	user.SetPassword("hunter2")
 	assert.Equal("", user.PasswordResetToken)
@@ -53,7 +53,7 @@ func TestResetPasswordResetsPassword(t *testing.T) {
 func TestValidAuthenticationWithValidAuthentication(t *testing.T) {
 	assert := assert.New(t)
 
-	user := TestUser([]string{})
+	user := CreateTestUser([]string{})
 	password := "flahblahblah"
 	user.SetPassword(password)
 	assert.Equal(true, user.ValidAuthentication(password))
@@ -62,7 +62,7 @@ func TestValidAuthenticationWithValidAuthentication(t *testing.T) {
 func TestValidAuthenticationWithBadPassword(t *testing.T) {
 	assert := assert.New(t)
 
-	user := TestUser([]string{})
+	user := CreateTestUser([]string{})
 	password := "flahblahblah"
 	user.SetPassword(password)
 	assert.Equal(false, user.ValidAuthentication("flooblublu"))
@@ -71,7 +71,7 @@ func TestValidAuthenticationWithBadPassword(t *testing.T) {
 func TestNewSessionCreatesSession(t *testing.T) {
 	assert := assert.New(t)
 
-	user := TestUser([]string{})
+	user := CreateTestUser([]string{})
 	cookie, err := user.NewSession()
 	assert.Nil(err)
 
@@ -86,7 +86,7 @@ func TestNewSessionCreatesSession(t *testing.T) {
 func TestDestroyAllSessionsDestroysAllSessions(t *testing.T) {
 	assert := assert.New(t)
 
-	user := TestUser([]string{})
+	user := CreateTestUser([]string{})
 	_, err := user.NewSession()
 	assert.Nil(err)
 

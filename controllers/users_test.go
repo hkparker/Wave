@@ -12,7 +12,7 @@ import (
 
 func TestAdminCanCreateUser(t *testing.T) {
 	assert := assert.New(t)
-	admin := models.TestUser([]string{"admin"})
+	admin := models.CreateTestUser([]string{"admin"})
 	session_id, _ := admin.NewSession()
 	req, err := http.NewRequest(
 		"POST",
@@ -48,7 +48,7 @@ func TestAdminCanCreateUser(t *testing.T) {
 
 func TestUserCannotCreateUser(t *testing.T) {
 	assert := assert.New(t)
-	user := models.TestUser([]string{})
+	user := models.CreateTestUser([]string{})
 	session_id, _ := user.NewSession()
 	req, err := http.NewRequest(
 		"POST",
@@ -82,7 +82,7 @@ func TestUserCannotCreateUser(t *testing.T) {
 
 func TestCreateUserWithInvalidData(t *testing.T) {
 	assert := assert.New(t)
-	user := models.TestUser([]string{"admin"})
+	user := models.CreateTestUser([]string{"admin"})
 	session_id, _ := user.NewSession()
 	req, err := http.NewRequest(
 		"POST",
@@ -117,7 +117,7 @@ func TestCreateUserWithInvalidData(t *testing.T) {
 
 func TestCreateUserWithNoData(t *testing.T) {
 	assert := assert.New(t)
-	user := models.TestUser([]string{"admin"})
+	user := models.CreateTestUser([]string{"admin"})
 	session_id, _ := user.NewSession()
 	req, err := http.NewRequest(
 		"POST",
@@ -153,7 +153,7 @@ func TestCreateUserWithNoData(t *testing.T) {
 func TestUserCanChangeTheirName(t *testing.T) {
 	assert := assert.New(t)
 
-	user := models.TestUser([]string{})
+	user := models.CreateTestUser([]string{})
 	session_id, _ := user.NewSession()
 	req, err := http.NewRequest(
 		"POST",

@@ -4,7 +4,7 @@ import (
 	"github.com/hkparker/Wave/helpers"
 )
 
-func TestUser(traits []string) (user User) {
+func CreateTestUser(traits []string) (user User) {
 	username := helpers.RandomString()
 	user = User{
 		Name:     "Turd Ferguson",

@@ -56,28 +56,41 @@ func main() {
 		gin.SetMode(gin.ReleaseMode)
 	}
 
-	// Start Collector server
-	go func() {
+	// Create small wrapper for starting handlers with TLS configs
+	run_tls := func(handler http.Handler, address string, config *tls.Config) {
 		server := &http.Server{
-			Addr: fmt.Sprintf(
-				"%s:%d",
-				address,
-				collector_port,
-			),
-			TLSConfig: models.CollectorTLSConfig(),
-			Handler:   controllers.NewCollector(),
+			Handler: handler,
 		}
-		tcp_listener, err := net.Listen("tcp", server.Addr)
+		tcp_listener, err := net.Listen("tcp", address)
 		if err != nil {
+			log.Fatal("")
 		}
-		tls_listener := tls.NewListener(tcp_listener, server.TLSConfig)
+		tls_listener := tls.NewListener(tcp_listener, config)
 		server.Serve(tls_listener)
-		//server.ListenAndServeTLS("selfsigned.crt", "selfsigned.key")
-	}()
+	}
+
+	// Start Collector server
+	go run_tls(
+		controllers.NewCollector(),
+		fmt.Sprintf(
+			"%s:%d",
+			address,
+			collector_port,
+		),
+		models.CollectorTLSConfig(),
+	)
 
 	// Start Wave API
 	if api_tls {
-		// RunTLS()
+		run_tls(
+			controllers.NewRouter(),
+			fmt.Sprintf(
+				"%s:%d",
+				address,
+				port,
+			),
+			models.APITLSConfig(),
+		)
 	} else {
 		controllers.NewRouter().Run(fmt.Sprintf(
 			"%s:%d",

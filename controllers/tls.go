@@ -6,10 +6,10 @@ import (
 )
 
 func getTLS(c *gin.Context) {
-	config, err := models.TLSConfig()
-	if err != nil {
-	}
-	c.JSON(200, config)
+	//config, err := models.APITLSConfig()
+	//if err != nil {
+	//}
+	c.JSON(200, "") //config)
 }
 
 func setTLS(c *gin.Context) {

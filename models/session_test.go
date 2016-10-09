@@ -9,7 +9,7 @@ import (
 func TestSessionFromIDLoadsValidSession(t *testing.T) {
 	assert := assert.New(t)
 
-	user := TestUser([]string{})
+	user := CreateTestUser([]string{})
 	cookie, err := user.NewSession()
 	assert.Nil(err)
 
@@ -36,7 +36,7 @@ func TestSessionFromIDDoesntLoadInvalidSession(t *testing.T) {
 func TestUserReturnsUserWithSession(t *testing.T) {
 	assert := assert.New(t)
 
-	user := TestUser([]string{})
+	user := CreateTestUser([]string{})
 	cookie, err := user.NewSession()
 	assert.Nil(err)
 
