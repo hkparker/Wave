@@ -42,6 +42,7 @@ func main() {
 		fmt.Println("Wave 0.0.0")
 		os.Exit(0)
 	}
+	helpers.SetHostname(api_tls, address, port)
 
 	database.Connect(
 		db_username,
@@ -83,7 +84,7 @@ func main() {
 	// Start Wave API
 	if api_tls {
 		run_tls(
-			controllers.NewRouter(),
+			controllers.NewAPI(),
 			fmt.Sprintf(
 				"%s:%d",
 				address,
@@ -92,7 +93,7 @@ func main() {
 			models.APITLSConfig(),
 		)
 	} else {
-		controllers.NewRouter().Run(fmt.Sprintf(
+		controllers.NewAPI().Run(fmt.Sprintf(
 			"%s:%d",
 			address,
 			port,

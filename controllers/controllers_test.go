@@ -11,7 +11,7 @@ var (
 )
 
 func init() {
-	server := httptest.NewServer(NewRouter())
+	server := httptest.NewServer(NewAPI())
 	testing_endpoint = server.URL
 	testing_client = http.Client{}
 }

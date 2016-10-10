@@ -10,6 +10,7 @@ import (
 	"encoding/pem"
 	log "github.com/Sirupsen/logrus"
 	"github.com/hkparker/Wave/database"
+	"github.com/hkparker/Wave/helpers"
 	"github.com/jinzhu/gorm"
 	"math/big"
 	"time"
@@ -92,7 +93,7 @@ func selfSignedCert() (cert_data []byte, key_data []byte) {
 		Subject: pkix.Name{
 			Organization:       []string{"Wave"},
 			OrganizationalUnit: []string{"Wave"},
-			CommonName:         "localhost", // get from flag
+			CommonName:         helpers.WaveHost,
 		},
 		NotBefore:             time.Now(),
 		NotAfter:              time.Now().AddDate(6, 0, 0),

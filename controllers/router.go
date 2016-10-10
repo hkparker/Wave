@@ -7,7 +7,7 @@ import (
 	"github.com/hkparker/Wave/middleware"
 )
 
-func NewRouter() *gin.Engine {
+func NewAPI() *gin.Engine {
 	router := gin.Default()
 	if helpers.Production() {
 		router.Use(middleware.EmbeddedAssets())
