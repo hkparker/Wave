@@ -31,7 +31,7 @@ func main() {
 	flag.IntVar(&port, "port", 80, "port to listen on")
 	flag.IntVar(&collector_port, "collector-port", 444, "port to listen for collector websockets on")
 	flag.StringVar(&address, "address", "0.0.0.0", "ip address to bind to")
-	flag.BoolVar(&api_tls, "api-tls", false, "serve over TLS socket")
+	flag.BoolVar(&api_tls, "tls", false, "serve over TLS socket")
 	flag.StringVar(&db_username, "db_username", "", "username for Wave database")
 	flag.StringVar(&db_password, "db_password", "", "password for Wave database")
 	flag.StringVar(&db_name, "db_name", "wave_development", "database name to use")
@@ -56,7 +56,7 @@ func main() {
 		gin.SetMode(gin.ReleaseMode)
 	}
 
-	// Create small wrapper for starting handlers with TLS configs
+	// Create small wrapper for starting http handlers with TLS configs
 	run_tls := func(handler http.Handler, address string, config *tls.Config) {
 		server := &http.Server{
 			Handler: handler,

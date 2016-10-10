@@ -11,8 +11,9 @@ var admin_endpoints map[string]bool
 
 func init() {
 	public_endpoints = map[string]bool{
-		"/login":  true,
-		"/frames": true,
+		"/login":     true,
+		"/frames":    true,
+		"/bundle.js": true,
 	}
 
 	admin_endpoints = map[string]bool{
@@ -32,9 +33,10 @@ func Authentication() gin.HandlerFunc {
 				c.Redirect(302, "/login")
 				c.Abort()
 				log.WithFields(log.Fields{
-					"at":     "middleware.Authentication",
-					"reason": "missing wave_session cookie",
-					"error":  err.Error(),
+					"at":       "middleware.Authentication",
+					"reason":   "missing wave_session cookie",
+					"error":    err.Error(),
+					"endpoint": endpoint,
 				}).Info("redirecting unauthenticated request")
 				return
 			}
@@ -45,8 +47,9 @@ func Authentication() gin.HandlerFunc {
 					c.Redirect(302, "/login")
 					c.Abort()
 					log.WithFields(log.Fields{
-						"at":     "middleware.Authentication",
-						"reason": "could not find user for session",
+						"at":       "middleware.Authentication",
+						"reason":   "could not find user for session",
+						"endpoint": endpoint,
 					}).Info("redirecting unauthenticated request")
 					return
 				}
@@ -54,8 +57,9 @@ func Authentication() gin.HandlerFunc {
 				c.Redirect(302, "/login")
 				c.Abort()
 				log.WithFields(log.Fields{
-					"at":     "middleware.Authentication",
-					"reason": "wave_session header does not exist in session record",
+					"at":       "middleware.Authentication",
+					"reason":   "wave_session header does not exist in session record",
+					"endpoint": endpoint,
 				}).Info("redirecting unauthenticated request")
 				return
 			}
