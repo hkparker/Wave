@@ -5,7 +5,6 @@ import (
 	"flag"
 	"fmt"
 	log "github.com/Sirupsen/logrus"
-	"github.com/gin-gonic/gin"
 	"github.com/hkparker/Wave/controllers"
 	"github.com/hkparker/Wave/database"
 	"github.com/hkparker/Wave/helpers"
@@ -42,8 +41,9 @@ func main() {
 		fmt.Println("Wave 0.0.0")
 		os.Exit(0)
 	}
-	helpers.SetHostname(api_tls, address, port)
 
+	helpers.SetHostname(api_tls, address, port)
+	helpers.SetEnvironment()
 	database.Connect(
 		db_username,
 		db_password,
@@ -52,11 +52,6 @@ func main() {
 	)
 	models.CreateTables()
 
-	if helpers.Production() {
-		log.SetFormatter(&log.JSONFormatter{})
-		gin.SetMode(gin.ReleaseMode)
-	}
-
 	// Create small wrapper for starting http handlers with TLS configs
 	run_tls := func(handler http.Handler, address string, config *tls.Config) {
 		server := &http.Server{
@@ -64,7 +59,10 @@ func main() {
 		}
 		tcp_listener, err := net.Listen("tcp", address)
 		if err != nil {
-			log.Fatal("")
+			log.WithFields(log.Fields{
+				"address": address,
+				"error":   err.Error(),
+			}).Fatal("unable to create listener for connector")
 		}
 		tls_listener := tls.NewListener(tcp_listener, config)
 		server.Serve(tls_listener)

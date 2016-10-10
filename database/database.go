@@ -12,7 +12,7 @@ import (
 var Orm *gorm.DB
 
 func init() {
-	if helpers.Testing() && Orm == nil {
+	if helpers.TestingCmd() && Orm == nil {
 		var err error
 		Orm, err = gorm.Open("sqlite3", ":memory:")
 		if err != nil {

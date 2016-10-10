@@ -6,10 +6,14 @@ import (
 )
 
 func getTLS(c *gin.Context) {
-	//config, err := models.APITLSConfig()
-	//if err != nil {
-	//}
-	c.JSON(200, "") //config)
+	cert_data, key_data := models.APITLSData()
+	c.JSON(
+		200,
+		gin.H{
+			"certificate": string(cert_data),
+			"private_key": string(key_data),
+		},
+	)
 }
 
 func setTLS(c *gin.Context) {
@@ -21,7 +25,7 @@ func setTLS(c *gin.Context) {
 
 	err = models.SetTLS(tls_info)
 	if err != nil {
-		c.JSON(400, gin.H{"error": err.Error()})
+		c.JSON(500, gin.H{"error": err.Error()})
 		return
 	}
 }

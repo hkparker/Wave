@@ -17,7 +17,11 @@ func init() {
 	}
 
 	admin_endpoints = map[string]bool{
-		"/users/create": true,
+		"/users/create":            true,
+		"/admin/tls":               true,
+		"/admin/collectors":        true,
+		"/admin/collectors/create": true,
+		"/admin/collectors/delete": true,
 	}
 }
 

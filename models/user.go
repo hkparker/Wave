@@ -182,3 +182,8 @@ func UserFromSessionCookie(session_cookie string) (user User, err error) {
 	user, err = session.User()
 	return
 }
+
+func Users() (users []User, err error) {
+	err = database.Orm.Find(&users).Error
+	return
+}

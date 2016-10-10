@@ -23,7 +23,7 @@ func createUser(c *gin.Context) {
 	username, ok := user_info["username"]
 	if !ok || username == "" {
 		username_error := "no username provided"
-		c.JSON(500, gin.H{"error": username_error})
+		c.JSON(400, gin.H{"error": username_error})
 		log.WithFields(log.Fields{
 			"at":    "controllers.createUser",
 			"error": username_error,
@@ -74,7 +74,7 @@ func updateUserName(c *gin.Context) {
 	username, ok := user_info["username"]
 	if !ok || username == "" {
 		name_error := "no username provided"
-		c.JSON(500, gin.H{"error": name_error})
+		c.JSON(400, gin.H{"error": name_error})
 		log.WithFields(log.Fields{
 			"at":       "controllers.updateUserName",
 			"error":    name_error,
@@ -123,7 +123,7 @@ func updateUserPassword(c *gin.Context) {
 	old_password, ok := user_info["old_password"]
 	if !ok {
 		err := "no old password provided"
-		c.JSON(500, gin.H{"error": err})
+		c.JSON(400, gin.H{"error": err})
 		log.WithFields(log.Fields{
 			"at":    "controllers.updateUserPassword",
 			"error": err,
@@ -136,7 +136,7 @@ func updateUserPassword(c *gin.Context) {
 	new_password, ok := user_info["new_password"]
 	if !ok {
 		err := "no new password provided"
-		c.JSON(500, gin.H{"error": err})
+		c.JSON(400, gin.H{"error": err})
 		log.WithFields(log.Fields{
 			"at":    "controllers.updateUserPassword",
 			"error": err,
@@ -148,7 +148,7 @@ func updateUserPassword(c *gin.Context) {
 	// Ensure the old password is valid authentication
 	if !user.ValidAuthentication(old_password) {
 		err := "old password incorrect"
-		c.JSON(500, gin.H{"error": err})
+		c.JSON(401, gin.H{"error": err})
 		log.WithFields(log.Fields{
 			"at":    "controllers.updateUserPassword",
 			"error": err,
@@ -195,7 +195,7 @@ func deleteUser(c *gin.Context) {
 	username, ok := user_info["username"]
 	if !ok || username == "" {
 		err := "no username provided"
-		c.JSON(500, gin.H{"error": err})
+		c.JSON(400, gin.H{"error": err})
 		log.WithFields(log.Fields{
 			"at":       "controllers.deleteUser",
 			"username": username,
@@ -262,5 +262,4 @@ func deleteUser(c *gin.Context) {
 			"admin":    admin.Username,
 		}).Info("deleted user")
 	}
-
 }

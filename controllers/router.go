@@ -9,7 +9,7 @@ import (
 
 func NewAPI() *gin.Engine {
 	router := gin.Default()
-	if helpers.Production() {
+	if helpers.Production {
 		router.Use(middleware.EmbeddedAssets())
 	} else {
 		router.Use(static.Serve("/", static.LocalFile("static", false)))
@@ -33,9 +33,9 @@ func NewAPI() *gin.Engine {
 	// Device routes
 
 	// Collector routes
-	//router.GET("/admin/collectors", getCollector)
-	//router.POST("/admin/collectors/create", createCollector)
-	//router.POST("/admin/collectors/delete", deleteCollector)
+	router.GET("/admin/collectors", getCollectors)
+	router.POST("/admin/collectors/create", createCollector)
+	router.POST("/admin/collectors/delete", deleteCollector)
 
 	// Certificate Management
 	router.GET("/admin/tls", getTLS)
