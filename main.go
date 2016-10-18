@@ -62,7 +62,7 @@ func main() {
 			log.WithFields(log.Fields{
 				"address": address,
 				"error":   err.Error(),
-			}).Fatal("unable to create listener for connector")
+			}).Fatal("unable to create tls listener")
 		}
 		tls_listener := tls.NewListener(tcp_listener, config)
 		server.Serve(tls_listener)
