@@ -31,7 +31,7 @@ func createCollector(c *gin.Context) {
 		return
 	}
 
-	_, err = models.CreateCollector(name)
+	collector, err := models.CreateCollector(name)
 	if err != nil {
 		c.JSON(400, gin.H{"error": err.Error()})
 		log.WithFields(log.Fields{
@@ -42,6 +42,18 @@ func createCollector(c *gin.Context) {
 		return
 
 	}
+
+	c.JSON(200, gin.H{
+		"success":     "true",
+		"name":        collector.Name,
+		"certificate": collector.CaCert,
+		"private_key": collector.PrivateKey,
+	})
+	log.WithFields(log.Fields{
+		"at":    "controllers.createCollector",
+		"name":  name,
+		"admin": admin.Username,
+	}).Info("created collector")
 	// Live reloading eventually: https://github.com/golang/go/issues/16066
 }
 

@@ -33,13 +33,13 @@ func NewAPI() *gin.Engine {
 	// Device routes
 
 	// Collector routes
-	router.GET("/admin/collectors", getCollectors)
-	router.POST("/admin/collectors/create", createCollector)
-	router.POST("/admin/collectors/delete", deleteCollector)
+	router.GET("/collectors", getCollectors)
+	router.POST("/collectors/create", createCollector)
+	router.POST("/collectors/delete", deleteCollector)
 
 	// Certificate Management
-	router.GET("/admin/tls", getTLS)
-	router.POST("/admin/tls", setTLS)
+	router.GET("/tls", getTLS)
+	router.POST("/tls", setTLS)
 
 	return router
 }
