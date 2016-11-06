@@ -151,5 +151,9 @@ func pollCollector(c *gin.Context) {
 			// insert frame into Visualizer
 			// insert frame into MetadataService
 		}
+	} else {
+		log.WithFields(log.Fields{
+			"error": err.Error(),
+		}).Warn("failed to upgrade websocket connection")
 	}
 }
