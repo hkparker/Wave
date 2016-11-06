@@ -187,8 +187,53 @@ func TestUserCanChangeTheirName(t *testing.T) {
 	assert.Equal("Foober Doober", user.Name)
 }
 
-// test change name with non-json
-// test change name with missing username key
+func TestUserNameChangeWithInvalidData(t *testing.T) {
+	assert := assert.New(t)
+
+	user := models.CreateTestUser([]string{})
+	session_id, _ := user.NewSession()
+	req, err := http.NewRequest(
+		"POST",
+		testing_endpoint+"/users/name",
+		strings.NewReader(fmt.Sprintf(
+			"this isn't even json",
+		)),
+	)
+
+	session, err := models.SessionFromID(session_id)
+	assert.Nil(err)
+	cookie := session.HTTPCookie()
+	req.AddCookie(&cookie)
+
+	assert.Nil(err)
+	resp, err := testing_client.Do(req)
+	assert.Nil(err)
+	assert.Equal(400, resp.StatusCode)
+}
+
+func TestUserNameChangeWithMissingKey(t *testing.T) {
+	assert := assert.New(t)
+
+	user := models.CreateTestUser([]string{})
+	session_id, _ := user.NewSession()
+	req, err := http.NewRequest(
+		"POST",
+		testing_endpoint+"/users/name",
+		strings.NewReader(fmt.Sprintf(
+			"{\"hey\": \"what's up\"}",
+		)),
+	)
+
+	session, err := models.SessionFromID(session_id)
+	assert.Nil(err)
+	cookie := session.HTTPCookie()
+	req.AddCookie(&cookie)
+
+	assert.Nil(err)
+	resp, err := testing_client.Do(req)
+	assert.Nil(err)
+	assert.Equal(400, resp.StatusCode)
+}
 
 // test user can use password reset link
 // test password reset links expires in 24 hours
