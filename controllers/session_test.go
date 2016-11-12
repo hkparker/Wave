@@ -29,15 +29,15 @@ func TestNewSessionCreatesSession(t *testing.T) {
 	assert.Equal(200, resp.StatusCode)
 	if header, ok := resp.Header["Set-Cookie"]; assert.Equal(true, ok) {
 		if assert.NotEqual(len(header), 0) {
-			assert.NotEqual(header[0], "")
+			components := strings.Split(header[0], " ")
+			assert.NotEqual(0, len(components))
+			cookie := components[0]
+			session_id := cookie[13 : len(cookie)-1]
+			found_user, err := models.UserFromSessionCookie(session_id)
+			assert.Nil(err)
+			assert.Equal(user.Username, found_user.Username)
 		}
 	}
-
-	//session, err := models.SessionFromID(session_id)
-	//assert.Nil(err)
-	//found_user, err = models.UserFromSessionCookie(session_cookie)
-	//assert.Nil(err)
-	//assert.Equal(user.Username, found_user.Username)
 }
 
 func TestNewSessionErrorWithInvalidData(t *testing.T) {
