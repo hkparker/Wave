@@ -1,6 +1,6 @@
 # Wave
 
-Wave is a wireless Intrusion Detection System and 802.11 visualizer.  Wireless data is sent from [collector](https://github.com/hkparker/collector)s to Wave where it is analysed and stored in elasticsearch.  In early development.
+Wave is a wireless Intrusion Detection System and 802.11 visualizer.  Wireless data is sent from [collector](https://github.com/hkparker/collector)s to Wave where it is analysed by various engines.  In early development.
 
 ## Developing
 
@@ -8,7 +8,7 @@ You'll need `npm`, `go`, and `docker-compose` available.
 
 ### Installing dependencies
 
-Install reflex, forego, and go-bindata, run `go-get -t` and `npm install`.
+Install reflex, forego, and go-bindata, run `go get -t` and `npm install`.
 
 ```
 make deps
@@ -16,9 +16,15 @@ make deps
 
 ### Start instance
 
-Run `make develop` to start elasticsearch and postgres as well as an auto-rebuilding instance of Wave.
+Start postgres and an auto-rebuilding instance of Wave.
+
+```
+make develop
+```
 
 ### Running tests
+
+Run `go test ./... -cover` and `npm test`.
 
 ```
 make test

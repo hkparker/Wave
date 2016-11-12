@@ -2,8 +2,3 @@ pg:
   image: postgres
   ports:
     - "5432:5432"
-es:
-  image: elasticsearch
-  ports:
-   - "9200:9200"
-   - "9300:9300"
