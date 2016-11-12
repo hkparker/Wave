@@ -15,7 +15,3 @@ func init() {
 	testing_endpoint = server.URL
 	testing_client = http.Client{}
 }
-
-// test requestJSON
-// test currentUser
-// test sessionCookie

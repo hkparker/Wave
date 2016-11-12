@@ -3,6 +3,7 @@ package models
 import (
 	log "github.com/Sirupsen/logrus"
 	"github.com/hkparker/Wave/database"
+	"github.com/hkparker/Wave/helpers"
 	"github.com/jinzhu/gorm"
 	"net/http"
 	"time"
@@ -22,7 +23,7 @@ func (session Session) HTTPCookie() http.Cookie {
 		Name:       "wave_session",
 		Value:      session.Cookie,
 		Path:       "/",
-		Domain:     "wave",
+		Domain:     helpers.WaveHost,
 		Expires:    expire,
 		RawExpires: expire.Format(time.UnixDate),
 		MaxAge:     41472000,
@@ -49,6 +50,10 @@ func (session Session) User() (user User, err error) {
 
 func (session *Session) Save() error {
 	return database.Orm.Save(&session).Error
+}
+
+func (session *Session) Delete() error {
+	return database.Orm.Delete(&session).Error
 }
 
 func SessionFromID(id string) (session Session, err error) {

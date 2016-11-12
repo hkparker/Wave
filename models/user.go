@@ -49,7 +49,7 @@ func CreateUser(username string) (password_reset_link string, err error) {
 			err = db_err
 			return
 		}
-		password_reset_link = "http://wave/users/reset/" + password_reset_token
+		password_reset_link = helpers.WaveAddress + "/users/reset/" + password_reset_token
 	}
 	return
 }

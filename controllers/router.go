@@ -18,15 +18,15 @@ func NewAPI() *gin.Engine {
 	router.Use(middleware.Authentication())
 
 	// Session routes
-	router.POST("/login", newSession)
-	//router.POST("/logout", deleteSession)
+	router.POST("/sessions/create", newSession)
+	router.POST("/sessions/delete", deleteSession)
 
 	// User routes
 	router.POST("/users/create", createUser)
 	router.POST("/users/name", updateUserName)
 	//router.GET("/users/password/:id", passwordReset)
 	router.POST("/users/password", updateUserPassword)
-	router.POST("/users/destroy", deleteUser)
+	router.POST("/users/delete", deleteUser)
 
 	// Signature routes
 	// Incident routes

@@ -11,9 +11,9 @@ var admin_endpoints map[string]bool
 
 func init() {
 	public_endpoints = map[string]bool{
-		"/login":     true,
-		"/frames":    true,
-		"/bundle.js": true,
+		"/login":           true,
+		"/sessions/create": true,
+		"/bundle.js":       true,
 	}
 
 	admin_endpoints = map[string]bool{

@@ -63,7 +63,7 @@ func newSession(c *gin.Context) {
 			c.JSON(500, gin.H{"error": err.Error()})
 			log.WithFields(log.Fields{
 				"at":       "controllers.newSession",
-				"error":    err,
+				"error":    err.Error(),
 				"username": username,
 			}).Error("error creating session")
 			return
@@ -73,7 +73,7 @@ func newSession(c *gin.Context) {
 			c.JSON(500, gin.H{"error": err.Error()})
 			log.WithFields(log.Fields{
 				"at":       "controllers.newSession",
-				"error":    err,
+				"error":    err.Error(),
 				"username": username,
 			}).Error("error looking up new sessions")
 			return
@@ -96,4 +96,32 @@ func newSession(c *gin.Context) {
 			"username": username,
 		}).Error("error creating session")
 	}
+}
+
+func deleteSession(c *gin.Context) {
+	session_cookie, serr := sessionCookie(c)
+
+	if serr == nil {
+		session, err := models.SessionFromID(session_cookie)
+		if err != nil {
+			c.JSON(401, gin.H{"error": "no session"})
+			log.WithFields(log.Fields{
+				"at":    "controllers.deleteSession",
+				"error": err.Error(),
+			}).Error("error finding session for cookie")
+			return
+		}
+		err = session.Delete()
+		if err != nil {
+			c.JSON(500, gin.H{"error": "error deleting session"})
+			log.WithFields(log.Fields{
+				"at":    "controllers.deleteSession",
+				"error": err.Error(),
+			}).Error("error deleting session")
+			return
+		}
+	}
+
+	c.Redirect(302, "/login")
+	c.Abort()
 }
