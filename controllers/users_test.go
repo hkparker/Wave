@@ -242,6 +242,17 @@ func TestUserCannotChangeNameWithMissingKey(t *testing.T) {
 	resp, err := testing_client.Do(req)
 	assert.Nil(err)
 	assert.Equal(400, resp.StatusCode)
+	decoder := json.NewDecoder(resp.Body)
+	var params map[string]string
+	err = decoder.Decode(&params)
+	if !assert.Nil(err) {
+		assert.Nil(err.Error())
+	}
+	if assert.NotNil(params) {
+		if assert.NotNil(params["error"]) {
+			assert.Equal("no username provided", params["error"])
+		}
+	}
 }
 
 // test user can use password reset link
