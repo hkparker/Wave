@@ -51,6 +51,7 @@ func main() {
 		db_ssl,
 	)
 	models.CreateTables()
+	models.CreateAdmin()
 
 	// Create small wrapper for starting http handlers with TLS configs
 	run_tls := func(handler http.Handler, address string, config *tls.Config) {

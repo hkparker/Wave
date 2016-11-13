@@ -86,7 +86,7 @@ func newSession(c *gin.Context) {
 		log.WithFields(log.Fields{
 			"at":       "controllers.newSession",
 			"username": username,
-		}).Error("session created")
+		}).Info("session created")
 	} else {
 		err := "incorrect password"
 		c.JSON(401, gin.H{"error": "incorrect authentication"})
