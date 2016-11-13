@@ -12,9 +12,8 @@ func TestCreateUserCreatesUserInCorrectState(t *testing.T) {
 	assert := assert.New(t)
 
 	username := helpers.RandomString()
-	reset_link, err := CreateUser(username)
+	err := CreateUser(username)
 	assert.Nil(err)
-	assert.NotEqual("", reset_link)
 
 	var user User
 	db_err := database.Orm.First(&user, "Username = ?", username)
@@ -33,21 +32,6 @@ func TestSetPasswordSetsPassword(t *testing.T) {
 
 	err = bcrypt.CompareHashAndPassword(user.Password, []byte(password))
 	assert.Nil(err)
-}
-
-func TestResetPasswordResetsPassword(t *testing.T) {
-	assert := assert.New(t)
-
-	user := CreateTestUser([]string{})
-	user.NewSession()
-	user.SetPassword("hunter2")
-	assert.Equal("", user.PasswordResetToken)
-	err := user.ResetPassword()
-	assert.Nil(err)
-
-	assert.Equal(0, len(user.Sessions))
-	assert.NotEqual("", user.PasswordResetToken)
-	assert.NotEqual(true, user.ValidAuthentication("hunter2"))
 }
 
 func TestValidAuthenticationWithValidAuthentication(t *testing.T) {

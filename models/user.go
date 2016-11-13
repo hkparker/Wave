@@ -2,7 +2,6 @@ package models
 
 import (
 	log "github.com/Sirupsen/logrus"
-	"github.com/gin-gonic/gin"
 	"github.com/hkparker/Wave/database"
 	"github.com/hkparker/Wave/helpers"
 	"github.com/jinzhu/gorm"
@@ -12,19 +11,16 @@ import (
 
 type User struct {
 	gorm.Model
-	Name               string
-	Password           []byte
-	Username           string `sql:"not null;unique"`
-	Admin              bool
-	Sessions           []Session
-	PasswordResetToken string
-	//PasswordResetTime
+	Name     string
+	Password []byte
+	Username string `sql:"not null;unique"`
+	Admin    bool
+	Sessions []Session
 }
 
-func CreateUser(username string) (password_reset_link string, err error) {
+func CreateUser(username string) (err error) {
 	user := User{
-		Username:           username,
-		PasswordResetToken: helpers.RandomString(),
+		Username: username,
 	}
 	db_err := database.Orm.Create(&user).Error
 	if db_err != nil {
@@ -34,13 +30,6 @@ func CreateUser(username string) (password_reset_link string, err error) {
 			"error":  err,
 		}).Warn("error_saving_user")
 	} else {
-		log.WithFields(log.Fields{
-			"UserID":   user.ID,
-			"username": user.Username,
-		}).Info("user_created")
-
-		password_reset_token := helpers.RandomString()
-		user.PasswordResetToken = password_reset_token
 		db_err = user.Save()
 		if db_err != nil {
 			log.WithFields(log.Fields{
@@ -48,8 +37,12 @@ func CreateUser(username string) (password_reset_link string, err error) {
 			}).Warn("error_saving_user")
 			err = db_err
 			return
+		} else {
+			log.WithFields(log.Fields{
+				"UserID":   user.ID,
+				"username": user.Username,
+			}).Info("user_created")
 		}
-		password_reset_link = helpers.WaveAddress + "/users/reset/" + password_reset_token
 	}
 	return
 }
@@ -64,29 +57,17 @@ func (user *User) SetPassword(password string) (err error) {
 		return
 	}
 	user.Password = pw_data
-	user.Save()
-	// err
-	log.WithFields(log.Fields{
-		"UserID": user.ID,
-	}).Info("user_password_set")
-	return
-}
-
-func (user *User) ResetPassword() (err error) {
-	user.DestroyAllSessions()
-	user.SetPassword(helpers.RandomString())
-	user.PasswordResetToken = helpers.RandomString()
 	err = user.Save()
 	if err != nil {
 		log.WithFields(log.Fields{
-			"at":     "user.ResetPassword",
 			"UserID": user.ID,
-		}).Warn("error_saving_user")
-		return
+			"error":  err.Error(),
+		}).Error("error_setting_password")
+	} else {
+		log.WithFields(log.Fields{
+			"UserID": user.ID,
+		}).Info("user_password_set")
 	}
-	log.WithFields(log.Fields{
-		"UserID": user.ID,
-	}).Info("user_password_reset")
 	return
 }
 
@@ -112,16 +93,34 @@ func (user *User) NewSession() (wave_session string, err error) {
 		Cookie:            wave_session,
 	}
 	user.Sessions = append(user.Sessions, session)
-	user.Save()
-	// err
-	log.WithFields(log.Fields{
-		"UserID": user.ID,
-	}).Info("session_created")
+	err = user.Save()
+	if err != nil {
+		log.WithFields(log.Fields{
+			"UserID": user.ID,
+			"error":  err.Error(),
+		}).Error("error_creating_sessions")
+	} else {
+		log.WithFields(log.Fields{
+			"UserID": user.ID,
+		}).Info("session_created")
+	}
 	return
 }
 
-func (user *User) DestroyAllOtherSessions(c *gin.Context) {
+func (user *User) DestroyAllOtherSessions(session_cookie string) {
+	var sessions []Session
+	for _, session := range user.Sessions {
+		if session.Cookie != session_cookie {
+			err := database.Orm.Unscoped().Delete(&session)
+			if err != nil {
 
+			}
+		} else {
+			sessions = append(sessions, session)
+		}
+	}
+	user.Sessions = sessions
+	user.Save()
 }
 
 func (user *User) DestroyAllSessions() {
@@ -139,7 +138,10 @@ func (user *User) DestroyAllSessions() {
 }
 
 func (user User) OnlyAdmin() (only_admin bool, err error) {
-	only_admin = true
+	only_admin = false
+	if !user.Admin {
+		return
+	}
 
 	var admins []User
 	err = database.Orm.Where("Admin = ?", true).Find(&admins).Error
@@ -147,14 +149,14 @@ func (user User) OnlyAdmin() (only_admin bool, err error) {
 		return
 	}
 
-	if len(admins) > 1 || !user.Admin {
-		only_admin = false
+	if len(admins) == 1 {
+		only_admin = true
 	}
 	return
 }
 
 func (user *User) Reload() error {
-	return database.Orm.First(&user, "Username = ?", user.Username).Error
+	return database.Orm.Unscoped().First(&user, "Username = ?", user.Username).Error
 }
 
 func (user *User) Save() error {
@@ -186,4 +188,9 @@ func UserFromSessionCookie(session_cookie string) (user User, err error) {
 func Users() (users []User, err error) {
 	err = database.Orm.Find(&users).Error
 	return
+}
+
+// Used for tests
+func DropUsers() {
+	database.Orm.Delete(User{})
 }

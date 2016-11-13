@@ -22,10 +22,11 @@ func NewAPI() *gin.Engine {
 	router.POST("/sessions/delete", deleteSession)
 
 	// User routes
+	router.GET("/users", getUsers)
 	router.POST("/users/create", createUser)
 	router.POST("/users/name", updateUserName)
-	//router.GET("/users/password/:id", passwordReset)
 	router.POST("/users/password", updateUserPassword)
+	router.POST("/users/assign-password", assignUserPassword)
 	router.POST("/users/delete", deleteUser)
 
 	// Signature routes

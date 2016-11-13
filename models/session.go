@@ -52,6 +52,10 @@ func (session *Session) Save() error {
 	return database.Orm.Save(&session).Error
 }
 
+func (session *Session) Reload() error {
+	return database.Orm.First(&session, "Cookie = ?", session.Cookie).Error
+}
+
 func (session *Session) Delete() error {
 	return database.Orm.Delete(&session).Error
 }

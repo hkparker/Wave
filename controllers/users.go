@@ -34,11 +34,10 @@ func createUser(c *gin.Context) {
 
 	// Save the new user and create a link for the user
 	// to set a password
-	reset_link, err := models.CreateUser(username)
+	err = models.CreateUser(username)
 	if err == nil {
 		c.JSON(200, gin.H{
-			"success":    "true",
-			"reset_link": reset_link,
+			"success": "true",
 		})
 		log.WithFields(log.Fields{
 			"at":       "controllers.createUser",
@@ -71,7 +70,7 @@ func updateUserName(c *gin.Context) {
 	}
 
 	// Ensure the JSON contains a username key with data
-	username, ok := user_info["username"]
+	username, ok := user_info["name"]
 	if !ok || username == "" {
 		name_error := "no username provided"
 		c.JSON(400, gin.H{"error": name_error})
@@ -169,12 +168,22 @@ func updateUserPassword(c *gin.Context) {
 		}).Error("error setting user password")
 	} else {
 		// Invalidate all session except the one which made the request
-		user.DestroyAllOtherSessions(c)
-		c.JSON(200, gin.H{"success": "true"})
-		log.WithFields(log.Fields{
-			"at":   "controllers.updateUserPassword",
-			"user": user.Name,
-		}).Info("user password updated")
+		session_id, err := sessionCookie(c)
+		if err != nil {
+			c.JSON(500, gin.H{"error": err.Error()})
+			log.WithFields(log.Fields{
+				"at":    "controllers.updateUserPassword",
+				"error": err.Error(),
+				"user":  user.Name,
+			}).Error("error getting session cookie from valid session")
+		} else {
+			user.DestroyAllOtherSessions(session_id)
+			c.JSON(200, gin.H{"success": "true"})
+			log.WithFields(log.Fields{
+				"at":   "controllers.updateUserPassword",
+				"user": user.Name,
+			}).Info("user password updated")
+		}
 	}
 }
 
@@ -262,4 +271,105 @@ func deleteUser(c *gin.Context) {
 			"admin":    admin.Username,
 		}).Info("deleted user")
 	}
+}
+
+func assignUserPassword(c *gin.Context) {
+	// Ensure the request is valid JSON and get
+	// the user from the current session
+	user_info, err := requestJSON(c)
+	if err != nil {
+		return
+	}
+	admin, err := currentUser(c)
+	if err != nil {
+		return
+	}
+
+	// Ensure the JSON contains a username key with data
+	username, ok := user_info["username"]
+	if !ok || username == "" {
+		username_error := "no username provided"
+		c.JSON(400, gin.H{"error": username_error})
+		log.WithFields(log.Fields{
+			"at":    "controllers.assignUserPassword",
+			"error": username_error,
+			"admin": admin.Username,
+		}).Error("error assigning user password")
+		return
+	}
+
+	// Ensure the JSON contains a password key with data
+	password, ok := user_info["password"]
+	if !ok || password == "" {
+		password_error := "no password provided"
+		c.JSON(400, gin.H{"error": password_error})
+		log.WithFields(log.Fields{
+			"at":    "controllers.assignUserPassword",
+			"error": password_error,
+			"admin": admin.Username,
+		}).Error("error assigning user password")
+		return
+	}
+
+	user, err := models.UserByUsername(username)
+	if err != nil {
+		c.JSON(500, gin.H{"error": "unable to load user"})
+		log.WithFields(log.Fields{
+			"at":    "controllers.assignUserPassword",
+			"error": err.Error(),
+			"admin": admin.Username,
+		}).Error("error loading user")
+		return
+	}
+
+	user.SetPassword(password)
+	if err != nil {
+		c.JSON(500, gin.H{"error": "unable to set password"})
+		log.WithFields(log.Fields{
+			"at":    "controllers.assignUserPassword",
+			"error": err.Error(),
+			"admin": admin.Username,
+		}).Error("error setting password")
+		return
+	}
+
+	user.DestroyAllSessions()
+	c.JSON(200, gin.H{"success": "true"})
+	log.WithFields(log.Fields{
+		"at":       "controllers.assignUserPassword",
+		"username": username,
+		"admin":    admin.Username,
+	}).Info("assigned password")
+}
+
+func getUsers(c *gin.Context) {
+	admin, err := currentUser(c)
+	if err != nil {
+		return
+	}
+
+	users, err := models.Users()
+	if err != nil {
+		c.JSON(500, gin.H{"error": err.Error()})
+		log.WithFields(log.Fields{
+			"at":    "controllers.getUsers",
+			"error": err.Error(),
+			"admin": admin.Username,
+		}).Error("error looking up users")
+		return
+	}
+	var data []map[string]string
+	for _, user := range users {
+		data = append(data, map[string]string{
+			"username": user.Username,
+			"name":     user.Name,
+			"admin": func() string {
+				if user.Admin {
+					return "true"
+				}
+				return "false"
+			}(),
+		})
+	}
+	c.JSON(200, data)
 }
