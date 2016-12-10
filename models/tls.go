@@ -19,8 +19,8 @@ import (
 
 type TLS struct {
 	gorm.Model
-	CaCert     []byte
-	PrivateKey []byte
+	CaCert     string
+	PrivateKey string
 }
 
 func APITLSConfig() (config *tls.Config) {
@@ -50,7 +50,7 @@ func APITLSData() ([]byte, []byte) {
 	if err != nil {
 		log.Fatal("error loading first TLS record for data: %s", err)
 	}
-	return model.CaCert, model.PrivateKey
+	return []byte(model.CaCert), []byte(model.PrivateKey)
 }
 
 func SetTLS(request map[string]string) (err error) {
@@ -89,8 +89,8 @@ func SetTLS(request map[string]string) (err error) {
 		return
 	}
 
-	config.CaCert = []byte(request["ca_cert"])
-	config.PrivateKey = []byte(request["private_key"])
+	config.CaCert = request["ca_cert"]
+	config.PrivateKey = request["private_key"]
 	err = database.Orm.Save(&config).Error
 	if err != nil {
 		log.Error("error saving new TLS data: %s", err)
@@ -112,8 +112,8 @@ func createTLSIfMissing() (err error) {
 	if count == 0 {
 		cert_data, key_data := selfSignedCert()
 		new_config := TLS{
-			CaCert:     cert_data,
-			PrivateKey: key_data,
+			CaCert:     string(cert_data),
+			PrivateKey: string(key_data),
 		}
 		err = database.Orm.Save(&new_config).Error
 		if err != nil {
