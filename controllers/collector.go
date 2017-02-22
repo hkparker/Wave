@@ -1,10 +1,13 @@
 package controllers
 
 import (
-	"fmt"
+	"encoding/json"
 	log "github.com/Sirupsen/logrus"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
+	"github.com/hkparker/Wave/engines/ids"
+	"github.com/hkparker/Wave/engines/metadata"
+	"github.com/hkparker/Wave/engines/visualizer"
 	"github.com/hkparker/Wave/models"
 )
 
@@ -146,10 +149,13 @@ func pollCollector(c *gin.Context) {
 			if err != nil {
 				break
 			}
-			fmt.Println(string(frame_bytes))
-			// insert frame into IDS engine
-			// insert frame into Visualizer
-			// insert frame into MetadataService
+
+			var frame models.Wireless80211Frame
+			json.Unmarshal(frame_bytes, &frame)
+
+			ids.Insert(frame)
+			visualizer.Insert(frame)
+			metadata.Insert(frame)
 		}
 	} else {
 		log.WithFields(log.Fields{

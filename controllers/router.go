@@ -29,6 +29,10 @@ func NewAPI() *gin.Engine {
 	router.POST("/users/assign-password", assignUserPassword)
 	router.POST("/users/delete", deleteUser)
 
+	// Frontend Events
+
+	// Visualizer stream
+
 	// Signature routes
 	// Incident routes
 	// Device routes
