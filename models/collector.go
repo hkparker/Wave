@@ -22,18 +22,10 @@ type Collector struct {
 }
 
 func CollectorTLSConfig() *tls.Config {
-	// Load all collectors
-	var collectors []Collector
-	err := database.Orm.Find(&collectors).Error
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	// Create certificate pool for collectors
+	// Validate the client was signed by the Wave API certificate
 	cert_pool := x509.NewCertPool()
-	for _, collector := range collectors {
-		cert_pool.AppendCertsFromPEM(collector.CaCert)
-	}
+	cert, _ := APITLSData()
+	cert_pool.AppendCertsFromPEM(cert)
 
 	// Create client validating TLS config and return
 	config := &tls.Config{

@@ -143,6 +143,7 @@ func selfSignedCert() (cert_data []byte, key_data []byte) {
 			OrganizationalUnit: []string{"Wave"},
 			CommonName:         helpers.WaveHost,
 		},
+		DNSNames:              []string{"127.0.0.1"},
 		NotBefore:             time.Now(),
 		NotAfter:              time.Now().AddDate(6, 0, 0),
 		BasicConstraintsValid: true,
