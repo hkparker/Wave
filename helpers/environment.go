@@ -12,7 +12,7 @@ var (
 	Testing     bool = false
 )
 
-func SetEnvironment() {
+func setEnvironment() {
 	if TestingCmd() {
 		Testing = true
 		return
@@ -24,7 +24,6 @@ func SetEnvironment() {
 	Production = true
 	log.SetFormatter(&log.JSONFormatter{})
 	gin.SetMode(gin.ReleaseMode)
-	return
 }
 
 func env() string {

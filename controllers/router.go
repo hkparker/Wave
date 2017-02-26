@@ -36,6 +36,7 @@ func NewAPI() *gin.Engine {
 	// Signature routes
 	// Incident routes
 	// Device routes
+	// Version route
 
 	// Collector routes
 	router.GET("/collectors", getCollectors)

@@ -7,40 +7,56 @@ import (
 )
 
 var WaveAddress string
-var WaveHost string
+var WaveBind string
+var WaveHostname string
+var WavePort int
+var CollectorPort int
+var TLS bool
 
-func SetHostname() {
-	address := os.Getenv("WAVE_ADDRESS")
-	if address == "" {
-		log.Fatal("WAVE_ADDRESS envar must be provided")
+func setHostname() {
+	WaveHostname = os.Getenv("WAVE_HOSTNAME")
+	if WaveHostname == "" {
+		log.Fatal("WAVE_HOSTNAME envar must be provided")
 	}
+	WaveBind = os.Getenv("WAVE_BIND")
+	if WaveBind == "" {
+		log.Fatal("WAVE_BIND envar must be provided")
+	}
+
 	port_str := os.Getenv("WAVE_PORT")
-	var port int
-	if address == "" {
-		log.Fatal("WAVE_PORT envar must be provided")
+	collector_port_str := os.Getenv("WAVE_COLLECTOR_PORT")
+	if port_str == "" || collector_port_str == "" {
+		log.Fatal("WAVE_PORT and WAVE_COLLECTOR_PORT envars must be provided")
 	} else {
 		var err error
-		port, err = strconv.Atoi(port_str)
+		WavePort, err = strconv.Atoi(port_str)
 		if err != nil {
 			log.WithFields(log.Fields{
 				"at":    "helpers.SetHostname",
 				"value": port_str,
 			}).Fatal("unable to assert WAVE_PORT as int")
 		}
-	}
-	tls := false
-	if os.Getenv("WAVE_TLS") == "true" {
-		tls = true
+		CollectorPort, err = strconv.Atoi(collector_port_str)
+		if err != nil {
+			log.WithFields(log.Fields{
+				"at":    "helpers.SetHostname",
+				"value": port_str,
+			}).Fatal("unable to assert WAVE_COLLECTOR_PORT as int")
+		}
 	}
 
-	WaveHost = address
-	if tls {
+	TLS = false
+	if os.Getenv("WAVE_TLS") == "true" {
+		TLS = true
+	}
+
+	if TLS {
 		WaveAddress = "https://"
 	} else {
 		WaveAddress = "http://"
 	}
-	WaveAddress = WaveAddress + address
-	if !((!tls && (port == 80)) || (tls && (port == 443))) {
-		WaveAddress = WaveAddress + ":" + strconv.Itoa(port)
+	WaveAddress = WaveAddress + WaveHostname
+	if !((!TLS && (WavePort == 80)) || (TLS && (WavePort == 443))) {
+		WaveAddress = WaveAddress + ":" + strconv.Itoa(WavePort)
 	}
 }

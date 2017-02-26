@@ -8,11 +8,16 @@ import (
 
 func init() {
 	if database.Orm != nil {
-		CreateTables()
+		createTables()
 	}
 }
 
-func CreateTables() {
+func Setup() {
+	createTables()
+	createAdmin()
+}
+
+func createTables() {
 	if !database.Orm.HasTable(User{}) {
 		database.Orm.CreateTable(User{})
 		log.Info("creating missing user table")
@@ -34,7 +39,7 @@ func CreateTables() {
 	}
 }
 
-func CreateAdmin() {
+func createAdmin() {
 	var admins []User
 	if err := database.Orm.Where("Admin = ?", true).Find(&admins).Error; err == nil {
 		if len(admins) == 0 {

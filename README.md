@@ -1,6 +1,6 @@
 # Wave
 
-Wave is a wireless Intrusion Detection System and 802.11 visualizer.  Wireless data is sent from [collector](https://github.com/hkparker/collector)s to Wave where it is analysed by various engines.  In early development.
+Wave is an 802.11 intrusion detection system, visualizer, and analytics platform.  Wireless data is sent from [collector](https://github.com/hkparker/collector)s to Wave where it is analysed by various engines.
 
 ## Developing
 
@@ -8,7 +8,7 @@ You'll need `npm`, `go`, and `docker-compose` available.
 
 ### Installing dependencies
 
-Install reflex, forego, and go-bindata, run `go get -t` and `npm install`.
+Install [reflex](https://github.com/cespare/reflex), [forego](https://github.com/ddollar/forego), and [go-bindata](https://github.com/jteeuwen/go-bindata), run `go get -t` and `npm install`.
 
 ```
 make deps

@@ -152,7 +152,7 @@ func pollCollector(c *gin.Context) {
 			var frame models.Wireless80211Frame
 			json.Unmarshal(frame_bytes, &frame)
 
-			ids.Insert(frame)
+			ids.Insert(string(frame_bytes), frame)
 			visualizer.Insert(frame)
 			metadata.Insert(frame)
 		}

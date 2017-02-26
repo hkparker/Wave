@@ -24,7 +24,7 @@ func (session Session) HTTPCookie() http.Cookie {
 		Name:     "wave_session",
 		Value:    session.Cookie,
 		Path:     "/",
-		Domain:   helpers.WaveHost,
+		Domain:   helpers.WaveHostname,
 		MaxAge:   41472000,
 		Secure:   os.Getenv("WAVE_TLS") == "true",
 		HttpOnly: true,
