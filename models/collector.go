@@ -17,8 +17,8 @@ import (
 type Collector struct {
 	gorm.Model
 	Name       string `sql:"not null;unique"`
-	CaCert     []byte
-	PrivateKey []byte
+	CaCert     string
+	PrivateKey string
 }
 
 func CollectorTLSConfig() *tls.Config {
@@ -50,8 +50,8 @@ func CreateCollector(name string) (collector Collector, err error) {
 	}
 	collector = Collector{
 		Name:       name,
-		CaCert:     cert_data,
-		PrivateKey: key_data,
+		CaCert:     string(cert_data),
+		PrivateKey: string(key_data),
 	}
 	err = database.Orm.Save(&collector).Error
 	return

@@ -11,9 +11,10 @@ import (
 	"errors"
 	log "github.com/Sirupsen/logrus"
 	"github.com/hkparker/Wave/database"
-	"github.com/hkparker/Wave/helpers"
+	//"github.com/hkparker/Wave/helpers"
 	"github.com/jinzhu/gorm"
 	"math/big"
+	"net"
 	"time"
 )
 
@@ -139,11 +140,11 @@ func selfSignedCert() (cert_data []byte, key_data []byte) {
 	ca := &x509.Certificate{
 		SerialNumber: randomSerial(),
 		Subject: pkix.Name{
-			Organization:       []string{"Wave"},
-			OrganizationalUnit: []string{"Wave"},
-			CommonName:         helpers.WaveHost,
+			Organization: []string{"Wave"},
+			CommonName:   "wave", //helpers.WaveHost,
 		},
-		DNSNames:              []string{"127.0.0.1"},
+		IPAddresses:           []net.IP{net.ParseIP("127.0.0.1")},
+		DNSNames:              []string{"wave"}, // store non-ip hostname
 		NotBefore:             time.Now(),
 		NotAfter:              time.Now().AddDate(6, 0, 0),
 		BasicConstraintsValid: true,

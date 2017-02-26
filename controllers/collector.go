@@ -57,7 +57,6 @@ func createCollector(c *gin.Context) {
 		"name":  name,
 		"admin": admin.Username,
 	}).Info("created collector")
-	// Live reloading eventually: https://github.com/golang/go/issues/16066
 }
 
 func getCollectors(c *gin.Context) {
