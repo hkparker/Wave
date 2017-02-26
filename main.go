@@ -9,32 +9,18 @@ import (
 	"github.com/hkparker/Wave/database"
 	"github.com/hkparker/Wave/helpers"
 	"github.com/hkparker/Wave/models"
+	_ "github.com/joho/godotenv/autoload"
 	"net"
 	"net/http"
 	"os"
+	"strconv"
 )
 
 func main() {
 	var version bool
 	var initdb bool
-	var port int
-	var collector_port int
-	var address string
-	var api_tls bool
-	var db_username string
-	var db_password string
-	var db_name string
-	var db_ssl string
 	flag.BoolVar(&version, "version", false, "version")
 	flag.BoolVar(&initdb, "initdb", false, "reset the Wave database")
-	flag.IntVar(&port, "port", 80, "port to listen on")
-	flag.IntVar(&collector_port, "collector-port", 444, "port to listen for collector websockets on")
-	flag.StringVar(&address, "address", "0.0.0.0", "ip address to bind to")
-	flag.BoolVar(&api_tls, "tls", false, "serve over TLS socket")
-	flag.StringVar(&db_username, "db_username", "", "username for Wave database")
-	flag.StringVar(&db_password, "db_password", "", "password for Wave database")
-	flag.StringVar(&db_name, "db_name", "wave_development", "database name to use")
-	flag.StringVar(&db_ssl, "db_ssl", "disable", "database connection over ssl")
 	flag.Parse()
 
 	if version {
@@ -42,13 +28,13 @@ func main() {
 		os.Exit(0)
 	}
 
-	helpers.SetHostname(api_tls, address, port)
+	helpers.SetHostname()
 	helpers.SetEnvironment()
 	database.Connect(
-		db_username,
-		db_password,
-		db_name,
-		db_ssl,
+		os.Getenv("WAVE_DB_USERNAME"),
+		os.Getenv("WAVE_DB_PASSWORD"),
+		os.Getenv("WAVE_DB_NAME"),
+		os.Getenv("WAVE_DB_TLS"),
 	)
 	models.CreateTables()
 	models.CreateAdmin()
@@ -69,33 +55,58 @@ func main() {
 		server.Serve(tls_listener)
 	}
 
+	// Parse port envars
+	collector_port_str := os.Getenv("WAVE_COLLECTOR_PORT")
+	wave_port_str := os.Getenv("WAVE_PORT")
+	var collector_port int
+	var wave_port int
+	if collector_port_str == "" || wave_port_str == "" {
+		log.Fatal("WAVE_PORT and WAVE_COLLECTOR_PORT envars must be provided")
+	} else {
+		var err error
+		wave_port, err = strconv.Atoi(wave_port_str)
+		if err != nil {
+			log.WithFields(log.Fields{
+				"at":    "main",
+				"value": wave_port_str,
+			}).Fatal("unable to assert WAVE_PORT as int")
+		}
+		collector_port, err = strconv.Atoi(collector_port_str)
+		if err != nil {
+			log.WithFields(log.Fields{
+				"at":    "main",
+				"value": collector_port_str,
+			}).Fatal("unable to assert WAVE_COLLECTOR_PORT as int")
+		}
+	}
+
 	// Start Collector server
 	go run_tls(
 		controllers.NewCollector(),
 		fmt.Sprintf(
 			"%s:%d",
-			address,
+			os.Getenv("WAVE_ADDRESS"),
 			collector_port,
 		),
 		models.CollectorTLSConfig(),
 	)
 
 	// Start Wave API
-	if api_tls {
+	if os.Getenv("WAVE_TLS") == "true" {
 		run_tls(
 			controllers.NewAPI(),
 			fmt.Sprintf(
 				"%s:%d",
-				address,
-				port,
+				os.Getenv("WAVE_ADDRESS"),
+				os.Getenv("WAVE_PORT"),
 			),
 			models.APITLSConfig(),
 		)
 	} else {
 		controllers.NewAPI().Run(fmt.Sprintf(
 			"%s:%d",
-			address,
-			port,
+			os.Getenv("WAVE_ADDRESS"),
+			wave_port,
 		))
 	}
 }
