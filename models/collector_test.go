@@ -21,11 +21,11 @@ func TextCollectorTLSConfigCreatesCorrectConfig(t *testing.T) {
 		assert.NotEqual(config.Certificates[0], config.Certificates[1])
 	}
 
-	block1, _ := pem.Decode(collector1.CaCert)
+	block1, _ := pem.Decode([]byte(collector1.CaCert))
 	client1, err := x509.ParseCertificate(block1.Bytes)
 	assert.Nil(err)
 
-	block2, _ := pem.Decode(collector2.CaCert)
+	block2, _ := pem.Decode([]byte(collector2.CaCert))
 	client2, err := x509.ParseCertificate(block2.Bytes)
 	assert.Nil(err)
 
