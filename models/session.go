@@ -6,7 +6,6 @@ import (
 	"github.com/hkparker/Wave/helpers"
 	"github.com/jinzhu/gorm"
 	"net/http"
-	"os"
 	"time"
 )
 
@@ -19,14 +18,13 @@ type Session struct {
 }
 
 func (session Session) HTTPCookie() http.Cookie {
-	//expire := time.Now().AddDate(1, 0, 1)
 	cookie := http.Cookie{
 		Name:     "wave_session",
 		Value:    session.Cookie,
 		Path:     "/",
 		Domain:   helpers.WaveHostname,
-		MaxAge:   41472000,
-		Secure:   os.Getenv("WAVE_TLS") == "true",
+		MaxAge:   int(time.Now().AddDate(1, 0, 1).Unix()),
+		Secure:   helpers.TLS,
 		HttpOnly: true,
 		Raw:      "wave_session=" + session.Cookie,
 		Unparsed: []string{"wave_session=" + session.Cookie},
