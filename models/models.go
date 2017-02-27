@@ -3,9 +3,19 @@ package models
 import (
 	log "github.com/Sirupsen/logrus"
 	"github.com/hkparker/Wave/helpers"
+	"github.com/jinzhu/gorm"
 )
 
 func init() {
+	if helpers.TestingCmd() && Orm == nil {
+		var err error
+		Orm, err = gorm.Open("sqlite3", ":memory:")
+		if err != nil {
+			log.WithFields(log.Fields{
+				"error": err.Error(),
+			}).Fatal("unable to connect to testing database server")
+		}
+	}
 	if Orm != nil {
 		createTables()
 	}

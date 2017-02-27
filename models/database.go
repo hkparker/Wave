@@ -3,25 +3,12 @@ package models
 import (
 	"fmt"
 	log "github.com/Sirupsen/logrus"
-	"github.com/hkparker/Wave/helpers"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 )
 
 var Orm *gorm.DB
-
-func init() {
-	if helpers.TestingCmd() && Orm == nil {
-		var err error
-		Orm, err = gorm.Open("sqlite3", ":memory:")
-		if err != nil {
-			log.WithFields(log.Fields{
-				"error": err.Error(),
-			}).Fatal("unable to connect to testing database server")
-		}
-	}
-}
 
 func Connect(db_username, db_password, db_name, db_ssl string) {
 	db_args := fmt.Sprintf(
