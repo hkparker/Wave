@@ -1,4 +1,4 @@
-package metadata
+package visualizer
 
 import (
 	//log "github.com/Sirupsen/logrus"

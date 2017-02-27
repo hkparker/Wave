@@ -4,7 +4,7 @@ import (
 	log "github.com/Sirupsen/logrus"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
-	"github.com/hkparker/Wave/engines/metadata"
+	"github.com/hkparker/Wave/engines/visualizer"
 )
 
 var VisualEvents = make(chan map[string]string, 0)
@@ -18,7 +18,7 @@ func streamVisualization(c *gin.Context) {
 			conn.Close()
 			//delete(VisualClients, conn)
 		}()
-		for _, event := range metadata.CatchupEvents() {
+		for _, event := range visualizer.CatchupEvents() {
 			err := conn.WriteJSON(event)
 			if err != nil {
 			}

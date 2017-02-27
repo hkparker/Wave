@@ -1,4 +1,4 @@
-package metadata
+package visualizer
 
 import (
 	"github.com/hkparker/Wave/models"
