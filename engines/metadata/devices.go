@@ -7,26 +7,38 @@ import (
 
 func updateKnownDevices(frame models.Wireless80211Frame) {
 	if _, ok := Devices[frame.Address1]; !ok {
-		registerNewDevice(frame)
+		registerNewDevice(frame.Address1)
 	} else if _, ok := Devices[frame.Address2]; !ok {
-		registerNewDevice(frame)
+		registerNewDevice(frame.Address2)
 	} else if _, ok := Devices[frame.Address3]; !ok {
-		registerNewDevice(frame)
+		registerNewDevice(frame.Address3)
 	} else if _, ok := Devices[frame.Address4]; !ok {
-		registerNewDevice(frame)
+		registerNewDevice(frame.Address4)
 	}
 }
 
-func registerNewDevice(frame models.Wireless80211Frame) {
-	device := models.Device{
-		MAC: frame.Address1,
+func registerNewDevice(mac string) {
+	if broadcast(mac) {
+		return
 	}
-	Devices[frame.Address1] = device
+	device := models.Device{
+		MAC: mac,
+	}
+	Devices[mac] = device
+	device.Save()
+	visualizeNewDevice(device)
+}
+
+func broadcast(mac string) bool {
+	if mac == "ff:ff:ff:ff:ff:ff" {
+		return true
+	}
+	return false
 }
 
 func visualizeNewDevice(device models.Device) {
+	//controllers.VisualPool <-
 	log.WithFields(log.Fields{
 		"mac": device.MAC,
-	}).Info("New Device")
-	//controllers.VisualPool <-
+	}).Info("new device observed")
 }

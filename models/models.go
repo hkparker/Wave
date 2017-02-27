@@ -46,6 +46,11 @@ func createTables() {
 		Orm.CreateTable(TLS{})
 		log.Info("creating missing tls configuration table")
 	}
+
+	if !Orm.HasTable(Device{}) {
+		Orm.CreateTable(Device{})
+		log.Info("creating missing device configuration table")
+	}
 }
 
 func createAdmin() {
