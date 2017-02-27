@@ -10,7 +10,6 @@ import (
 	"encoding/pem"
 	"errors"
 	log "github.com/Sirupsen/logrus"
-	"github.com/hkparker/Wave/database"
 	//"github.com/hkparker/Wave/helpers"
 	"github.com/jinzhu/gorm"
 	"math/big"
@@ -47,7 +46,7 @@ func APITLSCertificate() (pair tls.Certificate) {
 func APITLSData() ([]byte, []byte) {
 	createTLSIfMissing()
 	var model TLS
-	err := database.Orm.First(&model).Error
+	err := Orm.First(&model).Error
 	if err != nil {
 		log.Fatal("error loading first TLS record for data: %s", err)
 	}
@@ -58,7 +57,7 @@ func SetTLS(request map[string]string) (err error) {
 	createTLSIfMissing()
 	var collectors []Collector
 	var collector_count int
-	err = database.Orm.Find(&collectors).Count(&collector_count).Error
+	err = Orm.Find(&collectors).Count(&collector_count).Error
 	if err != nil {
 		log.Error("unable to load collector count for setting tls: %s", err)
 		return
@@ -70,7 +69,7 @@ func SetTLS(request map[string]string) (err error) {
 		return
 	}
 	var config TLS
-	err = database.Orm.First(&config).Error
+	err = Orm.First(&config).Error
 	if err != nil {
 		log.Errorf("error loading TLS config to set: %s", err)
 		return
@@ -92,7 +91,7 @@ func SetTLS(request map[string]string) (err error) {
 
 	config.CaCert = request["ca_cert"]
 	config.PrivateKey = request["private_key"]
-	err = database.Orm.Save(&config).Error
+	err = Orm.Save(&config).Error
 	if err != nil {
 		log.Error("error saving new TLS data: %s", err)
 	}
@@ -106,7 +105,7 @@ func SetTLS(request map[string]string) (err error) {
 func createTLSIfMissing() (err error) {
 	var count int
 	var tls []TLS
-	err = database.Orm.Find(&tls).Count(&count).Error
+	err = Orm.Find(&tls).Count(&count).Error
 	if err != nil {
 		log.Fatalf("error loading tls count from database: %s", err)
 	}
@@ -116,7 +115,7 @@ func createTLSIfMissing() (err error) {
 			CaCert:     string(cert_data),
 			PrivateKey: string(key_data),
 		}
-		err = database.Orm.Save(&new_config).Error
+		err = Orm.Save(&new_config).Error
 		if err != nil {
 			log.Fatalf("error saving new self-signed certificate: %s", err)
 		}
@@ -134,7 +133,7 @@ func randomSerial() *big.Int {
 }
 
 // Generate a new self-signed certificate to be used if the --tls
-// flag is set but no TLS certificate and key are stored in the database.
+// flag is set but no TLS certificate and key are stored in the
 func selfSignedCert() (cert_data []byte, key_data []byte) {
 	// Self signed certificate for provided hostname
 	ca := &x509.Certificate{

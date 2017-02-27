@@ -1,7 +1,6 @@
 package models
 
 import (
-	"github.com/hkparker/Wave/database"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -17,7 +16,7 @@ func TestSessionFromIDLoadsValidSession(t *testing.T) {
 	assert.Nil(err)
 
 	var related User
-	db_err := database.Orm.Model(&session).Related(&related)
+	db_err := Orm.Model(&session).Related(&related)
 	assert.Nil(db_err.Error)
 
 	assert.Equal(related.ID, user.ID)

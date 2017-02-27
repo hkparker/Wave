@@ -2,7 +2,6 @@ package models
 
 import (
 	log "github.com/Sirupsen/logrus"
-	"github.com/hkparker/Wave/database"
 	"github.com/hkparker/Wave/helpers"
 	"github.com/jinzhu/gorm"
 	"net/http"
@@ -34,7 +33,7 @@ func (session Session) HTTPCookie() http.Cookie {
 }
 
 func (session Session) User() (user User, err error) {
-	db_err := database.Orm.Model(&session).Related(&user)
+	db_err := Orm.Model(&session).Related(&user)
 	err = db_err.Error
 	if err != nil {
 		log.WithFields(log.Fields{
@@ -46,19 +45,19 @@ func (session Session) User() (user User, err error) {
 }
 
 func (session *Session) Save() error {
-	return database.Orm.Save(&session).Error
+	return Orm.Save(&session).Error
 }
 
 func (session *Session) Reload() error {
-	return database.Orm.First(&session, "Cookie = ?", session.Cookie).Error
+	return Orm.First(&session, "Cookie = ?", session.Cookie).Error
 }
 
 func (session *Session) Delete() error {
-	return database.Orm.Delete(&session).Error
+	return Orm.Delete(&session).Error
 }
 
 func SessionFromID(id string) (session Session, err error) {
-	db_err := database.Orm.First(&session, "Cookie = ?", id)
+	db_err := Orm.First(&session, "Cookie = ?", id)
 	err = db_err.Error
 	if err != nil {
 		log.WithFields(log.Fields{

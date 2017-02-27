@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"github.com/hkparker/Wave/controllers"
-	"github.com/hkparker/Wave/database"
 	"github.com/hkparker/Wave/helpers"
 	"github.com/hkparker/Wave/models"
 	_ "github.com/joho/godotenv/autoload"
@@ -12,13 +11,12 @@ import (
 func main() {
 	// Setup environment
 	helpers.Setup()
-	database.Connect(
+	models.Connect(
 		helpers.DBUsername,
 		helpers.DBPassword,
 		helpers.DBName,
 		helpers.DBTLS,
 	)
-	models.Setup()
 
 	// Start Collector server
 	go helpers.RunTLS(

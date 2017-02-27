@@ -9,7 +9,6 @@ import (
 	"crypto/x509/pkix"
 	"encoding/pem"
 	log "github.com/Sirupsen/logrus"
-	"github.com/hkparker/Wave/database"
 	"github.com/jinzhu/gorm"
 	"time"
 )
@@ -38,7 +37,7 @@ func CollectorTLSConfig() *tls.Config {
 }
 
 func Collectors() (collectors []Collector, err error) {
-	err = database.Orm.Find(&collectors).Error
+	err = Orm.Find(&collectors).Error
 	return
 }
 
@@ -53,7 +52,7 @@ func CreateCollector(name string) (collector Collector, err error) {
 		CaCert:     string(cert_data),
 		PrivateKey: string(key_data),
 	}
-	err = database.Orm.Save(&collector).Error
+	err = Orm.Save(&collector).Error
 	return
 }
 
@@ -111,10 +110,10 @@ func newCollectorKeys() (cert_data []byte, key_data []byte, err error) {
 }
 
 func (collector *Collector) Delete() error {
-	return database.Orm.Delete(&collector).Error
+	return Orm.Delete(&collector).Error
 }
 
 func CollectorByName(name string) (collector Collector, err error) {
-	err = database.Orm.First(&collector, "Name = ?", name).Error
+	err = Orm.First(&collector, "Name = ?", name).Error
 	return
 }

@@ -1,4 +1,4 @@
-package database
+package models
 
 import (
 	"fmt"
@@ -40,4 +40,5 @@ func Connect(db_username, db_password, db_name, db_ssl string) {
 			"error": err.Error(),
 		}).Fatal("unable to connect to database server")
 	}
+	Setup()
 }

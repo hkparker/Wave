@@ -1,7 +1,6 @@
 package models
 
 import (
-	"github.com/hkparker/Wave/database"
 	"github.com/hkparker/Wave/helpers"
 	"github.com/stretchr/testify/assert"
 	"golang.org/x/crypto/bcrypt"
@@ -16,7 +15,7 @@ func TestCreateUserCreatesUserInCorrectState(t *testing.T) {
 	assert.Nil(err)
 
 	var user User
-	db_err := database.Orm.First(&user, "Username = ?", username)
+	db_err := Orm.First(&user, "Username = ?", username)
 	assert.Nil(db_err.Error)
 
 	assert.Equal(false, user.Admin)
@@ -60,7 +59,7 @@ func TestNewSessionCreatesSession(t *testing.T) {
 	assert.Nil(err)
 
 	var session Session
-	db_err := database.Orm.First(&session, "Cookie = ?", cookie)
+	db_err := Orm.First(&session, "Cookie = ?", cookie)
 	assert.Nil(db_err.Error)
 	if assert.NotNil(session.UserID) {
 		assert.Equal(session.UserID, user.ID)

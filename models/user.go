@@ -2,7 +2,6 @@ package models
 
 import (
 	log "github.com/Sirupsen/logrus"
-	"github.com/hkparker/Wave/database"
 	"github.com/hkparker/Wave/helpers"
 	"github.com/jinzhu/gorm"
 	"golang.org/x/crypto/bcrypt"
@@ -22,7 +21,7 @@ func CreateUser(username string) (err error) {
 	user := User{
 		Username: username,
 	}
-	db_err := database.Orm.Create(&user).Error
+	db_err := Orm.Create(&user).Error
 	if db_err != nil {
 		err = db_err
 		log.WithFields(log.Fields{
@@ -111,7 +110,7 @@ func (user *User) DestroyAllOtherSessions(session_cookie string) {
 	var sessions []Session
 	for _, session := range user.Sessions {
 		if session.Cookie != session_cookie {
-			err := database.Orm.Unscoped().Delete(&session)
+			err := Orm.Unscoped().Delete(&session)
 			if err != nil {
 
 			}
@@ -130,7 +129,7 @@ func (user *User) DestroyAllSessions() {
 
 	}
 	for session := range user.Sessions {
-		err := database.Orm.Unscoped().Delete(&session)
+		err := Orm.Unscoped().Delete(&session)
 		if err != nil {
 
 		}
@@ -144,7 +143,7 @@ func (user User) OnlyAdmin() (only_admin bool, err error) {
 	}
 
 	var admins []User
-	err = database.Orm.Where("Admin = ?", true).Find(&admins).Error
+	err = Orm.Where("Admin = ?", true).Find(&admins).Error
 	if err != nil {
 		return
 	}
@@ -156,19 +155,19 @@ func (user User) OnlyAdmin() (only_admin bool, err error) {
 }
 
 func (user *User) Reload() error {
-	return database.Orm.Unscoped().First(&user, "Username = ?", user.Username).Error
+	return Orm.Unscoped().First(&user, "Username = ?", user.Username).Error
 }
 
 func (user *User) Save() error {
-	return database.Orm.Save(&user).Error
+	return Orm.Save(&user).Error
 }
 
 func (user *User) Delete() error {
-	return database.Orm.Delete(&user).Error
+	return Orm.Delete(&user).Error
 }
 
 func UserByUsername(username string) (user User, err error) {
-	err = database.Orm.First(&user, "Username = ?", username).Error
+	err = Orm.First(&user, "Username = ?", username).Error
 	return
 }
 
@@ -176,7 +175,7 @@ func UserFromSessionCookie(session_cookie string) (user User, err error) {
 	session, err := SessionFromID(session_cookie)
 	if err != nil {
 		log.WithFields(log.Fields{
-			"at":    "database.currentUser",
+			"at":    "currentUser",
 			"error": err,
 		}).Error("session_missing")
 		return
@@ -186,11 +185,11 @@ func UserFromSessionCookie(session_cookie string) (user User, err error) {
 }
 
 func Users() (users []User, err error) {
-	err = database.Orm.Find(&users).Error
+	err = Orm.Find(&users).Error
 	return
 }
 
 // Used for tests
 func DropUsers() {
-	database.Orm.Delete(User{})
+	Orm.Delete(User{})
 }
