@@ -7,7 +7,6 @@ import (
 	"github.com/gorilla/websocket"
 	"github.com/hkparker/Wave/engines/ids"
 	"github.com/hkparker/Wave/engines/metadata"
-	"github.com/hkparker/Wave/engines/visualizer"
 	"github.com/hkparker/Wave/models"
 )
 
@@ -152,9 +151,8 @@ func pollCollector(c *gin.Context) {
 			var frame models.Wireless80211Frame
 			json.Unmarshal(frame_bytes, &frame)
 
-			ids.Insert(string(frame_bytes), frame)
-			visualizer.Insert(frame)
 			metadata.Insert(frame)
+			ids.Insert(string(frame_bytes), frame)
 		}
 	} else {
 		log.WithFields(log.Fields{
