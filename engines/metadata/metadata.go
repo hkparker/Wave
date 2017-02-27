@@ -17,3 +17,9 @@ func Insert(frame models.Wireless80211Frame) {
 	//updateNetworkAssociations(frames)
 	//updateTxRx()
 }
+
+func CatchupEvents() []map[string]string {
+	// for each device, visualize new device
+	// for each session, ...
+	return make([]map[string]string, 0)
+}

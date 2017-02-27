@@ -7,6 +7,20 @@ import (
 	"net/http"
 )
 
+func init() {
+	go func() {
+		for {
+			event := <-VisualEvents
+			for _, client := range VisualClients {
+				err := client.WriteJSON(event)
+				if err != nil {
+					log.Warn(err)
+				}
+			}
+		}
+	}()
+}
+
 func requestJSON(c *gin.Context) (json map[string]string, err error) {
 	err = c.BindJSON(&json)
 	if err != nil {

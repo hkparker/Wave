@@ -30,8 +30,8 @@ func NewAPI() *gin.Engine {
 	router.POST("/users/delete", deleteUser)
 
 	// Event streams
-	//router.GET("/streams/visualizer", streamFrames)
-	//router.GET("/streams/ids", streamFrames)
+	router.GET("/streams/visualizer", streamVisualization)
+	//router.GET("/streams/ids", streamAlerts)
 
 	// Signature routes
 	// Incident routes
