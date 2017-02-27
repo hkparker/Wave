@@ -1,7 +1,7 @@
 package metadata
 
 import (
-	log "github.com/Sirupsen/logrus"
+	//log "github.com/Sirupsen/logrus"
 	"github.com/hkparker/Wave/models"
 )
 
@@ -20,7 +20,7 @@ func updateAccessPoints(frame models.Wireless80211Frame) {
 
 func visualizeNewAP(mac string) {
 	//controllers.VisualPool <-
-	log.WithFields(log.Fields{
-		"mac": mac,
-	}).Info("new AP observed")
+	//log.WithFields(log.Fields{
+	//	"mac": mac,
+	//}).Info("new AP observed")
 }

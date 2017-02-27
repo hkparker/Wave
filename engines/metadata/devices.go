@@ -1,7 +1,7 @@
 package metadata
 
 import (
-	log "github.com/Sirupsen/logrus"
+	//log "github.com/Sirupsen/logrus"
 	"github.com/hkparker/Wave/models"
 )
 
@@ -38,7 +38,7 @@ func broadcast(mac string) bool {
 
 func visualizeNewDevice(device models.Device) {
 	//controllers.VisualPool <-
-	log.WithFields(log.Fields{
-		"mac": device.MAC,
-	}).Info("new device observed")
+	//log.WithFields(log.Fields{
+	//	"mac": device.MAC,
+	//}).Info("new device observed")
 }
