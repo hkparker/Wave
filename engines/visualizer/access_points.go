@@ -6,6 +6,7 @@ import (
 )
 
 func updateAccessPoints(frame models.Wireless80211Frame) {
+	DevicesMux.Lock()
 	if frame.Type == "MgmtBeacon" {
 		// Mgmt frame BSSID is Address3
 		dev := Devices[frame.Address3]
@@ -16,6 +17,7 @@ func updateAccessPoints(frame models.Wireless80211Frame) {
 			visualizeNewAP(frame.Address3)
 		}
 	}
+	DevicesMux.Unlock()
 }
 
 func visualizeNewAP(mac string) {

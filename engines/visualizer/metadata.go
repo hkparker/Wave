@@ -2,9 +2,11 @@ package visualizer
 
 import (
 	"github.com/hkparker/Wave/models"
+	"sync"
 )
 
 var Devices = make(map[string]models.Device)
+var DevicesMux sync.Mutex
 
 func init() {
 	// Load devices from DB
