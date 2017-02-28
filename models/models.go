@@ -12,6 +12,7 @@ func init() {
 		Orm, err = gorm.Open("sqlite3", ":memory:")
 		if err != nil {
 			log.WithFields(log.Fields{
+				"at":    "models.init",
 				"error": err.Error(),
 			}).Fatal("unable to connect to testing database server")
 		}
@@ -81,6 +82,7 @@ func createAdmin() {
 				log.Fatal(err)
 			}
 			log.WithFields(log.Fields{
+				"at":       "models.createAdmin",
 				"username": "root",
 				"password": password,
 			}).Info("created_default_admin")

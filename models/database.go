@@ -22,6 +22,7 @@ func Connect(db_username, db_password, db_name, db_ssl string) {
 	Orm, err = gorm.Open("postgres", db_args)
 	if err != nil {
 		log.WithFields(log.Fields{
+			"at":    "models.Connect",
 			"user":  db_username,
 			"ssl":   db_ssl,
 			"error": err.Error(),

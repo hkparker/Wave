@@ -156,6 +156,7 @@ func pollCollector(c *gin.Context) {
 		}
 	} else {
 		log.WithFields(log.Fields{
+			"at":    "controllers.pollCollector",
 			"error": err.Error(),
 		}).Warn("failed to upgrade websocket connection")
 	}

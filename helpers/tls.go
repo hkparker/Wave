@@ -14,6 +14,7 @@ func RunTLS(handler http.Handler, address string, config *tls.Config) {
 	tcp_listener, err := net.Listen("tcp", address)
 	if err != nil {
 		log.WithFields(log.Fields{
+			"at":      "helpers.RunTLS",
 			"address": address,
 			"error":   err.Error(),
 		}).Fatal("unable to create tls listener")

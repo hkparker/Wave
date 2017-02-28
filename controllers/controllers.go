@@ -44,7 +44,7 @@ func currentUser(c *gin.Context) (user models.User, err error) {
 		c.JSON(500, gin.H{"error": err.Error()})
 		c.Abort()
 		log.WithFields(log.Fields{
-			"at":    "controllers.UpdateUserName",
+			"at":    "controllers.currentUser",
 			"error": err.Error(),
 		}).Error("error getting current user")
 	}

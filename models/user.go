@@ -25,6 +25,7 @@ func CreateUser(username string) (err error) {
 	if db_err != nil {
 		err = db_err
 		log.WithFields(log.Fields{
+			"at":     "models.CreateUser",
 			"UserID": user.ID,
 			"error":  err,
 		}).Warn("error_saving_user")
@@ -32,12 +33,14 @@ func CreateUser(username string) (err error) {
 		db_err = user.Save()
 		if db_err != nil {
 			log.WithFields(log.Fields{
+				"at":     "models.CreateUser",
 				"UserID": user.ID,
 			}).Warn("error_saving_user")
 			err = db_err
 			return
 		} else {
 			log.WithFields(log.Fields{
+				"at":       "models.CreateUser",
 				"UserID":   user.ID,
 				"username": user.Username,
 			}).Info("user_created")
@@ -50,6 +53,7 @@ func (user *User) SetPassword(password string) (err error) {
 	pw_data, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
 		log.WithFields(log.Fields{
+			"at":     "models.SetPassword",
 			"UserID": user.ID,
 			"error":  err,
 		}).Warn("bcrypt_error")
@@ -59,11 +63,13 @@ func (user *User) SetPassword(password string) (err error) {
 	err = user.Save()
 	if err != nil {
 		log.WithFields(log.Fields{
+			"at":     "models.SetPassword",
 			"UserID": user.ID,
 			"error":  err.Error(),
 		}).Error("error_setting_password")
 	} else {
 		log.WithFields(log.Fields{
+			"at":     "models.SetPassword",
 			"UserID": user.ID,
 		}).Info("user_password_set")
 	}
@@ -95,11 +101,13 @@ func (user *User) NewSession() (wave_session string, err error) {
 	err = user.Save()
 	if err != nil {
 		log.WithFields(log.Fields{
+			"at":     "models.NewSession",
 			"UserID": user.ID,
 			"error":  err.Error(),
 		}).Error("error_creating_sessions")
 	} else {
 		log.WithFields(log.Fields{
+			"at":     "models.NewSession",
 			"UserID": user.ID,
 		}).Info("session_created")
 	}
@@ -175,7 +183,7 @@ func UserFromSessionCookie(session_cookie string) (user User, err error) {
 	session, err := SessionFromID(session_cookie)
 	if err != nil {
 		log.WithFields(log.Fields{
-			"at":    "currentUser",
+			"at":    "models.UserFromSessionCookie",
 			"error": err,
 		}).Error("session_missing")
 		return

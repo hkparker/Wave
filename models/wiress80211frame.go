@@ -100,6 +100,7 @@ func ParseFrameElements(stream []byte) (elements map[string][]byte) {
 		field, ok := ELEMENT_IDS[field_id]
 		if !ok {
 			log.WithFields(log.Fields{
+				"at": "models.ParseFrameElements",
 				"id": field_id,
 			}).Warn("unknown element id")
 		}

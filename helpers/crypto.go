@@ -11,6 +11,7 @@ func RandomString() (random_string string) {
 	_, err := rand.Read(bytes)
 	if err != nil {
 		log.WithFields(log.Fields{
+			"at":    "helpers.RandomString",
 			"error": err.Error(),
 		}).Fatal("error generating cryptographically secure random string")
 	}

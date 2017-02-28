@@ -23,6 +23,7 @@ func updateAccessPoints(frame models.Wireless80211Frame) {
 func visualizeNewAP(mac string) {
 	//controllers.VisualPool <-
 	//log.WithFields(log.Fields{
+	//      "at": "visualizeNewAP",
 	//	"mac": mac,
 	//}).Info("new AP observed")
 }

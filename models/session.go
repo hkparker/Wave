@@ -37,7 +37,7 @@ func (session Session) User() (user User, err error) {
 	err = db_err.Error
 	if err != nil {
 		log.WithFields(log.Fields{
-			"at":    "models.(Session) User",
+			"at":    "(Session) models.User",
 			"error": err.Error(),
 		}).Warn("error finding related user for session")
 	}

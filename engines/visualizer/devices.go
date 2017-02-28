@@ -41,6 +41,7 @@ func broadcast(mac string) bool {
 func visualizeNewDevice(device models.Device) {
 	//controllers.VisualPool <-
 	//log.WithFields(log.Fields{
+	//      "at": "visualizeNewDevice",
 	//	"mac": device.MAC,
 	//}).Info("new device observed")
 }
