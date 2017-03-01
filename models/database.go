@@ -32,7 +32,7 @@ func Connect(db_username, db_password, db_name, db_ssl string) {
 		log.WithFields(log.Fields{
 			"at":      "models.Connect",
 			"db_name": db_name,
-		}).Info("create missing database")
+		}).Info("created missing database")
 	}
 	Setup()
 }

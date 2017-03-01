@@ -30,8 +30,6 @@ func TestSessionFromIDDoesntLoadInvalidSession(t *testing.T) {
 	assert.Equal("", session.Cookie)
 }
 
-// TestHTTPCookie
-
 func TestUserReturnsUserWithSession(t *testing.T) {
 	assert := assert.New(t)
 

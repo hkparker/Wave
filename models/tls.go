@@ -10,7 +10,6 @@ import (
 	"encoding/pem"
 	"errors"
 	log "github.com/Sirupsen/logrus"
-	//"github.com/hkparker/Wave/helpers"
 	"github.com/jinzhu/gorm"
 	"math/big"
 	"net"

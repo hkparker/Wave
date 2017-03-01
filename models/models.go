@@ -28,29 +28,53 @@ func Setup() {
 }
 
 func createTables() {
-	if !Orm.HasTable(User{}) {
-		Orm.CreateTable(User{})
-		log.Info("creating missing user table")
-	}
-
-	if !Orm.HasTable(Session{}) {
-		Orm.CreateTable(Session{})
-		log.Info("creating missing session table")
+	if !Orm.HasTable(Alert{}) {
+		Orm.CreateTable(Alert{})
+		log.WithFields(log.Fields{
+			"at": "models.createTables",
+		}).Info("creating missing alert table")
 	}
 
 	if !Orm.HasTable(Collector{}) {
 		Orm.CreateTable(Collector{})
-		log.Info("creating missing collector table")
-	}
-
-	if !Orm.HasTable(TLS{}) {
-		Orm.CreateTable(TLS{})
-		log.Info("creating missing tls configuration table")
+		log.WithFields(log.Fields{
+			"at": "models.createTables",
+		}).Info("creating missing collector table")
 	}
 
 	if !Orm.HasTable(Device{}) {
 		Orm.CreateTable(Device{})
-		log.Info("creating missing device table")
+		log.WithFields(log.Fields{
+			"at": "models.createTables",
+		}).Info("creating missing device table")
+	}
+
+	if !Orm.HasTable(Network{}) {
+		Orm.CreateTable(Network{})
+		log.WithFields(log.Fields{
+			"at": "models.createTables",
+		}).Info("creating missing network table")
+	}
+
+	if !Orm.HasTable(Session{}) {
+		Orm.CreateTable(Session{})
+		log.WithFields(log.Fields{
+			"at": "models.createTables",
+		}).Info("creating missing session table")
+	}
+
+	if !Orm.HasTable(TLS{}) {
+		Orm.CreateTable(TLS{})
+		log.WithFields(log.Fields{
+			"at": "models.createTables",
+		}).Info("creating missing tls configuration table")
+	}
+
+	if !Orm.HasTable(User{}) {
+		Orm.CreateTable(User{})
+		log.WithFields(log.Fields{
+			"at": "models.createTables",
+		}).Info("creating missing user table")
 	}
 }
 
