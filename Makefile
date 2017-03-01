@@ -30,7 +30,7 @@ clean:
 # Run go-bindata to create embedded assets for single-binary deployment
 #
 embed-assets:
-	go-bindata -pkg=helpers -o=helpers/bindata.go static/
+	go-bindata -pkg=helpers -o=helpers/bindata.go static/ engines/ids/rules/
 
 #
 # Run the Procfile for development

@@ -52,11 +52,6 @@ func createTables() {
 		Orm.CreateTable(Device{})
 		log.Info("creating missing device table")
 	}
-
-	if !Orm.HasTable(Rule{}) {
-		Orm.CreateTable(Rule{})
-		log.Info("creating missing rule table")
-	}
 }
 
 func createAdmin() {

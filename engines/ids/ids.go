@@ -3,56 +3,72 @@ package ids
 import (
 	"fmt"
 	log "github.com/Sirupsen/logrus"
+	"github.com/hkparker/Wave/helpers"
 	"github.com/hkparker/Wave/models"
 	"github.com/robertkrimen/otto"
-	"io/ioutil"
-	"os"
 )
 
 var VMs = make([]*otto.Otto, 0)
+var Alerts = make(chan models.Alert, 0)
 
 func init() {
-	//loadRules()
+	//go processAlerts()
 	buildVMs()
 }
 
+var alerting_function = func(call otto.FunctionCall) otto.Value {
+	Alerts <- models.Alert{} //call.Argument(0).String()
+	return otto.Value{}
+}
+
+func processAlerts() {
+	for _ = range Alerts {
+		// save to database
+		// send down websocket
+		// update metadata relationships
+		// email / message / page
+	}
+}
+
 func buildVMs() {
-	rule_path := "engines/ids/rules/"
-	infos, err := ioutil.ReadDir(rule_path)
+	rule_path := "engines/ids/rules"
+	rule_files, err := helpers.AssetDir(rule_path)
 	if err != nil {
-		log.Error(err.Error())
+		log.WithFields(log.Fields{
+			"at":    "ids.buildVMs",
+			"error": err.Error(),
+		}).Error("unable to load rules")
 		return
 	}
-	for _, info := range infos {
-		if info.IsDir() {
-			manifest_file := rule_path + info.Name() + "/manifest.json"
-			rule_file := rule_path + info.Name() + "/rule.js"
-			if _, err := os.Stat(manifest_file); os.IsNotExist(err) {
-				log.Warn(manifest_file)
-				continue
-			}
-			if _, err := os.Stat(rule_file); os.IsNotExist(err) {
-				log.Warn(rule_file)
-				continue
-			}
-			rule_func_data, err := ioutil.ReadFile(rule_file)
+	for _, rule_file := range rule_files {
+		if len(rule_file) < 3 {
+			continue
+		} else if rule_file[len(rule_file)-3:] != ".js" {
+			continue
+		}
+		if rule_data, ferr := helpers.Asset(rule_path + "/" + rule_file); ferr == nil {
+			vm := otto.New()
+			_, err := vm.Run(string(rule_data))
 			if err != nil {
 				log.Error(err)
-				continue
 			}
-			vm := otto.New()
-			vm.Run(string(rule_func_data))
-			//vm.Set("alert", func(call otto.FunctionCall) otto.Value {
-			//	alerts <- call.Argument(0).String()
-			//	return otto.Value{}
-			//})
+			vm.Set("alert", alerting_function)
 			VMs = append(VMs, vm)
+		} else {
+			log.WithFields(log.Fields{
+				"at":    "ids.buildVMs",
+				"error": ferr.Error(),
+			}).Error("unable to load rule file")
 		}
 	}
 }
 
 func Insert(frame string, parsed models.Wireless80211Frame) {
+	// dedup between collectors
 	for _, vm := range VMs {
-		vm.Run(fmt.Sprintf("evaluate(%s)", frame))
+		_, err := vm.Run(fmt.Sprintf("evaluate(%s)", frame))
+		if err != nil {
+			log.Error(err)
+		}
 	}
 }

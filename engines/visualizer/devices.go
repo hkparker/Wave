@@ -19,6 +19,7 @@ func updateKnownDevices(frame models.Wireless80211Frame) {
 
 func registerNewDevice(mac string) {
 	DevicesMux.Lock()
+	defer DevicesMux.Unlock()
 	if broadcast(mac) {
 		return
 	}
@@ -28,7 +29,6 @@ func registerNewDevice(mac string) {
 	Devices[mac] = device
 	device.Save()
 	visualizeNewDevice(device)
-	DevicesMux.Unlock()
 }
 
 func broadcast(mac string) bool {
