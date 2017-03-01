@@ -12,7 +12,7 @@ var VMs = make([]*otto.Otto, 0)
 var Alerts = make(chan models.Alert, 0)
 
 func init() {
-	//go processAlerts()
+	go processAlerts()
 	buildVMs()
 }
 
