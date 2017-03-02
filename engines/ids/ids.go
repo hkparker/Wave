@@ -8,11 +8,13 @@ import (
 	"github.com/robertkrimen/otto"
 )
 
-var VMs = make([]*otto.Otto, 0)
+var VMs = make(map[string][]*otto.Otto, 0)
+var NewVMs = make(chan []*otto.Otto, 1)
 var Alerts = make(chan models.Alert, 0)
 
 func init() {
 	go processAlerts()
+	go prepareVMs()
 	buildVMs()
 }
 
@@ -23,6 +25,7 @@ var alerting_function = func(call otto.FunctionCall) otto.Value {
 
 func processAlerts() {
 	for _ = range Alerts {
+		// dedup between interfaces
 		// save to database
 		// send down websocket
 		// update metadata relationships
@@ -30,7 +33,13 @@ func processAlerts() {
 	}
 }
 
-func buildVMs() {
+func prepareVMs() {
+	for {
+		NewVMs <- buildVMs()
+	}
+}
+
+func buildVMs() (vm_set []*otto.Otto) {
 	rule_path := "engines/ids/rules"
 	rule_files, err := helpers.AssetDir(rule_path)
 	if err != nil {
@@ -53,7 +62,7 @@ func buildVMs() {
 				log.Error(err)
 			}
 			vm.Set("alert", alerting_function)
-			VMs = append(VMs, vm)
+			vm_set = append(vm_set, vm)
 		} else {
 			log.WithFields(log.Fields{
 				"at":    "ids.buildVMs",
@@ -61,11 +70,16 @@ func buildVMs() {
 			}).Error("unable to load rule file")
 		}
 	}
+	return
 }
 
 func Insert(frame string, parsed models.Wireless80211Frame) {
-	// dedup between collectors
-	for _, vm := range VMs {
+	vm_set, ok := VMs[parsed.Interface]
+	if !ok {
+		vm_set = <-NewVMs
+		VMs[parsed.Interface] = vm_set
+	}
+	for _, vm := range vm_set {
 		_, err := vm.Run(fmt.Sprintf("evaluate(%s)", frame))
 		if err != nil {
 			log.Error(err)
