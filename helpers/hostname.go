@@ -13,6 +13,17 @@ var WavePort int
 var CollectorPort int
 var TLS bool
 
+func init() {
+	if TestingCmd() {
+		WaveAddress = "http://127.0.0.1"
+		WaveBind = "127.0.0.1"
+		WaveHostname = "localhost"
+		WavePort = 8080
+		CollectorPort = 8888
+		TLS = false
+	}
+}
+
 func setHostname() {
 	WaveHostname = os.Getenv("WAVE_HOSTNAME")
 	if WaveHostname == "" {

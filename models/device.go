@@ -1,7 +1,6 @@
 package models
 
 import (
-	//log "github.com/Sirupsen/logrus"
 	"github.com/jinzhu/gorm"
 )
 
@@ -14,4 +13,8 @@ type Device struct {
 
 func (device *Device) Save() error {
 	return Orm.Save(&device).Error
+}
+
+func (device *Device) Delete() error {
+	return Orm.Delete(&device).Error
 }

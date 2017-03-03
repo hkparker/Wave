@@ -10,6 +10,7 @@ import (
 	"encoding/pem"
 	"errors"
 	log "github.com/Sirupsen/logrus"
+	"github.com/hkparker/Wave/helpers"
 	"github.com/jinzhu/gorm"
 	"math/big"
 	"net"
@@ -139,10 +140,9 @@ func selfSignedCert() (cert_data []byte, key_data []byte) {
 		SerialNumber: randomSerial(),
 		Subject: pkix.Name{
 			Organization: []string{"Wave"},
-			CommonName:   "wave", //helpers.WaveHost,
+			CommonName:   helpers.WaveHostname,
 		},
-		IPAddresses:           []net.IP{net.ParseIP("127.0.0.1")},
-		DNSNames:              []string{"wave"}, // store non-ip hostname
+		IPAddresses:           []net.IP{net.ParseIP(helpers.WaveBind)},
 		NotBefore:             time.Now(),
 		NotAfter:              time.Now().AddDate(6, 0, 0),
 		BasicConstraintsValid: true,

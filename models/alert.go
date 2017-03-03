@@ -1,7 +1,6 @@
 package models
 
 import (
-	//log "github.com/Sirupsen/logrus"
 	"github.com/jinzhu/gorm"
 )
 
@@ -10,4 +9,12 @@ type Alert struct {
 	Title    string
 	Rule     int
 	Severity string
+}
+
+func (alert *Alert) Save() error {
+	return Orm.Save(&alert).Error
+}
+
+func (alert *Alert) Delete() error {
+	return Orm.Delete(&alert).Error
 }
