@@ -97,6 +97,7 @@ func Insert(frame string, parsed models.Wireless80211Frame) {
 	for _, vm := range vm_set {
 		evals.Add(1)
 		go func(vm *otto.Otto) {
+			defer evals.Done()
 			_, err := vm.Run(fmt.Sprintf("evaluate(%s)", frame))
 			if err != nil {
 				log.WithFields(log.Fields{}).Error(err)
