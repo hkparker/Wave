@@ -14,7 +14,10 @@ func init() {
 			for _, client := range VisualClients {
 				err := client.WriteJSON(event)
 				if err != nil {
-					log.Warn(err)
+					log.WithFields(log.Fields{
+						"at":    "controllers.init",
+						"error": err.Error(),
+					}).Warn("error writing visual update to client")
 				}
 			}
 		}

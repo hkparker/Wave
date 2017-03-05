@@ -1,11 +1,13 @@
 package ids
 
 import (
+	"encoding/json"
 	"fmt"
 	log "github.com/Sirupsen/logrus"
 	"github.com/hkparker/Wave/helpers"
 	"github.com/hkparker/Wave/models"
 	"github.com/robertkrimen/otto"
+	"sync"
 )
 
 var VMs = make(map[string][]*otto.Otto, 0)
@@ -15,11 +17,19 @@ var Alerts = make(chan models.Alert, 0)
 func init() {
 	go processAlerts()
 	go prepareVMs()
-	buildVMs()
 }
 
 var alerting_function = func(call otto.FunctionCall) otto.Value {
-	Alerts <- models.Alert{} //call.Argument(0).String()
+	new_alert := models.Alert{}
+	err := json.Unmarshal([]byte(call.Argument(0).String()), new_alert)
+	if err != nil {
+		log.WithFields(log.Fields{
+			"at":    "ids.alerting_function",
+			"error": err.Error(),
+		}).Error("bad alert from rule")
+	} else {
+		Alerts <- new_alert
+	}
 	return otto.Value{}
 }
 
@@ -59,7 +69,11 @@ func buildVMs() (vm_set []*otto.Otto) {
 			vm := otto.New()
 			_, err := vm.Run(string(rule_data))
 			if err != nil {
-				log.Error(err)
+				log.WithFields(log.Fields{
+					"at":    "ids.buildVMs",
+					"file":  rule_file,
+					"error": err.Error(),
+				}).Error("error loading rule data into VM")
 			}
 			vm.Set("alert", alerting_function)
 			vm_set = append(vm_set, vm)
@@ -79,10 +93,15 @@ func Insert(frame string, parsed models.Wireless80211Frame) {
 		vm_set = <-NewVMs
 		VMs[parsed.Interface] = vm_set
 	}
+	var evals sync.WaitGroup
 	for _, vm := range vm_set {
-		_, err := vm.Run(fmt.Sprintf("evaluate(%s)", frame))
-		if err != nil {
-			log.Error(err)
-		}
+		evals.Add(1)
+		go func(vm *otto.Otto) {
+			_, err := vm.Run(fmt.Sprintf("evaluate(%s)", frame))
+			if err != nil {
+				log.WithFields(log.Fields{}).Error(err)
+			}
+		}(vm)
 	}
+	evals.Wait()
 }

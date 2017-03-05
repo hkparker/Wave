@@ -38,7 +38,10 @@ func APITLSCertificate() (pair tls.Certificate) {
 		private_key,
 	)
 	if err != nil {
-		log.Fatalf("error reading TLS data from database: %s", err)
+		log.WithFields(log.Fields{
+			"at":    "models.APITLSCertificate",
+			"error": err.Error(),
+		}).Fatal("error reading TLS data from database")
 	}
 	return
 }
@@ -48,7 +51,10 @@ func APITLSData() ([]byte, []byte) {
 	var model TLS
 	err := Orm.First(&model).Error
 	if err != nil {
-		log.Fatal("error loading first TLS record for data: %s", err)
+		log.WithFields(log.Fields{
+			"at":    "models.APITLSData",
+			"error": err.Error(),
+		}).Fatal("error loading first TLS record for data")
 	}
 	return []byte(model.CaCert), []byte(model.PrivateKey)
 }
@@ -59,32 +65,44 @@ func SetTLS(request map[string]string) (err error) {
 	var collector_count int
 	err = Orm.Find(&collectors).Count(&collector_count).Error
 	if err != nil {
-		log.Error("unable to load collector count for setting tls: %s", err)
+		log.WithFields(log.Fields{
+			"at":    "models.SetTLS",
+			"error": err.Error(),
+		}).Error("unable to load collector count for setting tls")
 		return
 	}
 	if collector_count != 0 {
 		err_str := "cannot set TLS data until all collectors are deleted"
-		log.Error(err_str)
+		log.WithFields(log.Fields{
+			"at": "models.SetTLS",
+		}).Error(err_str)
 		err = errors.New(err_str)
 		return
 	}
 	var config TLS
 	err = Orm.First(&config).Error
 	if err != nil {
-		log.Errorf("error loading TLS config to set: %s", err)
+		log.WithFields(log.Fields{
+			"at":    "models.SetTLS",
+			"error": err.Error(),
+		}).Error("error loading TLS config to set")
 		return
 	}
 
 	if _, ok := request["ca_cert"]; !ok {
 		err_str := "missing ca_cert key"
-		log.Error(err_str)
+		log.WithFields(log.Fields{
+			"at": "models.SetTLS",
+		}).Error(err_str)
 		err = errors.New(err_str)
 		return
 	}
 
 	if _, ok := request["private_key"]; !ok {
 		err_str := "missing private_key key"
-		log.Error(err_str)
+		log.WithFields(log.Fields{
+			"at": "models.SetTLS",
+		}).Error(err_str)
 		err = errors.New(err_str)
 		return
 	}
@@ -93,7 +111,10 @@ func SetTLS(request map[string]string) (err error) {
 	config.PrivateKey = request["private_key"]
 	err = Orm.Save(&config).Error
 	if err != nil {
-		log.Error("error saving new TLS data: %s", err)
+		log.WithFields(log.Fields{
+			"at":    "models.SetTLS",
+			"error": err.Error(),
+		}).Error("error saving new TLS data")
 	}
 	return
 }
@@ -107,7 +128,10 @@ func createTLSIfMissing() (err error) {
 	var tls []TLS
 	err = Orm.Find(&tls).Count(&count).Error
 	if err != nil {
-		log.Fatalf("error loading tls count from database: %s", err)
+		log.WithFields(log.Fields{
+			"at":    "models.createTLSIfMissing",
+			"error": err.Error(),
+		}).Fatal("error loading tls count from database")
 	}
 	if count == 0 {
 		cert_data, key_data := selfSignedCert()
@@ -117,7 +141,10 @@ func createTLSIfMissing() (err error) {
 		}
 		err = Orm.Save(&new_config).Error
 		if err != nil {
-			log.Fatalf("error saving new self-signed certificate: %s", err)
+			log.WithFields(log.Fields{
+				"at":    "models.createTLSIfMissing",
+				"error": err.Error(),
+			}).Fatal("error saving new self-signed certificate")
 		}
 	}
 	return
@@ -127,7 +154,10 @@ func randomSerial() *big.Int {
 	serial_number_limit := new(big.Int).Lsh(big.NewInt(1), 128)
 	serial_number, err := rand.Int(rand.Reader, serial_number_limit)
 	if err != nil {
-		log.Fatalf("failed to generate serial number for self signed certificate: %s", err)
+		log.WithFields(log.Fields{
+			"at":    "models.randomSerial",
+			"error": err.Error(),
+		}).Fatal("failed to generate serial number for self signed certificate")
 	}
 	return serial_number
 }
@@ -154,21 +184,30 @@ func selfSignedCert() (cert_data []byte, key_data []byte) {
 	// Generate key
 	priv, err := rsa.GenerateKey(rand.Reader, 2048)
 	if err != nil {
-		log.Fatalf("failed to generate private key for self signed certificate: %s", err)
+		log.WithFields(log.Fields{
+			"at":    "models.selfSignedCert",
+			"error": err.Error(),
+		}).Fatal("failed to generate private key for self signed certificate")
 	}
 	pub := &priv.PublicKey
 
 	// Create Certificate
 	cert_der, err := x509.CreateCertificate(rand.Reader, ca, ca, pub, priv)
 	if err != nil {
-		log.Fatalf("failed to create self signed certificate: %s", err)
+		log.WithFields(log.Fields{
+			"at":    "models.selfSignedCert",
+			"error": err.Error(),
+		}).Fatal("failed to create self signed certificate")
 	}
 
 	// Create PEM encoding of certificate
 	var cert_buffer bytes.Buffer
 	err = pem.Encode(&cert_buffer, &pem.Block{Type: "CERTIFICATE", Bytes: cert_der})
 	if err != nil {
-		log.Fatalf("could not PEM encode certificate data: %s", err)
+		log.WithFields(log.Fields{
+			"at":    "models.selfSignedCert",
+			"error": err.Error(),
+		}).Fatal("could not PEM encode certificate data")
 	}
 	cert_data = cert_buffer.Bytes()
 
@@ -176,7 +215,10 @@ func selfSignedCert() (cert_data []byte, key_data []byte) {
 	var key_buffer bytes.Buffer
 	err = pem.Encode(&key_buffer, &pem.Block{Type: "RSA PRIVATE KEY", Bytes: x509.MarshalPKCS1PrivateKey(priv)})
 	if err != nil {
-		log.Fatalf("could not PEM encode key data: %s", err)
+		log.WithFields(log.Fields{
+			"at":    "models.selfSignedCert",
+			"error": err.Error(),
+		}).Fatal("could not PEM encode key data")
 	}
 	key_data = key_buffer.Bytes()
 

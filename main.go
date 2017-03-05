@@ -11,12 +11,7 @@ import (
 func main() {
 	// Setup environment
 	helpers.Setup()
-	models.Connect(
-		helpers.DBUsername,
-		helpers.DBPassword,
-		helpers.DBName,
-		helpers.DBTLS,
-	)
+	models.Connect()
 
 	// Start Collector server
 	go helpers.RunTLS(

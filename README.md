@@ -8,7 +8,7 @@ You'll need `npm`, `go`, and `docker-compose` available.
 
 ### Installing dependencies
 
-Install [reflex](https://github.com/cespare/reflex), [forego](https://github.com/ddollar/forego), and [go-bindata](https://github.com/jteeuwen/go-bindata), run `go get -t` and `npm install`.
+Install [reflex](https://github.com/cespare/reflex), [forego](https://github.com/ddollar/forego), and [go-bindata](https://github.com/jteeuwen/go-bindata), run `make embedded-assets`, `go get -t`, and `npm install`.
 
 ```
 make deps

@@ -8,6 +8,8 @@ import (
 var DBHostname string
 var DBUsername string
 var DBPassword string
+var DBAdminUsername string
+var DBAdminPassword string
 var DBName string
 var DBTLS string
 
@@ -18,11 +20,13 @@ func setDatabase() {
 	}
 
 	DBUsername = os.Getenv("WAVE_DB_USERNAME")
+	DBAdminUsername = os.Getenv("WAVE_DB_ADMIN_USERNAME")
 	if DBUsername == "" {
 		log.Fatal("WAVE_DB_USERNAME envar must be provided")
 	}
 
 	DBPassword = os.Getenv("WAVE_DB_PASSWORD")
+	DBAdminPassword = os.Getenv("WAVE_DB_ADMIN_PASSWORD")
 	if DBPassword == "" {
 		log.Fatal("WAVE_DB_PASSWORD envar must be provided")
 	}

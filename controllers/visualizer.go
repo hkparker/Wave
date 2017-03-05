@@ -25,6 +25,10 @@ func streamVisualization(c *gin.Context) {
 		for _, event := range visualizer.CatchupEvents() {
 			err := conn.WriteJSON(event)
 			if err != nil {
+				log.WithFields(log.Fields{
+					"at":    "controllers.streamVisualization",
+					"error": err.Error(),
+				}).Error("error writing catch-up event")
 			}
 		}
 		VisualClients[id] = conn

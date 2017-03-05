@@ -44,7 +44,10 @@ func Collectors() (collectors []Collector, err error) {
 func CreateCollector(name string) (collector Collector, err error) {
 	cert_data, key_data, err := newCollectorKeys()
 	if err != nil {
-		log.Errorf("failed to create collector: %s", err)
+		log.WithFields(log.Fields{
+			"at":    "models.CreateCollector",
+			"error": err.Error(),
+		}).Error("failed to create collector")
 		return
 	}
 	collector = Collector{
@@ -60,7 +63,10 @@ func newCollectorKeys() (cert_data []byte, key_data []byte, err error) {
 	api_cert := APITLSCertificate()
 	ca, err := x509.ParseCertificate(api_cert.Certificate[0])
 	if err != nil {
-		log.Errorf("error parsing API TLS certificate for new collector: %s", err)
+		log.WithFields(log.Fields{
+			"at":    "models.newColletorKeys",
+			"error": err.Error(),
+		}).Error("error parsing API TLS certificate for new collector")
 		return
 	}
 	ca_key := api_cert.PrivateKey
@@ -78,13 +84,19 @@ func newCollectorKeys() (cert_data []byte, key_data []byte, err error) {
 	}
 	collector_priv, err := rsa.GenerateKey(rand.Reader, 2048)
 	if err != nil {
-		log.Errorf("error generating private key for new collector: %s", err)
+		log.WithFields(log.Fields{
+			"at":    "models.newColletorKeys",
+			"error": err.Error(),
+		}).Error("error generating private key for new collector")
 		return
 	}
 	collector_pub := &collector_priv.PublicKey
 	collector_cert_data, err := x509.CreateCertificate(rand.Reader, collector_cert, ca, collector_pub, ca_key)
 	if err != nil {
-		log.Errorf("error creating collector certificate: %s", err)
+		log.WithFields(log.Fields{
+			"at":    "models.newColletorKeys",
+			"error": err.Error(),
+		}).Error("error creating collector certificate")
 		return
 	}
 
@@ -92,7 +104,10 @@ func newCollectorKeys() (cert_data []byte, key_data []byte, err error) {
 	var cert_buffer bytes.Buffer
 	err = pem.Encode(&cert_buffer, &pem.Block{Type: "CERTIFICATE", Bytes: collector_cert_data})
 	if err != nil {
-		log.Errorf("could not PEM encode collector certificate data: %s", err)
+		log.WithFields(log.Fields{
+			"at":    "models.newColletorKeys",
+			"error": err.Error(),
+		}).Error("could not PEM encode collector certificate data")
 		return
 	}
 	cert_data = cert_buffer.Bytes()
@@ -101,7 +116,10 @@ func newCollectorKeys() (cert_data []byte, key_data []byte, err error) {
 	var key_buffer bytes.Buffer
 	err = pem.Encode(&key_buffer, &pem.Block{Type: "RSA PRIVATE KEY", Bytes: x509.MarshalPKCS1PrivateKey(collector_priv)})
 	if err != nil {
-		log.Errorf("could not PEM encode collector key data: %s", err)
+		log.WithFields(log.Fields{
+			"at":    "models.newColletorKeys",
+			"error": err.Error(),
+		}).Error("could not PEM encode collector key data")
 		return
 	}
 	key_data = key_buffer.Bytes()

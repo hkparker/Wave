@@ -7,4 +7,11 @@ var manifest = {
 function evaluate(frame) {
 	// We can pretty print each from by logging JSON.stringify
 	//console.log(JSON.stringify(frame, null, 2))
+
+	// If this frame results in an IDS alert, we send an 
+	alert(JSON.stringify({
+		"Title": "Example rule got a frame",
+		"Rule": manifest.Name,
+		"Severity": "low"
+	}))
 }

@@ -94,11 +94,19 @@ func createAdmin() {
 			password := helpers.RandomString()
 			err = admin.SetPassword(password)
 			if err != nil {
-				log.Fatal(err)
+				log.WithFields(log.Fields{
+					"at":  "models.createAdmin",
+					"err": err.Error(),
+				}).Error("unable to create admin")
+				return
 			}
 			err = admin.Save()
 			if err != nil {
-				log.Fatal(err)
+				log.WithFields(log.Fields{
+					"at":  "models.createAdmin",
+					"err": err.Error(),
+				}).Error("unable to create admin")
+				return
 			}
 			log.WithFields(log.Fields{
 				"at":       "models.createAdmin",
@@ -107,6 +115,9 @@ func createAdmin() {
 			}).Info("created_default_admin")
 		}
 	} else {
-		log.Fatal(err)
+		log.WithFields(log.Fields{
+			"at":  "models.createAdmin",
+			"err": err.Error(),
+		}).Error("error retrieving admins")
 	}
 }

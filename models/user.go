@@ -118,10 +118,8 @@ func (user *User) DestroyAllOtherSessions(session_cookie string) {
 	var sessions []Session
 	for _, session := range user.Sessions {
 		if session.Cookie != session_cookie {
-			err := Orm.Unscoped().Delete(&session)
-			if err != nil {
-
-			}
+			Orm.Model(&user).Association("Sessions").Delete(&session)
+			Orm.Unscoped().Delete(&session)
 		} else {
 			sessions = append(sessions, session)
 		}
@@ -131,17 +129,12 @@ func (user *User) DestroyAllOtherSessions(session_cookie string) {
 }
 
 func (user *User) DestroyAllSessions() {
-	user.Sessions = []Session{}
-	err := user.Save()
-	if err != nil {
-
-	}
 	for session := range user.Sessions {
-		err := Orm.Unscoped().Delete(&session)
-		if err != nil {
-
-		}
+		Orm.Model(&user).Association("Sessions").Delete(&session)
+		Orm.Unscoped().Delete(&session)
 	}
+	user.Sessions = []Session{}
+	user.Save()
 }
 
 func (user User) OnlyAdmin() (only_admin bool, err error) {

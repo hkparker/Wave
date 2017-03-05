@@ -3,6 +3,7 @@ package controllers
 import (
 	"github.com/gin-gonic/contrib/static"
 	"github.com/gin-gonic/gin"
+	"github.com/hkparker/Wave/engines/visualizer"
 	"github.com/hkparker/Wave/helpers"
 	"github.com/hkparker/Wave/middleware"
 )
@@ -51,6 +52,8 @@ func NewAPI() *gin.Engine {
 }
 
 func NewCollector() *gin.Engine {
+	visualizer.Load()
+
 	collector := gin.Default()
 	collector.GET("/frames", pollCollector)
 	return collector
