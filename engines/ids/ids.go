@@ -75,7 +75,8 @@ func buildVMs() (vm_set []*otto.Otto) {
 					"error": err.Error(),
 				}).Error("error loading rule data into VM")
 			}
-			vm.Set("alert", alerting_function)
+			vm.Set("alert_string", alerting_function)
+			vm.Run("alert = function(event) { alert_string(JSON.stringify(event)) }")
 			vm_set = append(vm_set, vm)
 		} else {
 			log.WithFields(log.Fields{

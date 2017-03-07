@@ -9,9 +9,9 @@ function evaluate(frame) {
 	//console.log(JSON.stringify(frame, null, 2))
 
 	// If this frame results in an IDS alert, we send an 
-	alert(JSON.stringify({
+	alert({
 		"Title": "Example rule got a frame",
 		"Rule": manifest.Name,
 		"Severity": "low"
-	}))
+	})
 }
