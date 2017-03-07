@@ -1,7 +1,7 @@
 package visualizer
 
 import (
-	//log "github.com/Sirupsen/logrus"
+	log "github.com/Sirupsen/logrus"
 	"github.com/hkparker/Wave/models"
 )
 
@@ -39,9 +39,17 @@ func broadcast(mac string) bool {
 }
 
 func visualizeNewDevice(device models.Device) {
-	//controllers.VisualPool <-
-	//log.WithFields(log.Fields{
-	//      "at": "visualizeNewDevice",
-	//	"mac": device.MAC,
-	//}).Info("new device observed")
+	new_resources := make(VisualEvent)
+	new_resources["NewDevices"] = append(
+		new_resources["NewDevices"],
+		map[string]string{
+			"MAC":    device.MAC,
+			"Vendor": device.Vendor,
+		},
+	)
+	VisualEvents <- new_resources
+	log.WithFields(log.Fields{
+		"at":  "visualizeNewDevice",
+		"mac": device.MAC,
+	}).Info("new device observed")
 }

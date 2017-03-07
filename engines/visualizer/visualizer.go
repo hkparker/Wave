@@ -5,6 +5,9 @@ import (
 	"sync"
 )
 
+type VisualEvent map[string][]map[string]string
+
+var VisualEvents = make(chan interface{}, 0)
 var Devices = make(map[string]models.Device)
 var DevicesMux sync.Mutex
 var Networks = make(map[string][]models.Network)
@@ -34,7 +37,7 @@ func Insert(frame models.Wireless80211Frame) {
 	updateAccessPoints(frame)
 	//updateProbeRequests(frame)
 	//updateNetworkAssociations(frames)
-	//updateTxRx()
+	//updateTx()
 }
 
 func CatchupEvents() []map[string]string {

@@ -1,7 +1,7 @@
 package visualizer
 
 import (
-	//log "github.com/Sirupsen/logrus"
+	log "github.com/Sirupsen/logrus"
 	"github.com/hkparker/Wave/models"
 )
 
@@ -21,9 +21,17 @@ func updateAccessPoints(frame models.Wireless80211Frame) {
 }
 
 func visualizeNewAP(mac string) {
-	//controllers.VisualPool <-
-	//log.WithFields(log.Fields{
-	//      "at": "visualizeNewAP",
-	//	"mac": mac,
-	//}).Info("new AP observed")
+	update_resources := make(VisualEvent)
+	update_resources["UpdateDevices"] = append(
+		update_resources["UpdateDevices"],
+		map[string]string{
+			"MAC":  mac,
+			"IsAP": "true",
+		},
+	)
+	VisualEvents <- update_resources
+	log.WithFields(log.Fields{
+		"at":  "visualizer.visualizeNewAP",
+		"mac": mac,
+	}).Info("update device as ap")
 }

@@ -3,6 +3,7 @@ package controllers
 import (
 	log "github.com/Sirupsen/logrus"
 	"github.com/gin-gonic/gin"
+	"github.com/hkparker/Wave/engines/visualizer"
 	"github.com/hkparker/Wave/models"
 	"net/http"
 )
@@ -10,7 +11,7 @@ import (
 func init() {
 	go func() {
 		for {
-			event := <-VisualEvents
+			event := <-visualizer.VisualEvents
 			for _, client := range VisualClients {
 				err := client.WriteJSON(event)
 				if err != nil {

@@ -8,7 +8,6 @@ import (
 	"github.com/satori/go.uuid"
 )
 
-var VisualEvents = make(chan map[string]string, 0)
 var VisualClients = make(map[string]*websocket.Conn, 0)
 
 func streamVisualization(c *gin.Context) {

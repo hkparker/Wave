@@ -6,7 +6,7 @@ import (
 
 type Device struct {
 	gorm.Model
-	MAC         string
+	MAC         string `sql:"not null;unique"`
 	Vendor      string
 	AccessPoint bool
 }
