@@ -42,10 +42,7 @@ func visualizeNewDevice(device models.Device) {
 	new_resources := make(VisualEvent)
 	new_resources["NewDevices"] = append(
 		new_resources["NewDevices"],
-		map[string]string{
-			"MAC":    device.MAC,
-			"Vendor": device.Vendor,
-		},
+		device.VisualData(),
 	)
 	VisualEvents <- new_resources
 	log.WithFields(log.Fields{

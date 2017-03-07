@@ -11,6 +11,13 @@ type Device struct {
 	AccessPoint bool
 }
 
+func (device *Device) VisualData() map[string]string {
+	return map[string]string{
+		"MAC":    device.MAC,
+		"Vendor": device.Vendor,
+	}
+}
+
 func (device *Device) Save() error {
 	return Orm.Save(&device).Error
 }

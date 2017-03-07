@@ -7,7 +7,7 @@ import (
 
 type VisualEvent map[string][]map[string]string
 
-var VisualEvents = make(chan interface{}, 0)
+var VisualEvents = make(chan VisualEvent, 0)
 var Devices = make(map[string]models.Device)
 var DevicesMux sync.Mutex
 var Networks = make(map[string][]models.Network)
@@ -40,8 +40,16 @@ func Insert(frame models.Wireless80211Frame) {
 	//updateTx()
 }
 
-func CatchupEvents() []map[string]string {
-	// for each device, visualize new device
-	// for each session, ...
-	return make([]map[string]string, 0)
+func CatchupEvents() []VisualEvent {
+	new_resources := make(VisualEvent)
+	for _, device := range Devices {
+		new_resources["NewDevices"] = append(
+			new_resources["NewDevices"],
+			device.VisualData(),
+		)
+	}
+	// add other resources, create other events
+	return []VisualEvent{
+		new_resources,
+	}
 }
