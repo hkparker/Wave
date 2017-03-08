@@ -1,6 +1,9 @@
 package controllers
 
 import (
+	"crypto/sha256"
+	"crypto/tls"
+	"encoding/hex"
 	"encoding/json"
 	log "github.com/Sirupsen/logrus"
 	"github.com/gin-gonic/gin"
@@ -142,6 +145,11 @@ func pollCollector(c *gin.Context) {
 	conn, err := upgrayedd.Upgrade(c.Writer, c.Request, nil)
 	if err == nil {
 		defer conn.Close()
+		// Generate an ID for this collector from the certificate presented
+		sig := conn.UnderlyingConn().(*tls.Conn).ConnectionState().PeerCertificates[0].Signature
+		sha := sha256.Sum256(sig)
+		collector_id := hex.EncodeToString(sha[:])
+
 		for {
 			_, frame_bytes, err := conn.ReadMessage()
 			if err != nil {
@@ -152,7 +160,7 @@ func pollCollector(c *gin.Context) {
 			json.Unmarshal(frame_bytes, &frame)
 
 			visualizer.Insert(frame)
-			ids.Insert(string(frame_bytes), frame)
+			ids.Insert(string(frame_bytes), frame, collector_id)
 		}
 	} else {
 		log.WithFields(log.Fields{

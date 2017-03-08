@@ -21,7 +21,7 @@ func init() {
 
 var alerting_function = func(call otto.FunctionCall) otto.Value {
 	new_alert := models.Alert{}
-	err := json.Unmarshal([]byte(call.Argument(0).String()), new_alert)
+	err := json.Unmarshal([]byte(call.Argument(0).String()), &new_alert)
 	if err != nil {
 		log.WithFields(log.Fields{
 			"at":    "ids.alerting_function",
@@ -88,11 +88,11 @@ func buildVMs() (vm_set []*otto.Otto) {
 	return
 }
 
-func Insert(frame string, parsed models.Wireless80211Frame) {
-	vm_set, ok := VMs[parsed.Interface]
+func Insert(frame string, parsed models.Wireless80211Frame, collector_id string) {
+	vm_set, ok := VMs[collector_id]
 	if !ok {
 		vm_set = <-NewVMs
-		VMs[parsed.Interface] = vm_set
+		VMs[collector_id] = vm_set
 	}
 	var evals sync.WaitGroup
 	for _, vm := range vm_set {

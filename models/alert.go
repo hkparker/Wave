@@ -7,7 +7,7 @@ import (
 type Alert struct {
 	gorm.Model
 	Title    string
-	Rule     int
+	Rule     string
 	Severity string
 }
 
