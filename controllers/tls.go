@@ -26,6 +26,7 @@ func setTLS(c *gin.Context) {
 	err = models.SetTLS(tls_info)
 	if err != nil {
 		c.JSON(500, gin.H{"error": err.Error()})
-		return
+	} else {
+		c.JSON(200, gin.H{"success": "true"})
 	}
 }

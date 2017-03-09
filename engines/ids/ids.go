@@ -93,6 +93,7 @@ func Insert(frame string, parsed models.Wireless80211Frame, collector_id string)
 	if !ok {
 		vm_set = <-NewVMs
 		VMs[collector_id] = vm_set
+		// set the collector id as a variable
 	}
 	var evals sync.WaitGroup
 	for _, vm := range vm_set {

@@ -25,8 +25,6 @@ func (session Session) HTTPCookie() http.Cookie {
 		MaxAge:   int(time.Now().AddDate(1, 0, 1).Unix()),
 		Secure:   helpers.TLS,
 		HttpOnly: true,
-		Raw:      "wave_session=" + session.Cookie,
-		Unparsed: []string{"wave_session=" + session.Cookie},
 	}
 
 	return cookie

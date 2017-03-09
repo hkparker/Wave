@@ -12,13 +12,19 @@ func init() {
 	go func() {
 		for {
 			event := <-visualizer.VisualEvents
-			for _, client := range VisualClients {
+			VisualClientMux.Lock()
+			clients_list := VisualClients
+			VisualClientMux.Unlock()
+			for id, client := range clients_list {
 				err := client.WriteJSON(event)
 				if err != nil {
 					log.WithFields(log.Fields{
 						"at":    "controllers.init",
 						"error": err.Error(),
 					}).Warn("error writing visual update to client")
+					VisualClientMux.Lock()
+					delete(VisualClients, id)
+					VisualClientMux.Unlock()
 				}
 			}
 		}

@@ -6,21 +6,17 @@ import (
 	"github.com/gorilla/websocket"
 	"github.com/hkparker/Wave/engines/visualizer"
 	"github.com/satori/go.uuid"
+	"sync"
 )
 
 var VisualClients = make(map[string]*websocket.Conn, 0)
+var VisualClientMux sync.Mutex
 
 func streamVisualization(c *gin.Context) {
 	var upgrayedd websocket.Upgrader
 	conn, err := upgrayedd.Upgrade(c.Writer, c.Request, nil)
 	if err == nil {
 		id := uuid.NewV4().String()
-		defer func() {
-			conn.Close()
-			if _, present := VisualClients[id]; present {
-				delete(VisualClients, id)
-			}
-		}()
 		for _, event := range visualizer.CatchupEvents() {
 			err := conn.WriteJSON(event)
 			if err != nil {
@@ -30,7 +26,9 @@ func streamVisualization(c *gin.Context) {
 				}).Error("error writing catch-up event")
 			}
 		}
+		VisualClientMux.Lock()
 		VisualClients[id] = conn
+		VisualClientMux.Unlock()
 	} else {
 		log.WithFields(log.Fields{
 			"at":    "controllers.streamVisualization",
