@@ -30,7 +30,13 @@ clean:
 # Run go-bindata to create embedded assets for single-binary deployment
 #
 embed-assets:
-	go-bindata -pkg=helpers -o=helpers/bindata.go static/ engines/ids/rules/
+	go-bindata -pkg=helpers -o=helpers/bindata.go static/ engines/ids/rules/ engines/visualizer/metadata
+
+#
+# Download list of vendor mac prefixes from nmap
+#
+update-vendor-bytes:
+	curl https://svn.nmap.org/nmap/nmap-mac-prefixes > engines/visualizer/metadata/nmap-mac-prefixes
 
 #
 # Run the Procfile for development
@@ -66,7 +72,7 @@ build: build-frontend build-backend
 #
 # Build all Versions of Wave in the bin directory
 #
-release: clean test embed-assets
+release: clean test embed-assets update-vendor-bytes
 	GOOS=linux GOARCH=amd64 go build -o bin/Wave-linux
 	GOOS=linux GOARCH=arm go build -o bin/Wave-linux-arm
 	GOOS=freebsd GOARCH=amd64 go build -o bin/Wave-freebsd

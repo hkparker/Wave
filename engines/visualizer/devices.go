@@ -3,6 +3,7 @@ package visualizer
 import (
 	log "github.com/Sirupsen/logrus"
 	"github.com/hkparker/Wave/models"
+	"strings"
 )
 
 func updateKnownDevices(frame models.Wireless80211Frame) {
@@ -23,8 +24,13 @@ func registerNewDevice(mac string) {
 	if broadcast(mac) {
 		return
 	}
+	vendor := "unknown"
+	if vendor_string, ok := VendorBytes[strings.ToUpper(mac[0:8])]; ok {
+		vendor = vendor_string
+	}
 	device := models.Device{
-		MAC: mac,
+		MAC:    mac,
+		Vendor: vendor,
 	}
 	Devices[mac] = device
 	device.Save()
