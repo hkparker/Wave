@@ -3,7 +3,7 @@ all: clean test release
 #
 # Assuming only `go` and `npm` available, install all required utilities
 #
-deps:
+deps: update-vendor-bytes
 	go get github.com/cespare/reflex
 	go get github.com/ddollar/forego
 	go get -u github.com/jteeuwen/go-bindata/...
