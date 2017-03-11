@@ -36,6 +36,7 @@ embed-assets:
 # Download list of vendor mac prefixes from nmap
 #
 update-vendor-bytes:
+	mkdir -p engines/visualizer/metadata
 	curl https://svn.nmap.org/nmap/nmap-mac-prefixes > engines/visualizer/metadata/nmap-mac-prefixes
 
 #
