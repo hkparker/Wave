@@ -25,8 +25,10 @@ func registerNewDevice(mac string) {
 		return
 	}
 	vendor := "unknown"
-	if vendor_string, ok := VendorBytes[strings.ToUpper(mac[0:8])]; ok {
-		vendor = vendor_string
+	if len(mac) >= 8 {
+		if vendor_string, ok := VendorBytes[strings.ToUpper(mac[0:8])]; ok {
+			vendor = vendor_string
+		}
 	}
 	device := models.Device{
 		MAC:    mac,

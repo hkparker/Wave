@@ -18,12 +18,14 @@ func streamVisualization(c *gin.Context) {
 	if err == nil {
 		id := uuid.NewV4().String()
 		for _, event := range visualizer.CatchupEvents() {
-			err := conn.WriteJSON(event)
-			if err != nil {
-				log.WithFields(log.Fields{
-					"at":    "controllers.streamVisualization",
-					"error": err.Error(),
-				}).Error("error writing catch-up event")
+			if len(event) > 0 {
+				err := conn.WriteJSON(event)
+				if err != nil {
+					log.WithFields(log.Fields{
+						"at":    "controllers.streamVisualization",
+						"error": err.Error(),
+					}).Error("error writing catch-up event")
+				}
 			}
 		}
 		VisualClientMux.Lock()
