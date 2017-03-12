@@ -8,19 +8,31 @@ import (
 
 func updateKnownDevices(frame models.Wireless80211Frame) {
 	if _, ok := Devices[frame.Address1]; !ok {
+		DevicesMux.Lock()
 		registerNewDevice(frame.Address1)
-	} else if _, ok := Devices[frame.Address2]; !ok {
+		DevicesMux.Unlock()
+	}
+	if _, ok := Devices[frame.Address2]; !ok {
+		DevicesMux.Lock()
 		registerNewDevice(frame.Address2)
-	} else if _, ok := Devices[frame.Address3]; !ok {
+		DevicesMux.Unlock()
+	}
+	if _, ok := Devices[frame.Address3]; !ok {
+		DevicesMux.Lock()
 		registerNewDevice(frame.Address3)
-	} else if _, ok := Devices[frame.Address4]; !ok {
+		DevicesMux.Unlock()
+	}
+	if _, ok := Devices[frame.Address4]; !ok {
+		DevicesMux.Lock()
 		registerNewDevice(frame.Address4)
+		DevicesMux.Unlock()
 	}
 }
 
 func registerNewDevice(mac string) {
-	DevicesMux.Lock()
-	defer DevicesMux.Unlock()
+	if len(mac) != 17 {
+		return
+	}
 	if broadcast(mac) {
 		return
 	}

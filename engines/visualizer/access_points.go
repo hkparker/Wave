@@ -10,8 +10,15 @@ func updateAccessPoints(frame models.Wireless80211Frame) {
 	defer DevicesMux.Unlock()
 	if frame.Type == "MgmtBeacon" {
 		// Mgmt frame BSSID is Address3
-		dev := Devices[frame.Address3]
-		if !dev.AccessPoint {
+		var dev models.Device
+		ret := models.Orm.Where("MAC = ?", frame.Address3).First(&dev)
+		if ret.Error != nil {
+			log.WithFields(log.Fields{
+				"at":    "visualizer.updateAccessPoints",
+				"MAC":   frame.Address3,
+				"error": ret.Error,
+			}).Error("error looking up AP")
+		} else if !dev.AccessPoint {
 			dev.AccessPoint = true
 			dev.Save()
 			Devices[frame.Address3] = dev
