@@ -55,7 +55,7 @@ func (session *Session) Delete() error {
 }
 
 func SessionFromID(id string) (session Session, err error) {
-	db_err := Orm.First(&session, "Cookie = ?", id)
+	db_err := Orm.Where("Cookie = ?", id).First(&session)
 	err = db_err.Error
 	if err != nil {
 		log.WithFields(log.Fields{

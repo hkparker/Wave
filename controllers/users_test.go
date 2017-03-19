@@ -282,6 +282,9 @@ func TestUserCanUpdatePassword(t *testing.T) {
 	assert.Equal(200, resp.StatusCode)
 	user.Reload()
 	assert.Equal(true, user.ValidAuthentication("1234"))
+	var sessions []models.Session
+	models.Orm.Model(&user).Related(&sessions)
+	assert.Equal(1, len(sessions))
 }
 
 func TestUserCannotUpdatePasswordWithBadPassword(t *testing.T) {
@@ -335,6 +338,9 @@ func TestAdminCanAssignUserPassword(t *testing.T) {
 	assert.Equal(200, resp.StatusCode)
 	user.Reload()
 	assert.Equal(true, user.ValidAuthentication("1234"))
+	var sessions []models.Session
+	models.Orm.Model(&user).Related(&sessions)
+	assert.Equal(0, len(sessions))
 }
 
 func TestUserCannotAssignUserPassword(t *testing.T) {

@@ -78,7 +78,7 @@ func updateUserName(c *gin.Context) {
 			"at":       "controllers.updateUserName",
 			"error":    name_error,
 			"username": username,
-			"user":     user.Name,
+			"user_id":  user.ID,
 		}).Error("error updating user name")
 		return
 	}
@@ -93,14 +93,14 @@ func updateUserName(c *gin.Context) {
 			"at":       "controllers.updateUserName",
 			"error":    db_err.Error(),
 			"username": username,
-			"user":     user.Name,
+			"user_id":  user.ID,
 		}).Error("error updating user name")
 	} else {
 		c.JSON(200, gin.H{"success": "true"})
 		log.WithFields(log.Fields{
 			"at":       "controllers.updateUserName",
 			"username": username,
-			"old_name": user.Name,
+			"user_id":  user.ID,
 		}).Info("user name updated")
 	}
 }

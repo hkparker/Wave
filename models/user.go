@@ -115,21 +115,25 @@ func (user *User) NewSession() (wave_session string, err error) {
 }
 
 func (user *User) DestroyAllOtherSessions(session_cookie string) {
+	var new_sessions []Session
 	var sessions []Session
-	for _, session := range user.Sessions {
+	Orm.Model(&user).Related(&sessions)
+	for _, session := range sessions {
 		if session.Cookie != session_cookie {
 			Orm.Model(&user).Association("Sessions").Delete(&session)
 			Orm.Unscoped().Delete(&session)
 		} else {
-			sessions = append(sessions, session)
+			new_sessions = append(new_sessions, session)
 		}
 	}
-	user.Sessions = sessions
+	user.Sessions = new_sessions
 	user.Save()
 }
 
 func (user *User) DestroyAllSessions() {
-	for session := range user.Sessions {
+	var sessions []Session
+	Orm.Model(&user).Related(&sessions)
+	for _, session := range sessions {
 		Orm.Model(&user).Association("Sessions").Delete(&session)
 		Orm.Unscoped().Delete(&session)
 	}
