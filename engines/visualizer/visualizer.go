@@ -8,6 +8,11 @@ import (
 	"sync"
 )
 
+const (
+	NEW_DEVICES    = "NewDevices"
+	UPDATE_DEVICES = "UpdateDevices"
+)
+
 type VisualEvent map[string][]map[string]string
 
 var VisualEvents = make(chan VisualEvent, 0)
@@ -66,10 +71,97 @@ func Load() {
 
 func Insert(frame models.Wireless80211Frame) {
 	updateKnownDevices(frame)
-	updateAccessPoints(frame)
-	//updateProbeRequests(frame)
+
+	if len(frame.Type) < 4 {
+		log.WithFields(log.Fields{}).Warn()
+		return
+	}
+	switch frame.Type[:4] {
+	case "Mgmt":
+		insertMgmt(frame)
+	case "Data":
+		insertData(frame)
+	case "Ctrl":
+		insertCtrl(frame)
+	//case "Rese":
+	default:
+		log.WithFields(log.Fields{
+			"at":         "visualizer.Insert",
+			"frame.Type": frame.Type,
+		}).Warn("unknown frame type")
+	}
+}
+
+func insertMgmt(frame models.Wireless80211Frame) {
+	switch frame.Type {
+	case "MgmtAssociationReq":
+	case "MgmtAssociationResp":
+	case "MgmtReassociationReq":
+	case "MgmtReassociationResp":
+	case "MgmtProbeReq":
+		updateProbeRequests(frame)
+	case "MgmtProbeResp":
+	case "MgmtMeasurementPilot":
+	case "MgmtBeacon":
+		updateAccessPoints(frame)
+	case "MgmtATIM":
+	case "MgmtDisassociation":
+	case "MgmtAuthentication":
+	case "MgmtDeauthentication":
+	case "MgmtAction":
+	case "MgmtActionNoAck":
+	default:
+		log.WithFields(log.Fields{
+			"at":   "visualizer.insertMgmt",
+			"type": frame.Type,
+		}).Warn("unknown frame type")
+	}
+}
+
+func insertData(frame models.Wireless80211Frame) {
 	//updateNetworkAssociations(frames)
 	//updateTx()
+	switch frame.Type {
+	case "Data":
+	case "DataCFAck":
+	case "DataCFPoll":
+	case "DataCFAckPoll":
+	case "DataNull":
+	case "DataCFAckNoData":
+	case "DataCFPollNoData":
+	case "DataCFAckPollNoData":
+	case "DataQOSData":
+	case "DataQOSDataCFAck":
+	case "DataQOSDataCFPoll":
+	case "DataQOSDataCFAckPoll":
+	case "DataQOSNull":
+	case "DataQOSCFPollNoData":
+	case "DataQOSCFAckPollNoData":
+	default:
+		log.WithFields(log.Fields{
+			"at":   "visualizer.insertData",
+			"type": frame.Type,
+		}).Warn("unknown frame type")
+	}
+}
+
+func insertCtrl(frame models.Wireless80211Frame) {
+	switch frame.Type {
+	case "CtrlWrapper":
+	case "CtrlBlockAckReq":
+	case "CtrlBlockAck":
+	case "CtrlPowersavePoll":
+	case "CtrlRTS":
+	case "CtrlCTS":
+	case "CtrlAck":
+	case "CtrlCFEnd":
+	case "CtrlCFEndAck":
+	default:
+		log.WithFields(log.Fields{
+			"at":   "visualizer.insertCtrl",
+			"type": frame.Type,
+		}).Warn("unknown frame type")
+	}
 }
 
 func CatchupEvents() []VisualEvent {

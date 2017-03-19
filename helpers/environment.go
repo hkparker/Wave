@@ -18,6 +18,7 @@ func setEnvironment() {
 		return
 	}
 	if devEnvar() {
+		log.SetLevel(log.DebugLevel)
 		Development = true
 		return
 	}

@@ -40,5 +40,5 @@ func visualizeNewAP(mac string) {
 	log.WithFields(log.Fields{
 		"at":  "visualizer.visualizeNewAP",
 		"mac": mac,
-	}).Info("update device as ap")
+	}).Debug("update device as ap")
 }

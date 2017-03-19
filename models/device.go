@@ -12,9 +12,14 @@ type Device struct {
 }
 
 func (device *Device) VisualData() map[string]string {
+	is_ap := "false"
+	if device.AccessPoint {
+		is_ap = "true"
+	}
 	return map[string]string{
 		"MAC":    device.MAC,
 		"Vendor": device.Vendor,
+		"IsAP":   is_ap,
 	}
 }
 

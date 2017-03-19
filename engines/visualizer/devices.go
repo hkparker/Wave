@@ -9,21 +9,33 @@ import (
 func updateKnownDevices(frame models.Wireless80211Frame) {
 	if _, ok := Devices[frame.Address1]; !ok {
 		DevicesMux.Lock()
+		if len(frame.Address1) == 0 {
+			return
+		}
 		registerNewDevice(frame.Address1)
 		DevicesMux.Unlock()
 	}
 	if _, ok := Devices[frame.Address2]; !ok {
 		DevicesMux.Lock()
+		if len(frame.Address2) == 0 {
+			return
+		}
 		registerNewDevice(frame.Address2)
 		DevicesMux.Unlock()
 	}
 	if _, ok := Devices[frame.Address3]; !ok {
 		DevicesMux.Lock()
+		if len(frame.Address3) == 0 {
+			return
+		}
 		registerNewDevice(frame.Address3)
 		DevicesMux.Unlock()
 	}
 	if _, ok := Devices[frame.Address4]; !ok {
 		DevicesMux.Lock()
+		if len(frame.Address4) == 0 {
+			return
+		}
 		registerNewDevice(frame.Address4)
 		DevicesMux.Unlock()
 	}
@@ -31,6 +43,10 @@ func updateKnownDevices(frame models.Wireless80211Frame) {
 
 func registerNewDevice(mac string) {
 	if len(mac) != 17 {
+		log.WithFields(log.Fields{
+			"at":  "visualizer.registerDevice",
+			"mac": mac,
+		}).Warn("malformed mac")
 		return
 	}
 	if broadcast(mac) {
@@ -68,5 +84,5 @@ func visualizeNewDevice(device models.Device) {
 	log.WithFields(log.Fields{
 		"at":  "visualizeNewDevice",
 		"mac": device.MAC,
-	}).Info("new device observed")
+	}).Debug("new device observed")
 }
