@@ -9,6 +9,8 @@ type Device struct {
 	MAC         string `sql:"not null;unique"`
 	Vendor      string
 	AccessPoint bool
+	Probing     bool
+	ProbedFor   []Network
 }
 
 func (device *Device) VisualData() map[string]string {

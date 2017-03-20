@@ -6,34 +6,30 @@ import (
 )
 
 func updateAccessPoints(frame models.Wireless80211Frame) {
-	DevicesMux.Lock()
-	defer DevicesMux.Unlock()
-	if frame.Type == "MgmtBeacon" {
-		// Mgmt frame BSSID is Address3
-		var dev models.Device
-		ret := models.Orm.Where("MAC = ?", frame.Address3).First(&dev)
-		if ret.Error != nil {
-			log.WithFields(log.Fields{
-				"at":    "visualizer.updateAccessPoints",
-				"MAC":   frame.Address3,
-				"error": ret.Error,
-			}).Error("error looking up AP")
-		} else if !dev.AccessPoint {
-			dev.AccessPoint = true
-			dev.Save()
-			Devices[frame.Address3] = dev
-			visualizeNewAP(frame.Address3)
-		}
+	// Mgmt frame BSSID is Address3
+	var dev models.Device
+	ret := models.Orm.Where("MAC = ?", frame.Address3).First(&dev)
+	if ret.Error != nil {
+		log.WithFields(log.Fields{
+			"at":    "visualizer.updateAccessPoints",
+			"MAC":   frame.Address3,
+			"error": ret.Error,
+		}).Error("error looking up AP")
+	} else if !dev.AccessPoint {
+		dev.AccessPoint = true
+		dev.Save()
+		Devices[frame.Address3] = dev
+		visualizeNewAP(frame.Address3)
 	}
 }
 
 func visualizeNewAP(mac string) {
 	update_resources := make(VisualEvent)
-	update_resources["UpdateDevices"] = append(
-		update_resources["UpdateDevices"],
+	update_resources[UPDATE_DEVICES] = append(
+		update_resources[UPDATE_DEVICES],
 		map[string]string{
-			"MAC":  mac,
-			"IsAP": "true",
+			DEVICE_MAC:  mac,
+			DEVICE_ISAP: "true",
 		},
 	)
 	VisualEvents <- update_resources

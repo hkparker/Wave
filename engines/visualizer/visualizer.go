@@ -11,6 +11,10 @@ import (
 const (
 	NEW_DEVICES    = "NewDevices"
 	UPDATE_DEVICES = "UpdateDevices"
+
+	DEVICE_ISAP      = "IsAP"
+	DEVICE_MAC       = "MAC"
+	DEVICE_NULLPROBE = "NullProbe"
 )
 
 type VisualEvent map[string][]map[string]string
@@ -70,6 +74,8 @@ func Load() {
 }
 
 func Insert(frame models.Wireless80211Frame) {
+	DevicesMux.Lock()
+	defer DevicesMux.Unlock()
 	updateKnownDevices(frame)
 
 	if len(frame.Type) < 4 {
@@ -127,6 +133,7 @@ func insertData(frame models.Wireless80211Frame) {
 	case "DataCFPoll":
 	case "DataCFAckPoll":
 	case "DataNull":
+		updateDataNull(frame)
 	case "DataCFAckNoData":
 	case "DataCFPollNoData":
 	case "DataCFAckPollNoData":
