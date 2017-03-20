@@ -21,7 +21,7 @@ func init() {
 					log.WithFields(log.Fields{
 						"at":    "controllers.init",
 						"error": err.Error(),
-					}).Warn("error writing visual update to client")
+					}).Info("visualizer client disconnected")
 					VisualClientMux.Lock()
 					delete(VisualClients, id)
 					VisualClientMux.Unlock()

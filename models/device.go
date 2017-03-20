@@ -11,6 +11,7 @@ type Device struct {
 	AccessPoint bool
 	Probing     bool
 	ProbedFor   []Network
+	Online      bool
 }
 
 func (device *Device) VisualData() map[string]string {
@@ -18,10 +19,25 @@ func (device *Device) VisualData() map[string]string {
 	if device.AccessPoint {
 		is_ap = "true"
 	}
+	probing := "false"
+	if device.Probing {
+		probing = "true"
+	}
+	probed_for := ""
+	networks := make([]Network, 0)
+	Orm.Model(&device).Related(&networks, "ProbedFor")
+	for i, net := range networks {
+		probed_for += net.SSID
+		if i < len(networks)-1 {
+			probed_for += ","
+		}
+	}
 	return map[string]string{
-		"MAC":    device.MAC,
-		"Vendor": device.Vendor,
-		"IsAP":   is_ap,
+		"MAC":       device.MAC,
+		"Vendor":    device.Vendor,
+		"IsAP":      is_ap,
+		"Probing":   probing,
+		"ProbedFor": probed_for,
 	}
 }
 

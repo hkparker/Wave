@@ -12,9 +12,13 @@ const (
 	NEW_DEVICES    = "NewDevices"
 	UPDATE_DEVICES = "UpdateDevices"
 
-	DEVICE_ISAP      = "IsAP"
-	DEVICE_MAC       = "MAC"
-	DEVICE_NULLPROBE = "NullProbe"
+	DEVICE_ISAP           = "IsAP"
+	DEVICE_MAC            = "MAC"
+	DEVICE_NULLPROBE      = "NullProbe"
+	DEVICE_PROBE          = "ProbedFor"
+	DEVICE_POWERSTATE     = "PowerState"
+	DEVICE_POWERSTATE_ON  = "online"
+	DEVICE_POWERSTATE_OFF = "offline"
 )
 
 type VisualEvent map[string][]map[string]string
@@ -76,6 +80,8 @@ func Load() {
 func Insert(frame models.Wireless80211Frame) {
 	DevicesMux.Lock()
 	defer DevicesMux.Unlock()
+	NetworksMux.Lock()
+	defer NetworksMux.Unlock()
 	updateKnownDevices(frame)
 
 	if len(frame.Type) < 4 {

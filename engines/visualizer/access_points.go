@@ -21,6 +21,9 @@ func updateAccessPoints(frame models.Wireless80211Frame) {
 		Devices[frame.Address3] = dev
 		visualizeNewAP(frame.Address3)
 	}
+	// parse ssid
+	// lookup network or create with ssid
+	// add device as ap
 }
 
 func visualizeNewAP(mac string) {

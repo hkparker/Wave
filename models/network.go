@@ -6,7 +6,7 @@ import (
 
 type Network struct {
 	gorm.Model
-	SSID         string
+	SSID         string `sql:"not null;unique"`
 	Clients      []Device
 	AccessPoints []Device
 }
