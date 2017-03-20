@@ -9,8 +9,11 @@ import (
 )
 
 const (
-	NEW_DEVICES    = "NewDevices"
-	UPDATE_DEVICES = "UpdateDevices"
+	NEW_DEVICES         = "NewDevices"
+	UPDATE_DEVICES      = "UpdateDevices"
+	DRAW_EVENTS         = "DrawEvents"
+	NEW_ASSOCIATIONS    = "NewAssociations"
+	UPDATE_ASSOCIATIONS = "UpdateAssociationS"
 
 	DEVICE_ISAP           = "IsAP"
 	DEVICE_MAC            = "MAC"
@@ -19,6 +22,12 @@ const (
 	DEVICE_POWERSTATE     = "PowerState"
 	DEVICE_POWERSTATE_ON  = "online"
 	DEVICE_POWERSTATE_OFF = "offline"
+
+	EVENT_NULL_PROBE    = "NullProbe"
+	EVENT_PROBE_REQUEST = "ProbeRequest"
+
+	EVENT = "Event"
+	SSID  = "SSID"
 )
 
 type VisualEvent map[string][]map[string]string

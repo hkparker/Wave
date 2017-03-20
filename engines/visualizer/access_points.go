@@ -33,6 +33,7 @@ func visualizeNewAP(mac string) {
 		map[string]string{
 			DEVICE_MAC:  mac,
 			DEVICE_ISAP: "true",
+			// SSID
 		},
 	)
 	VisualEvents <- update_resources
