@@ -27,16 +27,12 @@ func updateAccessPoints(frame models.Wireless80211Frame) {
 }
 
 func visualizeNewAP(mac string) {
-	update_resources := make(VisualEvent)
-	update_resources[UPDATE_DEVICES] = append(
-		update_resources[UPDATE_DEVICES],
-		map[string]string{
-			DEVICE_MAC:  mac,
-			DEVICE_ISAP: "true",
-			// SSID
-		},
-	)
-	VisualEvents <- update_resources
+	VisualEvents <- VisualEvent{
+		TYPE:        TYPE_UPDATE_AP,
+		DEVICE_MAC:  mac,
+		DEVICE_ISAP: "true",
+		// SSID
+	}
 	log.WithFields(log.Fields{
 		"at":  "visualizer.visualizeNewAP",
 		"mac": mac,

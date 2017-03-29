@@ -73,35 +73,25 @@ func updateProbeRequests(frame models.Wireless80211Frame) {
 }
 
 func visualizeNullProbe(mac string) {
-	draw_event := make(VisualEvent)
-	draw_event[DRAW_EVENTS] = append(
-		draw_event[DRAW_EVENTS],
-		map[string]string{
-			DEVICE_MAC: mac,
-			EVENT:      EVENT_NULL_PROBE,
-		},
-	)
-	VisualEvents <- draw_event
+	VisualEvents <- VisualEvent{
+		TYPE:       TYPE_NULL_PROBE_REQUEST,
+		DEVICE_MAC: mac,
+	}
 	log.WithFields(log.Fields{
-		"at":  "visualizer.visualizeNullProbe",
-		"mac": mac,
+		"at":       "visualizer.visualizeNullProbe",
+		DEVICE_MAC: mac,
 	}).Debug("visualizing null probe")
 }
 
 func visualizeProbeRequest(mac string, ssid string) {
-	update_resources := make(VisualEvent)
-	update_resources[DRAW_EVENTS] = append(
-		update_resources[DRAW_EVENTS],
-		map[string]string{
-			DEVICE_MAC: mac,
-			EVENT:      EVENT_PROBE_REQUEST,
-			SSID:       ssid,
-		},
-	)
-	VisualEvents <- update_resources
+	VisualEvents <- VisualEvent{
+		TYPE:       TYPE_PROBE_REQUEST,
+		SSID:       ssid,
+		DEVICE_MAC: mac,
+	}
 	log.WithFields(log.Fields{
-		"at":   "visualizer.visualizeProbeRequest",
-		"SSID": ssid,
-		"mac":  mac,
+		"at":       "visualizer.visualizeProbeRequest",
+		SSID:       ssid,
+		DEVICE_MAC: mac,
 	}).Debug("visualizing probe request")
 }

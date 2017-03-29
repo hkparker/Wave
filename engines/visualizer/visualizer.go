@@ -9,12 +9,6 @@ import (
 )
 
 const (
-	NEW_DEVICES         = "NewDevices"
-	UPDATE_DEVICES      = "UpdateDevices"
-	DRAW_EVENTS         = "DrawEvents"
-	NEW_ASSOCIATIONS    = "NewAssociations"
-	UPDATE_ASSOCIATIONS = "UpdateAssociationS"
-
 	DEVICE_ISAP           = "IsAP"
 	DEVICE_MAC            = "MAC"
 	DEVICE_NULLPROBE      = "NullProbe"
@@ -23,14 +17,16 @@ const (
 	DEVICE_POWERSTATE_ON  = "online"
 	DEVICE_POWERSTATE_OFF = "offline"
 
-	EVENT_NULL_PROBE    = "NullProbe"
-	EVENT_PROBE_REQUEST = "ProbeRequest"
+	TYPE_NULL_PROBE_REQUEST = "NullProbeRequest"
+	TYPE_PROBE_REQUEST      = "ProbeRequest"
+	TYPE_UPDATE_AP          = "UpdateAccessPoint"
 
 	EVENT = "Event"
 	SSID  = "SSID"
+	TYPE  = "type"
 )
 
-type VisualEvent map[string][]map[string]string
+type VisualEvent map[string]string
 
 var VisualEvents = make(chan VisualEvent, 0)
 var Devices = make(map[string]models.Device)
@@ -187,15 +183,10 @@ func insertCtrl(frame models.Wireless80211Frame) {
 }
 
 func CatchupEvents() []VisualEvent {
-	new_resources := make(VisualEvent)
+	catchup_events := make([]VisualEvent, 0)
 	for _, device := range Devices {
-		new_resources["NewDevices"] = append(
-			new_resources["NewDevices"],
-			device.VisualData(),
-		)
+		catchup_events = append(catchup_events, device.VisualData())
 	}
 	// add other resources, create other events
-	return []VisualEvent{
-		new_resources,
-	}
+	return catchup_events
 }

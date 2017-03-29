@@ -33,6 +33,7 @@ func (device *Device) VisualData() map[string]string {
 		}
 	}
 	return map[string]string{
+		"type":      "NewDevice",
 		"MAC":       device.MAC,
 		"Vendor":    device.Vendor,
 		"IsAP":      is_ap,

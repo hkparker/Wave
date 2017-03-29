@@ -67,12 +67,7 @@ func broadcast(mac string) bool {
 }
 
 func visualizeNewDevice(device models.Device) {
-	new_resources := make(VisualEvent)
-	new_resources[NEW_DEVICES] = append(
-		new_resources[NEW_DEVICES],
-		device.VisualData(),
-	)
-	VisualEvents <- new_resources
+	VisualEvents <- device.VisualData()
 	log.WithFields(log.Fields{
 		"at":  "visualizeNewDevice",
 		"mac": device.MAC,
