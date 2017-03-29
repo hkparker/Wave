@@ -33,9 +33,7 @@ make test
 ## Stack
 
 * [collector](https://github.com/hkparker/collector): go application to sniff 802.11 frames and send them to Wave via websocket
-* [gin](https://github.com/gin-gonic/gin): web framework in go
-* [gorilla/websocket](https://github.com/gorilla/websocket): websocket support for gin
+* [gin](https://github.com/gin-gonic/gin): web framework
+* [gorilla/websocket](https://github.com/gorilla/websocket): websocket library
 * [gorm](https://github.com/jinzhu/gorm): ORM for go used for postgres
 * [postgres](https://github.com/postgres/postgres): storage of persistent data
-* [react-bootstrap](https://github.com/react-bootstrap/react-bootstrap): bootstrap markup library built with react
-* [vavigraphjs](https://github.com/anvaka/VivaGraphJS): graphing library with webgl support
