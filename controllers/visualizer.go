@@ -6,6 +6,7 @@ import (
 	"github.com/gorilla/websocket"
 	"github.com/hkparker/Wave/engines/visualizer"
 	"github.com/satori/go.uuid"
+	"net/http"
 	"sync"
 )
 
@@ -13,7 +14,11 @@ var VisualClients = make(map[string]*websocket.Conn, 0)
 var VisualClientMux sync.Mutex
 
 func streamVisualization(c *gin.Context) {
-	var upgrayedd websocket.Upgrader
+	upgrayedd := websocket.Upgrader{
+		CheckOrigin: func(r *http.Request) bool {
+			return true
+		},
+	}
 	conn, err := upgrayedd.Upgrade(c.Writer, c.Request, nil)
 	if err == nil {
 		id := uuid.NewV4().String()

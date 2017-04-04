@@ -58,20 +58,10 @@ type Wireless80211Frame struct {
 }
 
 func (frame *Wireless80211Frame) ParseElements(packet gopacket.Packet, ether *layers.Dot11) {
-	// since ether.Type is known, try to lookup the right one
-	//fmt.Println(ether.Type, uint8(ether.Type))
-	//fmt.Println(packet.Layers())
-	switch ether.Type {
-	case 0: //layers.LayerTypeDot11MgmtBeacon:
-		//fmt.Println("its a mgt")
-		//if beacon, ok := packet.Layer(layers.LayerTypeDot11MgmtBeacon).(*layers.Dot11MgmtBeacon); ok {
-		//	fmt.Println("got a beacon", beacon)
-		//	elements = ParseBeaconFrame()
-		//}
-	}
 	if probegreq, ok := packet.Layer(layers.LayerTypeDot11MgmtProbeReq).(*layers.Dot11MgmtProbeReq); ok {
-		//fmt.Println(ether.NextLayerType())
 		frame.Elements = ParseFrameElements(probegreq.LayerContents())
+	} else if beaconframe, ok := packet.Layer(layers.LayerTypeDot11MgmtBeacon).(*layers.Dot11MgmtBeacon); ok {
+		frame.Elements = ParseFrameElements(beaconframe.LayerContents()[12:])
 	} else if _, ok := packet.Layer(layers.LayerTypeDot11Data).(*layers.Dot11Data); ok {
 	} else if _, ok := packet.Layer(layers.LayerTypeDot11DataCFAck).(*layers.Dot11DataCFAck); ok {
 	} else if _, ok := packet.Layer(layers.LayerTypeDot11DataCFAckNoData).(*layers.Dot11DataCFAckNoData); ok {
@@ -103,6 +93,7 @@ func ParseFrameElements(stream []byte) (elements map[string][]byte) {
 				"at": "models.ParseFrameElements",
 				"id": field_id,
 			}).Warn("unknown element id")
+			return
 		}
 
 		field_len, remainder := stream[0], stream[1:]

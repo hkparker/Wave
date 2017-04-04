@@ -50,7 +50,7 @@ func updateProbeRequests(frame models.Wireless80211Frame) {
 					SSID: ssid,
 				}
 				network.Save()
-				Networks[ssid] = append(Networks[ssid], network)
+				Networks[ssid] = network //append(Networks[ssid], network)
 			}
 
 			networks := make([]models.Network, 0)
