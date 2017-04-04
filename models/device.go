@@ -29,7 +29,7 @@ func (device *Device) VisualData() map[string]string {
 	for i, net := range networks {
 		probed_for += net.SSID
 		if i < len(networks)-1 {
-			probed_for += " "
+			probed_for += ","
 		}
 	}
 	return map[string]string{

@@ -23,6 +23,7 @@ func (network *Network) VisualData() []map[string]string {
 			"SSID": network.SSID,
 		})
 	}
+	// add the client associations
 	return set
 }
 
