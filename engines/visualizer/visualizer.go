@@ -65,10 +65,10 @@ func loadMetadata() {
 }
 
 func Insert(frame models.Wireless80211Frame) {
-	//	DevicesMux.Lock()
-	//	defer DevicesMux.Unlock()
-	//	NetworksMux.Lock()
-	//	defer NetworksMux.Unlock()
+	DevicesMux.Lock()
+	defer DevicesMux.Unlock()
+	NetworksMux.Lock()
+	defer NetworksMux.Unlock()
 	updateKnownDevices(frame)
 
 	if len(frame.Type) < 4 {
@@ -166,15 +166,15 @@ func insertCtrl(frame models.Wireless80211Frame) {
 
 func CatchupEvents() []VisualEvent {
 	catchup_events := make([]VisualEvent, 0)
-	//for _, device := range Devices {
-	//	catchup_events = append(catchup_events, device.VisualData())
-	//}
-	//for _, network := range Networks {
-	//	ssid_set := network.VisualData()
-	//	for _, network_event := range ssid_set {
-	//		catchup_events = append(catchup_events, VisualEvent(network_event))
-	//	}
-	//}
+	for _, device := range Devices {
+		catchup_events = append(catchup_events, device.VisualData())
+	}
+	for _, network := range Networks {
+		ssid_set := network.VisualData()
+		for _, network_event := range ssid_set {
+			catchup_events = append(catchup_events, VisualEvent(network_event))
+		}
+	}
 	// add other resources, create other events
 	return catchup_events
 }
