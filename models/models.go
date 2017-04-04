@@ -42,20 +42,6 @@ func createTables() {
 		}).Info("creating missing collector table")
 	}
 
-	if !Orm.HasTable(Device{}) {
-		Orm.CreateTable(Device{})
-		log.WithFields(log.Fields{
-			"at": "models.createTables",
-		}).Info("creating missing device table")
-	}
-
-	if !Orm.HasTable(Network{}) {
-		Orm.CreateTable(Network{})
-		log.WithFields(log.Fields{
-			"at": "models.createTables",
-		}).Info("creating missing network table")
-	}
-
 	if !Orm.HasTable(Session{}) {
 		Orm.CreateTable(Session{})
 		log.WithFields(log.Fields{

@@ -8,39 +8,32 @@ import (
 
 func updateAccessPoints(frame models.Wireless80211Frame) {
 	// Mgmt frame BSSID is Address3
-	var dev models.Device
-	ret := models.Orm.Where("MAC = ?", frame.Address3).First(&dev)
-	if ret.Error != nil {
-		log.WithFields(log.Fields{
-			"at":    "visualizer.updateAccessPoints",
-			"MAC":   frame.Address3,
-			"error": ret.Error,
-		}).Error("error looking up AP")
-	}
+	dev := Devices[frame.Address3]
 	if !dev.AccessPoint {
 		dev.AccessPoint = true
-		dev.Save()
 		Devices[frame.Address3] = dev
 	}
 
 	//ssid := string(frame.Elements["SSID"])
 	ssid := string(bytes.Trim(frame.Elements["SSID"], "\x00"))
-	var net models.Network
-	ret = models.Orm.Where("SS_ID = ?", ssid).First(&net)
-	if ret.Error != nil {
+
+	net, ok := Networks[ssid]
+	if !ok {
 		net = models.Network{
-			AccessPoints: make([]models.Device, 0),
-			SSID:         ssid,
+			SSID: ssid,
 		}
-		models.Orm.Create(&net)
 		Networks[ssid] = net
 	}
 
-	var aps []models.Device
-	models.Orm.Model(&net).Related(&aps, "AccessPoints").Where("MAC = ?", frame.Address3)
-	if len(aps) == 0 {
+	associated := false
+	for _, ap := range net.AccessPoints {
+		if ap.MAC == dev.MAC {
+			associated = true
+			break
+		}
+	}
+	if !associated {
 		net.AccessPoints = append(net.AccessPoints, dev)
-		net.Save()
 		Networks[ssid] = net
 		visualizeNewAP(frame)
 	}

@@ -55,7 +55,6 @@ func registerNewDevice(mac string) {
 		Vendor: vendor,
 	}
 	Devices[mac] = device
-	device.Save()
 	visualizeNewDevice(device)
 }
 

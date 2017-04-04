@@ -29,6 +29,7 @@ const (
 type VisualEvent map[string]string
 
 var VisualEvents = make(chan VisualEvent, 0)
+
 var Devices = make(map[string]models.Device)
 var DevicesMux sync.Mutex
 var Networks = make(map[string]models.Network)
@@ -63,34 +64,15 @@ func loadMetadata() {
 	}
 }
 
-func Load() {
-	DevicesMux.Lock()
-	defer DevicesMux.Unlock()
-	NetworksMux.Lock()
-	defer NetworksMux.Unlock()
-
-	all_devices := make([]models.Device, 0)
-	models.Orm.Find(&all_devices)
-	for _, device := range all_devices {
-		Devices[device.MAC] = device
-	}
-
-	all_networks := make([]models.Network, 0)
-	models.Orm.Find(&all_networks)
-	for _, network := range all_networks {
-		Networks[network.SSID] = network //append(Networks[network.SSID], network)
-	}
-}
-
 func Insert(frame models.Wireless80211Frame) {
-	DevicesMux.Lock()
-	defer DevicesMux.Unlock()
-	NetworksMux.Lock()
-	defer NetworksMux.Unlock()
+	//	DevicesMux.Lock()
+	//	defer DevicesMux.Unlock()
+	//	NetworksMux.Lock()
+	//	defer NetworksMux.Unlock()
 	updateKnownDevices(frame)
 
 	if len(frame.Type) < 4 {
-		log.WithFields(log.Fields{}).Warn()
+		log.WithFields(log.Fields{}).Warn("frame type too small")
 		return
 	}
 	switch frame.Type[:4] {
@@ -184,15 +166,15 @@ func insertCtrl(frame models.Wireless80211Frame) {
 
 func CatchupEvents() []VisualEvent {
 	catchup_events := make([]VisualEvent, 0)
-	for _, device := range Devices {
-		catchup_events = append(catchup_events, device.VisualData())
-	}
-	for _, network := range Networks {
-		ssid_set := network.VisualData()
-		for _, network_event := range ssid_set {
-			catchup_events = append(catchup_events, VisualEvent(network_event))
-		}
-	}
+	//for _, device := range Devices {
+	//	catchup_events = append(catchup_events, device.VisualData())
+	//}
+	//for _, network := range Networks {
+	//	ssid_set := network.VisualData()
+	//	for _, network_event := range ssid_set {
+	//		catchup_events = append(catchup_events, VisualEvent(network_event))
+	//	}
+	//}
 	// add other resources, create other events
 	return catchup_events
 }

@@ -1,12 +1,7 @@
 package models
 
-import (
-	"github.com/jinzhu/gorm"
-)
-
 type Device struct {
-	gorm.Model
-	MAC         string `sql:"not null;unique"`
+	MAC         string
 	Vendor      string
 	AccessPoint bool
 	Probing     bool
@@ -24,11 +19,9 @@ func (device *Device) VisualData() map[string]string {
 		probing = "true"
 	}
 	probed_for := ""
-	networks := make([]Network, 0)
-	Orm.Model(&device).Related(&networks, "ProbedFor")
-	for i, net := range networks {
+	for i, net := range device.ProbedFor {
 		probed_for += net.SSID
-		if i < len(networks)-1 {
+		if i < len(device.ProbedFor)-1 {
 			probed_for += ","
 		}
 	}
@@ -40,12 +33,4 @@ func (device *Device) VisualData() map[string]string {
 		"Probing":   probing,
 		"ProbedFor": probed_for,
 	}
-}
-
-func (device *Device) Save() error {
-	return Orm.Save(&device).Error
-}
-
-func (device *Device) Delete() error {
-	return Orm.Delete(&device).Error
 }
