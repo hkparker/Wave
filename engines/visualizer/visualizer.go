@@ -29,12 +29,14 @@ const (
 type VisualEvent map[string]string
 
 var VisualEvents = make(chan VisualEvent, 0)
+var VendorBytes = make(map[string]string)
 
 var Devices = make(map[string]models.Device)
 var DevicesMux sync.Mutex
 var Networks = make(map[string]models.Network)
 var NetworksMux sync.Mutex
-var VendorBytes = make(map[string]string)
+var Associations = make(map[string][]string)
+var AssociationsMux sync.Mutex
 
 func init() {
 	loadMetadata()
@@ -69,6 +71,8 @@ func Insert(frame models.Wireless80211Frame) {
 	defer DevicesMux.Unlock()
 	NetworksMux.Lock()
 	defer NetworksMux.Unlock()
+	AssociationsMux.Lock()
+	defer AssociationsMux.Unlock()
 	updateKnownDevices(frame)
 
 	if len(frame.Type) < 4 {
@@ -122,18 +126,26 @@ func insertData(frame models.Wireless80211Frame) {
 	//updateTx()
 	switch frame.Type {
 	case "Data":
+		updateAssociation(frame)
 	case "DataCFAck":
+		updateAssociation(frame)
 	case "DataCFPoll":
+		updateAssociation(frame)
 	case "DataCFAckPoll":
+		updateAssociation(frame)
 	case "DataNull":
 		updateDataNull(frame)
 	case "DataCFAckNoData":
 	case "DataCFPollNoData":
 	case "DataCFAckPollNoData":
 	case "DataQOSData":
+		updateAssociation(frame)
 	case "DataQOSDataCFAck":
+		updateAssociation(frame)
 	case "DataQOSDataCFPoll":
+		updateAssociation(frame)
 	case "DataQOSDataCFAckPoll":
+		updateAssociation(frame)
 	case "DataQOSNull":
 	case "DataQOSCFPollNoData":
 	case "DataQOSCFAckPollNoData":
@@ -173,6 +185,18 @@ func CatchupEvents() []VisualEvent {
 		ssid_set := network.VisualData()
 		for _, network_event := range ssid_set {
 			catchup_events = append(catchup_events, VisualEvent(network_event))
+		}
+	}
+	for mac, associations := range Associations {
+		for _, other := range associations {
+			catchup_events = append(
+				catchup_events,
+				VisualEvent{
+					TYPE:   "NewAssociation",
+					"MAC1": mac,
+					"MAC2": other,
+				},
+			)
 		}
 	}
 	// add other resources, create other events
