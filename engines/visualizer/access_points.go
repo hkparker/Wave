@@ -16,6 +16,10 @@ func updateAccessPoints(frame models.Wireless80211Frame) {
 
 	//ssid := string(frame.Elements["SSID"])
 	ssid := string(bytes.Trim(frame.Elements["SSID"], "\x00"))
+	if ssid == "" {
+		// Skip empty beacons (Closed System)
+		return
+	}
 
 	net, ok := Networks[ssid]
 	if !ok {

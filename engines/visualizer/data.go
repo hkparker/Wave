@@ -34,6 +34,9 @@ func memoized(mac1, mac2 string) bool {
 		log.Warn("null mac")
 		return true
 	}
+	if broadcast(mac1) || broadcast(mac2) {
+		return true
+	}
 	ret := true
 	association1 := Associations[mac1]
 	if !helpers.StringIncludedIn(association1, mac2) {
@@ -45,6 +48,10 @@ func memoized(mac1, mac2 string) bool {
 		Associations[mac2] = append(Associations[mac2], mac1)
 		ret = false
 	}
+	//if mac1 == mac2 {
+	//	log.Warn("association between identical mac " + mac1)
+	//	return true
+	//}
 	return ret
 }
 

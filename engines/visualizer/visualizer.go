@@ -73,7 +73,7 @@ func Insert(frame models.Wireless80211Frame) {
 	defer NetworksMux.Unlock()
 	AssociationsMux.Lock()
 	defer AssociationsMux.Unlock()
-	updateKnownDevices(frame)
+	//updateKnownDevices(frame)
 
 	if len(frame.Type) < 4 {
 		log.WithFields(log.Fields{}).Warn("frame type too small")
@@ -102,15 +102,21 @@ func insertMgmt(frame models.Wireless80211Frame) {
 	case "MgmtReassociationReq":
 	case "MgmtReassociationResp":
 	case "MgmtProbeReq":
+		updateKnownDevices(frame)
 		updateProbeRequests(frame)
 	case "MgmtProbeResp":
 	case "MgmtMeasurementPilot":
 	case "MgmtBeacon":
+		updateKnownDevices(frame)
 		updateAccessPoints(frame)
 	case "MgmtATIM":
 	case "MgmtDisassociation":
+		updateKnownDevices(frame)
+		animateDeauth(frame)
 	case "MgmtAuthentication":
 	case "MgmtDeauthentication":
+		updateKnownDevices(frame)
+		animateDeauth(frame)
 	case "MgmtAction":
 	case "MgmtActionNoAck":
 	default:
@@ -122,29 +128,37 @@ func insertMgmt(frame models.Wireless80211Frame) {
 }
 
 func insertData(frame models.Wireless80211Frame) {
-	//updateNetworkAssociations(frames)
 	//updateTx()
 	switch frame.Type {
 	case "Data":
+		updateKnownDevices(frame)
 		updateAssociation(frame)
 	case "DataCFAck":
+		updateKnownDevices(frame)
 		updateAssociation(frame)
 	case "DataCFPoll":
+		updateKnownDevices(frame)
 		updateAssociation(frame)
 	case "DataCFAckPoll":
+		updateKnownDevices(frame)
 		updateAssociation(frame)
 	case "DataNull":
+		updateKnownDevices(frame)
 		updateDataNull(frame)
 	case "DataCFAckNoData":
 	case "DataCFPollNoData":
 	case "DataCFAckPollNoData":
 	case "DataQOSData":
+		updateKnownDevices(frame)
 		updateAssociation(frame)
 	case "DataQOSDataCFAck":
+		updateKnownDevices(frame)
 		updateAssociation(frame)
 	case "DataQOSDataCFPoll":
+		updateKnownDevices(frame)
 		updateAssociation(frame)
 	case "DataQOSDataCFAckPoll":
+		updateKnownDevices(frame)
 		updateAssociation(frame)
 	case "DataQOSNull":
 	case "DataQOSCFPollNoData":
@@ -199,6 +213,12 @@ func CatchupEvents() []VisualEvent {
 			)
 		}
 	}
+	catchup_events = append(
+		catchup_events,
+		VisualEvent{
+			TYPE: "CacheCleared",
+		},
+	)
 	// add other resources, create other events
 	return catchup_events
 }

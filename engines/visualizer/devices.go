@@ -2,6 +2,7 @@ package visualizer
 
 import (
 	log "github.com/Sirupsen/logrus"
+	"github.com/hkparker/Wave/helpers"
 	"github.com/hkparker/Wave/models"
 	"strings"
 )
@@ -48,6 +49,9 @@ func registerNewDevice(mac string) {
 	if len(mac) >= 8 {
 		if vendor_string, ok := VendorBytes[strings.ToUpper(mac[0:8])]; ok {
 			vendor = vendor_string
+		} else {
+			//log.Warn("unknown vendor for " + mac)
+			//return
 		}
 	}
 	device := models.Device{
@@ -59,10 +63,22 @@ func registerNewDevice(mac string) {
 }
 
 func broadcast(mac string) bool {
-	if mac == "ff:ff:ff:ff:ff:ff" {
+	// IPv6 multicast DHCP
+	if mac[:5] == "33:33" {
 		return true
 	}
-	return false
+	// IPv4 multicast DHCP
+	if mac[:8] == "01:00:5e" {
+		return true
+	}
+	return helpers.StringIncludedIn(
+		[]string{
+			"ff:ff:ff:ff:ff:ff",
+			"33:33:00:01:00:02",
+			"00:00:00:00:00:00",
+		},
+		mac,
+	)
 }
 
 func visualizeNewDevice(device models.Device) {
