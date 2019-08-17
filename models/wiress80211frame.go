@@ -1,7 +1,7 @@
 package models
 
 import (
-	log "github.com/Sirupsen/logrus"
+	log "github.com/sirupsen/logrus"
 	"github.com/google/gopacket"
 	"github.com/google/gopacket/layers"
 )

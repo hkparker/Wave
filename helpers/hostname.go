@@ -1,7 +1,7 @@
 package helpers
 
 import (
-	log "github.com/Sirupsen/logrus"
+	log "github.com/sirupsen/logrus"
 	"os"
 	"strconv"
 )

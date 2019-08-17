@@ -2,7 +2,7 @@ package helpers
 
 import (
 	"crypto/tls"
-	log "github.com/Sirupsen/logrus"
+	log "github.com/sirupsen/logrus"
 	"net"
 	"net/http"
 )

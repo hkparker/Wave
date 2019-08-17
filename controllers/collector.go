@@ -5,7 +5,7 @@ import (
 	"crypto/tls"
 	"encoding/hex"
 	"encoding/json"
-	log "github.com/Sirupsen/logrus"
+	log "github.com/sirupsen/logrus"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
 	"github.com/hkparker/Wave/engines/ids"

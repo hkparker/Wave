@@ -2,7 +2,7 @@ package helpers
 
 import (
 	"crypto/rand"
-	log "github.com/Sirupsen/logrus"
+	log "github.com/sirupsen/logrus"
 	"github.com/jbenet/go-base58"
 )
 

@@ -1,7 +1,7 @@
 package visualizer
 
 import (
-	log "github.com/Sirupsen/logrus"
+	log "github.com/sirupsen/logrus"
 	"github.com/hkparker/Wave/helpers"
 	"github.com/hkparker/Wave/models"
 )

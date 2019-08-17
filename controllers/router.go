@@ -6,10 +6,16 @@ import (
 	//"github.com/hkparker/Wave/engines/visualizer"
 	"github.com/hkparker/Wave/helpers"
 	"github.com/hkparker/Wave/middleware"
+	cors "github.com/rs/cors/wrapper/gin"
 )
 
 func NewAPI() *gin.Engine {
 	router := gin.Default()
+
+	if helpers.Development { // create a proper CORS for production
+		router.Use(cors.Default())
+	}
+
 	if helpers.Production {
 		router.Use(middleware.EmbeddedAssets())
 	} else {
