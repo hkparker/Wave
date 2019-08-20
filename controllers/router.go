@@ -13,7 +13,12 @@ func NewAPI() *gin.Engine {
 	router := gin.Default()
 
 	if helpers.Development { // create a proper CORS for production
-		router.Use(cors.Default())
+		c := cors.New(cors.Options{
+		    AllowedOrigins: []string{"http://localhost:8080"},
+		    AllowCredentials: true,
+		    //Debug: true,
+		})
+		router.Use(c)
 	}
 
 	if helpers.Production {
@@ -44,6 +49,8 @@ func NewAPI() *gin.Engine {
 	// Incident routes
 	// Device routes
 	// Version route
+
+	router.GET("/version", func (c *gin.Context) { c.JSON(200, gin.H{"version": 0}) })
 
 	// Collector routes
 	router.GET("/collectors", getCollectors)

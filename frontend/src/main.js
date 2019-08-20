@@ -15,15 +15,17 @@ Vue.config.productionTip = false
 const store = new Vuex.Store({
   state: {
     authenticationState: "unauthenticated",
-    loggedIn: false
+    loggedIn: false,
+    version: 1
   },
   getters: {
     loggedIn: state => state.loggedIn,
     authenticationState: state => state.authenticationState,
+    version: state => state.version,
   },
   actions: {
     authenticate ({commit}, credentials) {
-     return axios({url: 'http://localhost:8081/sessions/create', data: credentials, method: 'POST', crossdomain: true })
+     return axios({url: 'http://localhost:8081/sessions/create', data: credentials, method: 'POST', crossdomain: true, withCredentials: true })
       .then(() => {
         commit('authSuccess')
         router.push('/')
@@ -37,6 +39,9 @@ const store = new Vuex.Store({
     }
   },
   mutations: {
+    setVersion: (state, newVersion) => {
+      state.version = newVersion
+    },
     authRequest (state) {
       state.authenticationState = "loading"
     },
