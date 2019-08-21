@@ -5,8 +5,17 @@
 </template>
 
 <script>
+import axios from 'axios'
+
 export default {
-  name: 'app'
+  name: 'app'//,
+  //beforeCreate () {
+  //  var $this = this
+  //  axios({url: 'http://localhost:8081/version', method: 'GET', crossdomain: true, withCredentials: true })
+  //    .then(() => {
+  //      $this.$store.commit('authSuccess')
+  //    })
+  //}
 }
 
 document.addEventListener('DOMContentLoaded', () => {

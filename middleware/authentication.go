@@ -53,7 +53,7 @@ func Authentication() gin.HandlerFunc {
 			var user models.User
 			if session, err := models.SessionFromID(session_cookie.Value); err == nil {
 				if user, err = session.User(); err != nil {
-					c.Redirect(302, "/login")
+					c.Status(401)
 					c.Abort()
 					log.WithFields(log.Fields{
 						"at":       "middleware.Authentication",
@@ -63,7 +63,7 @@ func Authentication() gin.HandlerFunc {
 					return
 				}
 			} else {
-				c.Redirect(302, "/login")
+				c.Status(401)
 				c.Abort()
 				log.WithFields(log.Fields{
 					"at":       "middleware.Authentication",

@@ -31,7 +31,7 @@ func NewAPI() *gin.Engine {
 
 	// Session routes
 	router.POST("/sessions/create", newSession)
-	router.POST("/sessions/delete", deleteSession)
+	router.POST("/sessions/destroy", deleteSession)
 
 	// User routes
 	router.GET("/users", getUsers)

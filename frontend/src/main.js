@@ -28,14 +28,20 @@ const store = new Vuex.Store({
      return axios({url: 'http://localhost:8081/sessions/create', data: credentials, method: 'POST', crossdomain: true, withCredentials: true })
       .then(() => {
         commit('authSuccess')
-        router.push('/')
       })
       .catch(err => {
         commit('authFailed', err)
       })
     },
     logout ({commit}) {
-      commit('logout')
+     return axios({url: 'http://localhost:8081/sessions/destroy', method: 'POST', crossdomain: true, withCredentials: true })
+      .then(() => {
+        commit('logout')
+      })
+      .catch(err => {
+        console.log(err)
+        //commit('authFailed', err)
+      })
     }
   },
   mutations: {
@@ -48,6 +54,7 @@ const store = new Vuex.Store({
     authSuccess (state) {
       state.authenticationState = "success"
       state.loggedIn = true
+      router.push('/')
     },
     authFailed (state) {
       state.authenticationState = "failed"
@@ -55,6 +62,7 @@ const store = new Vuex.Store({
     logout (state) {
       state.loggedIn = false
       state.authenticationState = "logged_out"
+      router.push("/login")
     }
   }
 })
@@ -73,6 +81,12 @@ const router = new VueRouter({
     { path: '/', component: LoggedIn, beforeEnter: requireLogin },
     { path: '/login', component: Login }
   ]
+})
+
+
+axios({url: 'http://localhost:8081/version', method: 'GET', crossdomain: true, withCredentials: true })
+  .then(() => {
+    store.commit('authSuccess')
 })
 
 new Vue({

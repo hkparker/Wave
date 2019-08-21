@@ -122,6 +122,6 @@ func deleteSession(c *gin.Context) {
 		}
 	}
 
-	c.Redirect(302, "/login")
+	c.Status(200)
 	c.Abort()
 }
