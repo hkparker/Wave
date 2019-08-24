@@ -50,7 +50,7 @@ func NewAPI() *gin.Engine {
 	// Device routes
 	// Version route
 
-	router.GET("/version", func (c *gin.Context) { c.JSON(200, gin.H{"version": 0}) })
+	router.GET("/status", getStatus)
 
 	// Collector routes
 	router.GET("/collectors", getCollectors)

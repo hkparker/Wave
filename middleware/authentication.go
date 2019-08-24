@@ -73,6 +73,8 @@ func Authentication() gin.HandlerFunc {
 				return
 			}
 
+			c.Set("currentUser", user)
+
 			if _, admin_protected := admin_endpoints[endpoint]; admin_protected && !user.Admin {
 				c.JSON(401, gin.H{"error": "permission denied"})
 				c.Abort()

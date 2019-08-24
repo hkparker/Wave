@@ -27,12 +27,6 @@ export default {
     login: function () {
       const { username, password } = this
       this.$store.dispatch('authenticate', { username, password })
-      //.then(() => { this.$router.push('/') })
-      //debugger; // go do stuff like kick off a func to check this and either set cookies and variables or pop a warning
-      //const { username, password } = this
-      //this.$store.dispatch(AUTH_REQUEST, { username, password }).then(() => {
-      //  this.$router.push('/')
-      //})
    }
 }
 }

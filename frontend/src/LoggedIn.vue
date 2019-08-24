@@ -27,7 +27,6 @@
             <a class="navbar-link">
               More
             </a>
-
             <div class="navbar-dropdown">
               <a class="navbar-item">
                 About
@@ -46,6 +45,16 @@
           </div>
         </div>
         <div class="navbar-end">
+          <div class="navbar-item has-dropdown is-hoverable">
+            <a class="navbar-link">
+              {{ this.$store.getters.currentUser }}
+            </a>
+            <div class="navbar-dropdown">
+              <a class="navbar-item">
+                Account Settings
+              </a>
+            </div>
+          </div>
           <div class="navbar-item">
             <div class="buttons">
               <a class="button is-danger is-outlined" v-on:click="logout">

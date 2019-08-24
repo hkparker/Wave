@@ -15,19 +15,21 @@ Vue.config.productionTip = false
 const store = new Vuex.Store({
   state: {
     authenticationState: "unauthenticated",
-    loggedIn: false,
-    version: 1
+    loggedIn: true,
+    version: 1,
+    currentUser: ""
   },
   getters: {
     loggedIn: state => state.loggedIn,
     authenticationState: state => state.authenticationState,
     version: state => state.version,
+    currentUser: state => state.currentUser
   },
   actions: {
     authenticate ({commit}, credentials) {
      return axios({url: 'http://localhost:8081/sessions/create', data: credentials, method: 'POST', crossdomain: true, withCredentials: true })
       .then(() => {
-        commit('authSuccess')
+        commit('authSuccess', credentials.username)
       })
       .catch(err => {
         commit('authFailed', err)
@@ -38,10 +40,6 @@ const store = new Vuex.Store({
       .then(() => {
         commit('logout')
       })
-      .catch(err => {
-        console.log(err)
-        //commit('authFailed', err)
-      })
     }
   },
   mutations: {
@@ -51,9 +49,13 @@ const store = new Vuex.Store({
     authRequest (state) {
       state.authenticationState = "loading"
     },
-    authSuccess (state) {
+    setCurrentUser: (state, username) => {
+      state.currentUser = username
+    },
+    authSuccess (state, username) {
       state.authenticationState = "success"
       state.loggedIn = true
+      state.currentUser = username
       router.push('/')
     },
     authFailed (state) {
@@ -70,27 +72,39 @@ const store = new Vuex.Store({
 const requireLogin = (to, from, next) => {
   if (store.getters.loggedIn) {
     next()
-    return
+  } else {
+    next('/login')
   }
-  next('/login')
+}
+
+const requireLoggedOut = (to, from, next) => {
+  if (!store.getters.loggedIn) {
+    next()
+  } else {
+    next('/')
+  }
 }
 
 const router = new VueRouter({
   mode: 'history',
   routes: [
     { path: '/', component: LoggedIn, beforeEnter: requireLogin },
-    { path: '/login', component: Login }
+    { path: '/login', component: Login, beforeEnter: requireLoggedOut }
   ]
-})
-
-
-axios({url: 'http://localhost:8081/version', method: 'GET', crossdomain: true, withCredentials: true })
-  .then(() => {
-    store.commit('authSuccess')
 })
 
 new Vue({
   router,
   render: h => h(App),
   store,
+  beforeCreate () {
+    var $this = this
+    axios({url: 'http://localhost:8081/status', method: 'GET', crossdomain: true, withCredentials: true })
+      .then((resp) => {
+        $this.$store.commit("setCurrentUser", resp.data.user)
+      })
+      .catch(() => {
+        $this.$store.commit('logout')
+      })
+  }
 }).$mount('#app')
