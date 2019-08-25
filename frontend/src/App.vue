@@ -1,12 +1,18 @@
 <template>
   <div id="app">
+    <LoggedIn v-if="this.$store.getters.loggedIn" />
     <router-view></router-view>
   </div>
 </template>
 
 <script>
+import LoggedIn from './LoggedIn.vue'
+
 export default {
-  name: 'app'
+  name: 'app',
+  components: {
+    LoggedIn,
+  }
 }
 </script>
 

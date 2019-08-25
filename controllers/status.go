@@ -18,5 +18,8 @@ func getStatus(c *gin.Context) {
 		return
 	}
 	
-	c.JSON(200, gin.H{"user": user.Username})
+	c.JSON(200, gin.H{
+		"user": user.Username,
+		"version": 0,
+	})
 }

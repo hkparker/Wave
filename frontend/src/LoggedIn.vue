@@ -50,7 +50,7 @@
               {{ this.$store.getters.currentUser }}
             </a>
             <div class="navbar-dropdown">
-              <a class="navbar-item">
+              <a class="navbar-item" v-on:click="settings">
                 Account Settings
               </a>
             </div>
@@ -65,21 +65,18 @@
         </div>
       </div>
     </nav>
-    <HelloWorld msg="test"/>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
-
 export default {
   name: 'app',
-  components: {
-    HelloWorld
-  },
   methods: {
     logout: function () {
       this.$store.dispatch('logout')
+    },
+    settings: function () {
+      this.$store.dispatch('settings')
     }
   }
 }
