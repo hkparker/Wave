@@ -10,7 +10,7 @@ export default new Vuex.Store({
     authenticationState: "unauthenticated",
     loggedIn: true,
     version: 1,
-    currentUser: ""
+    currentUser: {}
   },
   getters: {
     loggedIn: state => state.loggedIn,
@@ -20,7 +20,7 @@ export default new Vuex.Store({
   },
   actions: {
     authenticate ({commit}, credentials) {
-     return axios({url: 'http://localhost:8081/sessions/create', data: credentials, method: 'POST', crossdomain: true, withCredentials: true })
+     return axios({url: '/sessions/create', data: credentials, method: 'POST', crossdomain: true, withCredentials: true })
       .then(() => {
         commit('authSuccess', credentials.username)
       })
@@ -29,13 +29,16 @@ export default new Vuex.Store({
       })
     },
     logout ({commit}) {
-     return axios({url: 'http://localhost:8081/sessions/destroy', method: 'POST', crossdomain: true, withCredentials: true })
+     return axios({url: '/sessions/destroy', method: 'POST', crossdomain: true, withCredentials: true })
       .then(() => {
         commit('logout')
       })
     },
     settings ({commit}) {
       commit("settings")
+    },
+    dashboard ({commit}) {
+      commit("dashboard")
     }
   },
   mutations: {
@@ -64,6 +67,9 @@ export default new Vuex.Store({
     },
     settings () {
       router.push("/settings")
+    },
+    dashboard () {
+      router.push("/")
     }
   }
 })

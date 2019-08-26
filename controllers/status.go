@@ -19,7 +19,8 @@ func getStatus(c *gin.Context) {
 	}
 	
 	c.JSON(200, gin.H{
-		"user": user.Username,
+		"username": user.Username,
+		"admin": user.Admin,
 		"version": 0,
 	})
 }

@@ -1,7 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Login from './Login.vue'
-import LoggedIn from './LoggedIn.vue'
 import HelloWorld from './components/HelloWorld.vue'
 import AccountSettings from './components/AccountSettings.vue'
 import store from "./store.js"

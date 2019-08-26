@@ -13,9 +13,9 @@ new Vue({
   store,
   beforeCreate () {
     var $this = this
-    axios({url: 'http://localhost:8081/status', method: 'GET', crossdomain: true, withCredentials: true })
+    axios({url: '/status', method: 'GET', crossdomain: true, withCredentials: true })
       .then((resp) => {
-        $this.$store.commit("setCurrentUser", resp.data.user)
+        $this.$store.commit("setCurrentUser", resp.data)
       })
       .catch(() => {
         $this.$store.commit('logout')
