@@ -39,6 +39,15 @@ export default new Vuex.Store({
     },
     dashboard ({commit}) {
       commit("dashboard")
+    },
+    setEnvironment ({commit}) {
+      axios({url: '/status', method: 'GET', crossdomain: true, withCredentials: true })
+        .then((resp) => {
+          commit("setCurrentUser", resp.data)
+        })
+        .catch(() => {
+          commit('logout')
+        })
     }
   },
   mutations: {

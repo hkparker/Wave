@@ -126,7 +126,7 @@ func updateUserPassword(c *gin.Context) {
 		log.WithFields(log.Fields{
 			"at":    "controllers.updateUserPassword",
 			"error": err,
-			"user":  user.Name,
+			"user":  user.Username,
 		}).Error("error updating user password")
 		return
 	}

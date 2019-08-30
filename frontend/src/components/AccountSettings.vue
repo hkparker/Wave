@@ -2,6 +2,22 @@
   <div class="container">
     <h1 class="title">Account Setting</h1>
     <h2 class="subtitle">Change Password</h2>
+    <div v-if="passwordMismatchAlert" class="notification is-danger">
+      <button class="delete" v-on:click="passwordMismatchAlert=false"></button>
+        New passwords do not match
+    </div>
+    <div v-if="passwordIncorrectAlert" class="notification is-danger">
+      <button class="delete" v-on:click="passwordIncorrectAlert=false"></button>
+        Old password is incorrect
+    </div>
+    <div v-if="passwordSameAlert" class="notification is-danger">
+      <button class="delete" v-on:click="passwordSameAlert=false"></button>
+        Old password and new password are the same
+    </div>
+    <div v-if="passwordUpdatedAlert" class="notification is-success">
+      <button class="delete" v-on:click="passwordUpdatedAlert=false"></button>
+        Password Updated!
+    </div>
     <div class="field is-horizontal">
       <div class="field-label is-normal">
         <label class="label">Old Password</label>
@@ -28,7 +44,7 @@
     </div>
     <div class="field is-horizontal">
       <div class="field-label is-normal">
-        <label class="label">Confirm</label>
+        <label class="label">Confirm Password</label>
       </div>
       <div class="field-body">
         <div class="field">
@@ -56,18 +72,44 @@
 </template>
 
 <script>
+import axios from 'axios'
+
 export default {
   name: 'AccountSettings',
   data: function() {
     return {
       oldPassword: "",
       newPassword: "",
-      newPasswordConfirm: ""
+      newPasswordConfirm: "",
+      passwordMismatchAlert: false,
+      passwordIncorrectAlert: false,
+      passwordSameAlert: false,
+      passwordUpdatedAlert: false
     }
   },
   methods: {
     updatePassword: function () {
-      //debugger;
+      if (this.newPassword != this.newPasswordConfirm) {
+        this.passwordMismatchAlert = true
+        return
+      }
+      if (this.newPassword == this.oldPassword) {
+        this.passwordSameAlert = true
+        return
+      }
+      // make sure password isn't being set to the same password
+      var update = {
+        "old_password": this.oldPassword,
+        "new_password": this.newPassword
+      }
+      axios({url: '/users/password', data: update, method: 'POST', crossdomain: true, withCredentials: true })
+        .then(() => {
+          this.passwordUpdatedAlert = true
+        })
+        .catch(() => {
+          // catch this more specifically
+          this.passwordIncorrectAlert = true
+      })
     }
   }
 }
