@@ -20,6 +20,9 @@
             IDS
           </a>
           <a class="navbar-item">
+            Rules
+          </a>
+          <a class="navbar-item">
             Visualization
           </a>
         </div>
