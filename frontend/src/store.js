@@ -76,9 +76,19 @@ export default new Vuex.Store({
     },
     settings () {
       router.push("/settings")
+        .catch((e) => {
+          if (e.Name == "NavigationDuplicated") {
+            // user clicked the page they were already on, no need to log eror
+          }
+        })
     },
     dashboard () {
       router.push("/")
+        .catch((e) => {
+          if (e.Name == "NavigationDuplicated") {
+            // user clicked the page they were already on, no need to log eror
+          }
+        })
     }
   }
 })
