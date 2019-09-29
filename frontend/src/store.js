@@ -16,7 +16,8 @@ export default new Vuex.Store({
     loggedIn: state => state.loggedIn,
     authenticationState: state => state.authenticationState,
     version: state => state.version,
-    currentUser: state => state.currentUser
+    currentUser: state => state.currentUser,
+    admin: state => state.currentUser.admin
   },
   actions: {
     authenticate ({commit}, credentials) {
@@ -40,6 +41,21 @@ export default new Vuex.Store({
     },
     dashboard ({commit}) {
       commit("dashboard")
+    },
+    userManager ({commit}) {
+      commit("userManager")
+    },
+    collectorManager ({commit}) {
+      commit("collectorManager")
+    },
+    ids ({commit}) {
+      commit("ids")
+    },
+    rules ({commit}) {
+      commit("rules")
+    },
+    visualization ({commit}) {
+      commit("visualization")
     },
     setEnvironment ({commit}) {
       axios({url: '/status', method: 'GET', crossdomain: true, withCredentials: true })
@@ -84,6 +100,46 @@ export default new Vuex.Store({
     },
     dashboard () {
       router.push("/")
+        .catch((e) => {
+          if (e.Name == "NavigationDuplicated") {
+            // user clicked the page they were already on, no need to log eror
+          }
+        })
+    },
+    userManager () {
+      router.push("/users")
+        .catch((e) => {
+          if (e.Name == "NavigationDuplicated") {
+            // user clicked the page they were already on, no need to log eror
+          }
+        })
+    },
+    collectorManager () {
+      router.push("/collectors")
+        .catch((e) => {
+          if (e.Name == "NavigationDuplicated") {
+            // user clicked the page they were already on, no need to log eror
+          }
+        })
+    },
+    ids () {
+      router.push("/ids")
+        .catch((e) => {
+          if (e.Name == "NavigationDuplicated") {
+            // user clicked the page they were already on, no need to log eror
+          }
+        })
+    },
+    rules () {
+      router.push("/rules")
+        .catch((e) => {
+          if (e.Name == "NavigationDuplicated") {
+            // user clicked the page they were already on, no need to log eror
+          }
+        })
+    },
+    visualization () {
+      router.push("/visualization")
         .catch((e) => {
           if (e.Name == "NavigationDuplicated") {
             // user clicked the page they were already on, no need to log eror

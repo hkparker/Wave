@@ -3,6 +3,12 @@ import VueRouter from 'vue-router'
 import Login from './Login.vue'
 import Dashboard from './components/Dashboard.vue'
 import AccountSettings from './components/AccountSettings.vue'
+import UserManager from './components/UserManager.vue'
+import CollectorManager from './components/CollectorManager.vue'
+import IDS from './components/IDS.vue'
+import Rules from './components/Rules.vue'
+import Visualization from './components/Visualization.vue'
+import Unauthorized from './components/Unauthorized.vue'
 import store from "./store.js"
 
 Vue.use(VueRouter)
@@ -12,6 +18,14 @@ const requireLogin = (to, from, next) => {
     next()
   } else {
     next('/login')
+  }
+}
+
+const requireLoginAdmin = (to, from, next) => {
+  if (store.getters.loggedIn && store.getters.admin) {
+    next()
+  } else {
+    next('/unauthorized')
   }
 }
 
@@ -28,6 +42,12 @@ export default new VueRouter({
   routes: [
     { path: '/', component: Dashboard, beforeEnter: requireLogin },
     { path: '/settings', component: AccountSettings, beforeEnter: requireLogin },
-    { path: '/login', component: Login, beforeEnter: requireLoggedOut }
+    { path: '/users', component: UserManager, beforeEnter: requireLoginAdmin },
+    { path: '/collectors', component: CollectorManager, beforeEnter: requireLoginAdmin },
+    { path: '/login', component: Login, beforeEnter: requireLoggedOut },
+    { path: '/ids', component: IDS, beforeEnter: requireLogin },
+    { path: '/rules', component: Rules, beforeEnter: requireLogin },
+    { path: '/visualization', component: Visualization, beforeEnter: requireLogin },
+    { path: '/unauthorized', component: Unauthorized, beforeEnter: requireLogin },
   ]
 })

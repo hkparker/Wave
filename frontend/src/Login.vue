@@ -14,23 +14,22 @@
 </template>
 
 <script>
-
-export default {
-  name: 'app',
-  data: function() {
-    return {
-      username: "",
-      password: ""
-    }
-  },
-  methods: {
-    login: function () {
-      const { username, password } = this
-      this.$store.dispatch('authenticate', { username, password })
+  export default {
+    name: 'app',
+    data: function() {
+      return {
+        username: "",
+        password: ""
+      }
+    },
+    methods: {
+      login: function () {
+        const { username, password } = this
+        this.$store.dispatch('authenticate', { username, password })
+     }
    }
-}
-}
+  }
 </script>
 
-<style>
+<style scoped>
 </style>

@@ -16,13 +16,13 @@
           <a class="navbar-item" v-on:click="dashboard">
             Dashboard
           </a>
-          <a class="navbar-item">
+          <a class="navbar-item" v-on:click="ids">
             IDS
           </a>
-          <a class="navbar-item">
+          <a class="navbar-item" v-on:click="rules">
             Rules
           </a>
-          <a class="navbar-item">
+          <a class="navbar-item" v-on:click="visualization">
             Visualization
           </a>
         </div>
@@ -35,10 +35,10 @@
               <a class="navbar-item" v-on:click="settings">
                 Account Settings
               </a>
-              <a class="navbar-item" v-if="this.$store.getters.currentUser.admin">
+              <a class="navbar-item" v-if="this.$store.getters.currentUser.admin" v-on:click="userManager">
                 User Management
               </a>
-              <a class="navbar-item" v-if="this.$store.getters.currentUser.admin">
+              <a class="navbar-item" v-if="this.$store.getters.currentUser.admin" v-on:click="collectorManager">
                 Collector Management
               </a>
             </div>
@@ -68,6 +68,21 @@ export default {
     },
     dashboard: function () {
       this.$store.dispatch('dashboard')
+    },
+    userManager: function () {
+      this.$store.dispatch('userManager')
+    },
+    collectorManager: function () {
+      this.$store.dispatch('collectorManager')
+    },
+    ids: function () {
+      this.$store.dispatch('ids')
+    },
+    rules: function () {
+      this.$store.dispatch('rules')
+    },
+    visualization: function () {
+      this.$store.dispatch('visualization')
     }
   }
 }

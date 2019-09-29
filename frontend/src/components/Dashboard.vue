@@ -5,16 +5,15 @@
 </template>
 
 <script>
-export default {
-  name: 'HelloWorld',
-  props: {
-    msg: String
+  export default {
+    name: 'Dashboard',
+    props: {
+    }
   }
-}
 </script>
 
 <style scoped>
-h1 {
-  text-align: center;
-}
+  h1 {
+    text-align: center;
+  }
 </style>
