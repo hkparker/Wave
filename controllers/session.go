@@ -82,7 +82,14 @@ func newSession(c *gin.Context) {
 		// Set the wave_session cookie
 		cookie := session.HTTPCookie()
 		http.SetCookie(c.Writer, &cookie)
-		c.JSON(200, gin.H{"authentication": "success"})
+		c.JSON(
+			200,
+			gin.H{
+				"username": user.Username,
+				"admin": user.Admin,
+				"version": 0,
+			},
+		)
 		log.WithFields(log.Fields{
 			"at":       "controllers.newSession",
 			"username": username,

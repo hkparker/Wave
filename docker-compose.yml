@@ -1,4 +1,5 @@
 pg:
   image: postgres
+  net: "host"
   ports:
     - "5432:5432"

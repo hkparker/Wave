@@ -6,6 +6,7 @@ import (
 	"github.com/hkparker/Wave/engines/visualizer"
 	"github.com/hkparker/Wave/models"
 	"net/http"
+	"errors"
 )
 
 func init() {
@@ -44,21 +45,29 @@ func requestJSON(c *gin.Context) (json map[string]string, err error) {
 	return
 }
 
-func currentUser(c *gin.Context) (user models.User, err error) {
-	session_cookie, err := sessionCookie(c)
-	if err != nil {
-		return
-	}
-	user, err = models.UserFromSessionCookie(session_cookie)
-	if err != nil {
-		c.JSON(500, gin.H{"error": err.Error()})
+func currentUser(c *gin.Context) (models.User, error) {
+	userInterface, ok := c.Get("currentUser")
+	if !ok {
+		c.Status(500)
 		c.Abort()
+		errStr := "request context has no currentUser set"
 		log.WithFields(log.Fields{
-			"at":    "controllers.currentUser",
-			"error": err.Error(),
-		}).Error("error getting current user")
+			"at": "controllers.currentUser",
+		}).Error(errStr)
+		return models.User{}, errors.New(errStr)
 	}
-	return
+	user, ok := userInterface.(models.User)
+	if !ok {
+		c.Status(500)
+		c.Abort()
+		errStr := "unable to cast user interface to user model"
+		log.WithFields(log.Fields{
+			"at": "controllers.currentUser",
+		}).Error(errStr)
+		return user, errors.New(errStr)
+	}
+
+	return user, nil
 }
 
 func sessionCookie(c *gin.Context) (session_cookie string, err error) {

@@ -21,7 +21,8 @@ export default new Vuex.Store({
   actions: {
     authenticate ({commit}, credentials) {
      return axios({url: '/sessions/create', data: credentials, method: 'POST', crossdomain: true, withCredentials: true })
-      .then(() => {
+      .then((resp) => {
+        commit("setCurrentUser", resp.data)
         commit('authSuccess', credentials.username)
       })
       .catch(err => {
@@ -57,13 +58,12 @@ export default new Vuex.Store({
     authRequest (state) {
       state.authenticationState = "loading"
     },
-    setCurrentUser: (state, username) => {
-      state.currentUser = username
+    setCurrentUser: (state, user) => {
+      state.currentUser = user
     },
-    authSuccess (state, username) {
+    authSuccess (state) {
       state.authenticationState = "success"
       state.loggedIn = true
-      state.currentUser = username
       router.push('/')
     },
     authFailed (state) {
