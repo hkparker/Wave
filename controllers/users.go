@@ -358,9 +358,9 @@ func getUsers(c *gin.Context) {
 		}).Error("error looking up users")
 		return
 	}
-	var data []map[string]string
+	var data []gin.H
 	for _, user := range users {
-		data = append(data, map[string]string{
+		data = append(data, gin.H{
 			"username": user.Username,
 			"name":     user.Name,
 			"admin": func() string {
@@ -369,6 +369,7 @@ func getUsers(c *gin.Context) {
 				}
 				return "false"
 			}(),
+			"sessions": user.SessionCount(),
 		})
 	}
 	c.JSON(200, data)

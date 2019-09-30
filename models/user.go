@@ -114,6 +114,10 @@ func (user *User) NewSession() (wave_session string, err error) {
 	return
 }
 
+func (user *User) SessionCount() int {
+	return Orm.Model(&user).Association("Sessions").Count()
+}
+
 func (user *User) DestroyAllOtherSessions(session_cookie string) {
 	var new_sessions []Session
 	var sessions []Session

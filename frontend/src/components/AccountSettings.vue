@@ -116,8 +116,8 @@ export default {
 </script>
 
 <style scoped>
-h1 {
-  text-align: center;
-  padding-top: 30px;
-}
+  h1 {
+    text-align: center;
+    padding-top: 30px;
+  }
 </style>
