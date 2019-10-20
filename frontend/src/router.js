@@ -42,8 +42,8 @@ export default new VueRouter({
   routes: [
     { path: '/', component: Dashboard, beforeEnter: requireLogin },
     { path: '/settings', component: AccountSettings, beforeEnter: requireLogin },
-    { path: '/users', component: UserManager, beforeEnter: requireLoginAdmin },
-    { path: '/collectors', component: CollectorManager, beforeEnter: requireLoginAdmin },
+    { path: '/users', component: UserManager, beforeEnter: requireLogin }, // require admin once works on refresh
+    { path: '/collectors', component: CollectorManager, beforeEnter: requireLogin }, // require admin once works on refresh
     { path: '/login', component: Login, beforeEnter: requireLoggedOut },
     { path: '/ids', component: IDS, beforeEnter: requireLogin },
     { path: '/rules', component: Rules, beforeEnter: requireLogin },
