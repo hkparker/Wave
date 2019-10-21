@@ -21,6 +21,7 @@ const requireLogin = (to, from, next) => {
   }
 }
 
+/*
 const requireLoginAdmin = (to, from, next) => {
   if (store.getters.loggedIn && store.getters.admin) {
     next()
@@ -28,6 +29,7 @@ const requireLoginAdmin = (to, from, next) => {
     next('/unauthorized')
   }
 }
+*/
 
 const requireLoggedOut = (to, from, next) => {
   if (!store.getters.loggedIn) {

@@ -2,6 +2,26 @@
   <div class="container">
     <h1 class="title">User Management</h1>
     <h2 class="subtitle">Current Users</h2>
+    <div v-if="getUsersAlert" class="notification is-success">
+      <button class="delete" v-on:click="getUsersAlert=false"></button>
+        Error getting users: {{ getUsersError }}
+    </div>
+    <div v-if="passwordSetAlert" class="notification is-success">
+      <button class="delete" v-on:click="passwordSetAlert=false"></button>
+        New password has been assigned
+    </div>
+    <div v-if="userDeletedAlert" class="notification is-success">
+      <button class="delete" v-on:click="userDeletedAlert=false"></button>
+        User has been deleted
+    </div>
+    <div v-if="errorAssigningPasswordAlert" class="notification is-danger">
+      <button class="delete" v-on:click="errorAssigningPasswordAlert=false"></button>
+        Error assigning password: {{ passwordSetError }}
+    </div>
+    <div v-if="errorDeletingUserAlert" class="notification is-danger">
+      <button class="delete" v-on:click="errorDeletingUserAlert=false"></button>
+        Error deleting user: {{ userDeleteError }}
+    </div>
     <table class="table is-striped">
       <thead>
         <tr>
@@ -28,7 +48,7 @@
             </div>
           </td>
           <td>
-            <button class="button is-danger">Delete</button>
+            <button class="button is-danger" v-on:click="deleteUser(user.username)">Delete</button>
           </td>
         </tr>
       </tbody>
@@ -44,6 +64,14 @@
     name: 'UserManager',
     data: function() {
       return {
+        passwordSetAlert: false,
+        userDeletedAlert: false,
+        errorDeletingUserAlert: false,
+        errorAssigningPasswordAlert: false,
+        getUsersAlert: false,
+        userDeleteError: "",
+        passwordSetError: "",
+        getUsersError: "",
         users: [],
       }
     },
@@ -53,8 +81,9 @@
           .then((resp) => {
               this.users = resp.data
             })
-          .catch(() => {
-            // error getting users
+          .catch((err) => {
+            this.getUsersAlert = true
+            this.getUsersError = err.response.data.error
         })
       },
       setPassword: function (username) {
@@ -62,7 +91,31 @@
           "username": username,
           "password": document.querySelector("input#"+username).value
         }
-        console.log(update)
+        axios({url: '/users/assign-password', data: update, method: 'POST', crossdomain: true, withCredentials: true })
+          .then(() => {
+            this.passwordSetAlert = true
+            // if the user sets their own password this way, all their sessions
+            // will be destroyed and they will need to be logged out
+            this.$store.dispatch("setEnvironment")
+          })
+          .catch((err) => {
+            this.passwordSetAlert = true
+            this.passwordSetError = err.response.data.error
+        })
+      },
+      deleteUser: function (username) {
+        var update = {
+          "username": username
+        }
+        axios({url: '/users/delete', data: update, method: 'POST', crossdomain: true, withCredentials: true })
+          .then(() => {
+            this.userDeleteAlert = true
+            this.populateUsers() // just delete from data object?
+          })
+          .catch((err) => {
+            this.errorDeletingUserAlert = true
+            this.userDeleteError = err.response.data.error
+        })
       }
     },
     beforeMount(){
