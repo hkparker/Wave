@@ -20,10 +20,10 @@
           <td>
             <div class="field has-addons">
               <div class="control">
-                <input class="input" type="password">
+                <input :id="user.username" class="input" type="password">
               </div>
               <div class="control">
-                <button class="button is-danger" v-on:click="setPassword($event, user.username)">Set Password</button>
+                <button class="button is-danger" v-on:click="setPassword(user.username)">Set Password</button>
               </div>
             </div>
           </td>
@@ -57,9 +57,12 @@
             // error getting users
         })
       },
-      setPassword: function (context, user) {
-        console.log(context)
-        console.log(user)
+      setPassword: function (username) {
+        var update = {
+          "username": username,
+          "password": document.querySelector("input#"+username).value
+        }
+        console.log(update)
       }
     },
     beforeMount(){
