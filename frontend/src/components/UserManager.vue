@@ -127,6 +127,7 @@
         passwordSetError: "",
         getUsersError: "",
         newUsername: "",
+        newPassword: "",
         users: [],
       }
     },
