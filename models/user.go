@@ -17,9 +17,10 @@ type User struct {
 	Sessions []Session
 }
 
-func CreateUser(username string) (err error) {
+func CreateUser(username, password string, admin bool) (err error) {
 	user := User{
 		Username: username,
+		Admin: admin,
 	}
 	db_err := Orm.Create(&user).Error
 	if db_err != nil {
@@ -45,6 +46,15 @@ func CreateUser(username string) (err error) {
 				"username": user.Username,
 			}).Info("user_created")
 		}
+	}
+
+	err = user.SetPassword(password)
+	if err != nil {
+		log.WithFields(log.Fields{
+			"at":     "models.CreateUser",
+			"UserID": user.ID,
+			"error":  err.Error(),
+		}).Warn("error_setting_new_user_password")
 	}
 	return
 }

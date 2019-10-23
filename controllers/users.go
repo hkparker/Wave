@@ -32,9 +32,35 @@ func createUser(c *gin.Context) {
 		return
 	}
 
+	// Ensure the JSON contains a password key with data
+	password, ok := user_info["password"]
+	if !ok || password == "" {
+		password_error := "no password provided"
+		c.JSON(400, gin.H{"error": password_error})
+		log.WithFields(log.Fields{
+			"at":    "controllers.createUser",
+			"error": password_error,
+			"admin": admin.Username,
+		}).Error("error creating user")
+		return
+	}
+
+	// Ensure the JSON contains a valid admin key with data
+	adminKey, ok := user_info["admin"]
+	if !ok || !(adminKey == "true" || adminKey == "false") {
+		admin_error := "no valid admin key provided"
+		c.JSON(400, gin.H{"error": admin_error})
+		log.WithFields(log.Fields{
+			"at":    "controllers.createUser",
+			"error": admin_error,
+			"admin": admin.Username,
+		}).Error("error creating user")
+		return
+	}
+
 	// Save the new user and create a link for the user
 	// to set a password
-	err = models.CreateUser(username)
+	err = models.CreateUser(username, password, adminKey == "true")
 	if err == nil {
 		c.JSON(200, gin.H{
 			"success": "true",

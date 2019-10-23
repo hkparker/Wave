@@ -54,6 +54,14 @@
       </tbody>
     </table>
     <h2 class="subtitle">Add User</h2>
+    <div v-if="userCreatedAlert" class="notification is-success">
+      <button class="delete" v-on:click="userCreatedAlert=false"></button>
+        User created
+    </div>
+    <div v-if="errorCreatingUserAlert" class="notification is-danger">
+      <button class="delete" v-on:click="errorCreatingUserAlert=false"></button>
+        Error creating user: {{ this.userCreatedError }}
+    </div>
     <div class="field is-horizontal">
       <div class="field-label is-normal">
         <label class="label">Username</label>
@@ -86,7 +94,7 @@
         <div class="field">
           <div class="control">
             <label class="newUserAdmin">
-              <input type="checkbox">
+              <input type="checkbox" v-model="newAdmin">
                 Admin
             </label>
           </div>
@@ -100,8 +108,7 @@
       <div class="field-body">
         <div class="field">
           <div class="control">
-            <!--<button class="button is-info" v-on:click=""> -->
-            <button class="button is-info">
+            <button class="button is-info" v-on:click="addUser">
               Create User
             </button>
           </div>
@@ -123,11 +130,15 @@
         errorDeletingUserAlert: false,
         errorAssigningPasswordAlert: false,
         getUsersAlert: false,
+        userCreatedAlert: false,
+        errorCreatingUserAlert: false,
         userDeleteError: "",
+        userCreatedError: "",
         passwordSetError: "",
         getUsersError: "",
         newUsername: "",
         newPassword: "",
+        newAdmin: false,
         users: [],
       }
     },
@@ -165,12 +176,29 @@
         }
         axios({url: '/users/delete', data: update, method: 'POST', crossdomain: true, withCredentials: true })
           .then(() => {
-            this.userDeleteAlert = true
+            this.userDeletedAlert = true
             this.populateUsers() // just delete from data object?
           })
           .catch((err) => {
             this.errorDeletingUserAlert = true
-            this.userDeleteError = err.response.data.error
+            this.userDeletedError = err.response.data.error
+        })
+      },
+      addUser: function () {
+        var update = {
+          "username": this.newUsername,
+          "password": this.newPassword,
+          "admin": this.newAdmin.toString()
+        }
+        console.log(update)
+        axios({url: '/users/create', data: update, method: 'POST', crossdomain: true, withCredentials: true })
+          .then(() => {
+            this.userCreatedAlert = true
+            this.populateUsers() // just add to the data object?
+          })
+          .catch((err) => {
+            this.errorCreatingUserAlert = true
+            this.userCreatedError = err.response.data.error
         })
       }
     },
@@ -184,5 +212,13 @@
   h1 {
     text-align: center;
     padding-top: 30px;
+  }
+  .field-label {
+    max-width: fit-content;
+    min-width: 80px;
+    text-align: justify;
+  }
+  input {
+    width: auto;
   }
 </style>

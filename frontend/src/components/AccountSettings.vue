@@ -120,4 +120,12 @@ export default {
     text-align: center;
     padding-top: 30px;
   }
+  .field-label {
+    max-width: fit-content;
+    min-width: 140px;
+    text-align: justify;
+  }
+  input {
+    width: auto;
+  }
 </style>
