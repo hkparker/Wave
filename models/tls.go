@@ -9,9 +9,9 @@ import (
 	"crypto/x509/pkix"
 	"encoding/pem"
 	"errors"
-	log "github.com/sirupsen/logrus"
 	"github.com/hkparker/Wave/helpers"
 	"github.com/jinzhu/gorm"
+	log "github.com/sirupsen/logrus"
 	"math/big"
 	"net"
 	"time"
@@ -176,9 +176,9 @@ func selfSignedCert() (cert_data []byte, key_data []byte) {
 		NotBefore:             time.Now(),
 		NotAfter:              time.Now().AddDate(6, 0, 0),
 		BasicConstraintsValid: true,
-		IsCA:        true,
-		ExtKeyUsage: []x509.ExtKeyUsage{x509.ExtKeyUsageClientAuth, x509.ExtKeyUsageServerAuth},
-		KeyUsage:    x509.KeyUsageDigitalSignature | x509.KeyUsageCertSign,
+		IsCA:                  true,
+		ExtKeyUsage:           []x509.ExtKeyUsage{x509.ExtKeyUsageClientAuth, x509.ExtKeyUsageServerAuth},
+		KeyUsage:              x509.KeyUsageDigitalSignature | x509.KeyUsageCertSign,
 	}
 
 	// Generate key

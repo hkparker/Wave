@@ -2,8 +2,8 @@ package visualizer
 
 import (
 	"bytes"
-	log "github.com/sirupsen/logrus"
 	"github.com/hkparker/Wave/models"
+	log "github.com/sirupsen/logrus"
 )
 
 func updateAccessPoints(frame models.Wireless80211Frame) {

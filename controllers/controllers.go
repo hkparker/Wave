@@ -1,12 +1,12 @@
 package controllers
 
 import (
-	log "github.com/sirupsen/logrus"
+	"errors"
 	"github.com/gin-gonic/gin"
 	"github.com/hkparker/Wave/engines/visualizer"
 	"github.com/hkparker/Wave/models"
+	log "github.com/sirupsen/logrus"
 	"net/http"
-	"errors"
 )
 
 func init() {

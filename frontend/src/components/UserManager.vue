@@ -190,7 +190,6 @@
           "password": this.newPassword,
           "admin": this.newAdmin.toString()
         }
-        console.log(update)
         axios({url: '/users/create', data: update, method: 'POST', crossdomain: true, withCredentials: true })
           .then(() => {
             this.userCreatedAlert = true

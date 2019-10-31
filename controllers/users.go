@@ -1,9 +1,9 @@
 package controllers
 
 import (
-	log "github.com/sirupsen/logrus"
 	"github.com/gin-gonic/gin"
 	"github.com/hkparker/Wave/models"
+	log "github.com/sirupsen/logrus"
 )
 
 // Handle a request from administrator to create a new user

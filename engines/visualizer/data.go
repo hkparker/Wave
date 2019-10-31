@@ -1,9 +1,9 @@
 package visualizer
 
 import (
-	log "github.com/sirupsen/logrus"
 	"github.com/hkparker/Wave/helpers"
 	"github.com/hkparker/Wave/models"
+	log "github.com/sirupsen/logrus"
 )
 
 func updateAssociation(frame models.Wireless80211Frame) {

@@ -5,12 +5,12 @@ import (
 	"crypto/tls"
 	"encoding/hex"
 	"encoding/json"
-	log "github.com/sirupsen/logrus"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
 	"github.com/hkparker/Wave/engines/ids"
 	"github.com/hkparker/Wave/engines/visualizer"
 	"github.com/hkparker/Wave/models"
+	log "github.com/sirupsen/logrus"
 )
 
 func createCollector(c *gin.Context) {
@@ -49,10 +49,8 @@ func createCollector(c *gin.Context) {
 	}
 
 	c.JSON(200, gin.H{
-		"success":     "true",
-		"name":        collector.Name,
-		"certificate": collector.CaCert,
-		"private_key": collector.PrivateKey,
+		"success": "true",
+		"name":    collector.Name,
 	})
 	log.WithFields(log.Fields{
 		"at":    "controllers.createCollector",
@@ -82,6 +80,85 @@ func getCollectors(c *gin.Context) {
 		names = append(names, collector.Name)
 	}
 	c.JSON(200, names)
+}
+
+func getCollectorCertificate(c *gin.Context) {
+	collector_info, err := requestJSON(c)
+	if err != nil {
+		return
+	}
+	admin, err := currentUser(c)
+	if err != nil {
+		return
+	}
+
+	name, ok := collector_info["name"]
+	if !ok || name == "" {
+		name_error := "no name provided"
+		c.JSON(400, gin.H{"error": name_error})
+		log.WithFields(log.Fields{
+			"at":    "controllers.getCollectorCertificate",
+			"error": name_error,
+			"admin": admin.Username,
+		}).Error("error getting collector")
+		return
+	}
+
+	collector, err := models.CollectorByName(name)
+	if err != nil {
+		name_error := "name provided does not match collector"
+		c.JSON(400, gin.H{"error": name_error})
+		log.WithFields(log.Fields{
+			"at":    "controllers.getCollectorCertificate",
+			"error": name_error,
+			"admin": admin.Username,
+		}).Error("error getting collector")
+		return
+	}
+
+	c.Data(200, "application/x-pem-file", []byte(collector.CaCert))
+}
+
+func getCollectorKey(c *gin.Context) {
+	collector_info, err := requestJSON(c)
+	if err != nil {
+		return
+	}
+	admin, err := currentUser(c)
+	if err != nil {
+		return
+	}
+
+	name, ok := collector_info["name"]
+	if !ok || name == "" {
+		name_error := "no name provided"
+		c.JSON(400, gin.H{"error": name_error})
+		log.WithFields(log.Fields{
+			"at":    "controllers.getCollectorKey",
+			"error": name_error,
+			"admin": admin.Username,
+		}).Error("error getting collector")
+		return
+	}
+
+	collector, err := models.CollectorByName(name)
+	if err != nil {
+		name_error := "name provided does not match collector"
+		c.JSON(400, gin.H{"error": name_error})
+		log.WithFields(log.Fields{
+			"at":    "controllers.getCollectorKey",
+			"error": name_error,
+			"admin": admin.Username,
+		}).Error("error getting collector")
+		return
+	}
+
+	c.Data(200, "application/x-pem-file", []byte(collector.PrivateKey))
+}
+
+func getServerCertificate(c *gin.Context) {
+	cert_data, _ := models.APITLSData()
+	c.Data(200, "application/x-pem-file", cert_data)
 }
 
 func deleteCollector(c *gin.Context) {

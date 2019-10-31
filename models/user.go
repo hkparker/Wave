@@ -1,9 +1,9 @@
 package models
 
 import (
-	log "github.com/sirupsen/logrus"
 	"github.com/hkparker/Wave/helpers"
 	"github.com/jinzhu/gorm"
+	log "github.com/sirupsen/logrus"
 	"golang.org/x/crypto/bcrypt"
 	"time"
 )
@@ -20,7 +20,7 @@ type User struct {
 func CreateUser(username, password string, admin bool) (err error) {
 	user := User{
 		Username: username,
-		Admin: admin,
+		Admin:    admin,
 	}
 	db_err := Orm.Create(&user).Error
 	if db_err != nil {

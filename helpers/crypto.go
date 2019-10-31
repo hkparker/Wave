@@ -2,8 +2,8 @@ package helpers
 
 import (
 	"crypto/rand"
-	log "github.com/sirupsen/logrus"
 	"github.com/jbenet/go-base58"
+	log "github.com/sirupsen/logrus"
 )
 
 func RandomString() (random_string string) {

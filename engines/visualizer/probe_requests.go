@@ -1,8 +1,8 @@
 package visualizer
 
 import (
-	log "github.com/sirupsen/logrus"
 	"github.com/hkparker/Wave/models"
+	log "github.com/sirupsen/logrus"
 )
 
 // With thanks to:

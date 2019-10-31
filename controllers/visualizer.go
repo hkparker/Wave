@@ -1,11 +1,11 @@
 package controllers
 
 import (
-	log "github.com/sirupsen/logrus"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
 	"github.com/hkparker/Wave/engines/visualizer"
 	"github.com/satori/go.uuid"
+	log "github.com/sirupsen/logrus"
 	"net/http"
 	"sync"
 )

@@ -1,9 +1,9 @@
 package models
 
 import (
-	log "github.com/sirupsen/logrus"
 	"github.com/google/gopacket"
 	"github.com/google/gopacket/layers"
+	log "github.com/sirupsen/logrus"
 )
 
 // https://github.com/torvalds/linux/blob/master/include/linux/ieee80211.h#L1787

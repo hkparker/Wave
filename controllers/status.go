@@ -10,10 +10,10 @@ func getStatus(c *gin.Context) {
 	if err != nil {
 		return
 	}
-	
+
 	c.JSON(200, gin.H{
 		"username": user.Username,
-		"admin": user.Admin,
-		"version": 0,
+		"admin":    user.Admin,
+		"version":  0,
 	})
 }

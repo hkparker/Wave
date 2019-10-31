@@ -1,9 +1,9 @@
 package middleware
 
 import (
-	log "github.com/sirupsen/logrus"
 	"github.com/gin-gonic/gin"
 	"github.com/hkparker/Wave/models"
+	log "github.com/sirupsen/logrus"
 )
 
 var public_endpoints map[string]bool

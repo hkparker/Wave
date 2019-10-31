@@ -1,9 +1,9 @@
 package controllers
 
 import (
-	log "github.com/sirupsen/logrus"
 	"github.com/gin-gonic/gin"
 	"github.com/hkparker/Wave/models"
+	log "github.com/sirupsen/logrus"
 	"net/http"
 )
 
@@ -86,8 +86,8 @@ func newSession(c *gin.Context) {
 			200,
 			gin.H{
 				"username": user.Username,
-				"admin": user.Admin,
-				"version": 0,
+				"admin":    user.Admin,
+				"version":  0,
 			},
 		)
 		log.WithFields(log.Fields{

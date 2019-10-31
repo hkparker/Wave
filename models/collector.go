@@ -8,8 +8,8 @@ import (
 	"crypto/x509"
 	"crypto/x509/pkix"
 	"encoding/pem"
-	log "github.com/sirupsen/logrus"
 	"github.com/jinzhu/gorm"
+	log "github.com/sirupsen/logrus"
 	"time"
 )
 

@@ -1,8 +1,8 @@
 package helpers
 
 import (
-	log "github.com/sirupsen/logrus"
 	"github.com/gin-gonic/gin"
+	log "github.com/sirupsen/logrus"
 	"os"
 )
 

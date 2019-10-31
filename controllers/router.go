@@ -14,9 +14,9 @@ func NewAPI() *gin.Engine {
 
 	if helpers.Development { // create a proper CORS for production
 		c := cors.New(cors.Options{
-		    AllowedOrigins: []string{"http://localhost:8080"},
-		    AllowCredentials: true,
-		    //Debug: true,
+			AllowedOrigins:   []string{"http://localhost:8080"},
+			AllowCredentials: true,
+			//Debug: true,
 		})
 		router.Use(c)
 	}
@@ -54,6 +54,9 @@ func NewAPI() *gin.Engine {
 
 	// Collector routes
 	router.GET("/collectors", getCollectors)
+	router.POST("/collector/certificate", getCollectorCertificate)
+	router.POST("/collector/key", getCollectorKey)
+	router.POST("/collector/server_certificate", getServerCertificate)
 	router.POST("/collectors/create", createCollector)
 	router.POST("/collectors/delete", deleteCollector)
 
