@@ -10,7 +10,6 @@
       <thead>
         <tr>
           <th>Name</th>
-          <th>Status</th>
           <th>Certificate</th>
           <th>Key</th>
           <th>Server Certificate</th>
@@ -20,7 +19,6 @@
       <tbody id="usersTable">
         <tr v-for="collector in collectors" v-bind:key="collector">
           <td>{{ collector }}</td>
-          <td></td>
           <td><a v-on:click="downloadCertificate(collector)">Download</a></td>
           <td><a v-on:click="downloadKey(collector)">Download</a></td>
           <td><a v-on:click="downloadServerCertificate()">Download</a></td>
