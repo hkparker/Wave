@@ -4,6 +4,7 @@ import (
 	"github.com/hkparker/Wave/helpers"
 	"github.com/hkparker/Wave/models"
 	log "github.com/sirupsen/logrus"
+	"sort"
 	"strings"
 	"sync"
 )
@@ -35,7 +36,7 @@ var Devices = make(map[string]models.Device)
 var DevicesMux sync.Mutex
 var Networks = make(map[string]models.Network)
 var NetworksMux sync.Mutex
-var Associations = make(map[string][]string)
+var Associations = make(map[string]models.Association)
 var AssociationsMux sync.Mutex
 
 func init() {
@@ -190,6 +191,14 @@ func insertCtrl(frame models.Wireless80211Frame) {
 	}
 }
 
+// Given two MACs in any order, always return them
+// combined in sorted order
+func deterministicKey(mac1, mac2 string) string {
+	set := []string{mac1, mac2}
+	sort.Strings(set)
+	return strings.Join(set, ":")
+}
+
 func CatchupEvents() []VisualEvent {
 	catchup_events := make([]VisualEvent, 0)
 	for _, device := range Devices {
@@ -201,17 +210,16 @@ func CatchupEvents() []VisualEvent {
 			catchup_events = append(catchup_events, VisualEvent(network_event))
 		}
 	}
-	for mac, associations := range Associations {
-		for _, other := range associations {
-			catchup_events = append(
-				catchup_events,
-				VisualEvent{
-					TYPE:   "NewAssociation",
-					"MAC1": mac,
-					"MAC2": other,
-				},
-			)
-		}
+	for _, association := range Associations {
+		catchup_events = append(
+			catchup_events,
+			VisualEvent{
+				TYPE:   "NewAssociation",
+				"Key":  deterministicKey(association.Source, association.Target),
+				"target": association.Source,
+				"source": association.Target,
+			},
+		)
 	}
 	catchup_events = append(
 		catchup_events,

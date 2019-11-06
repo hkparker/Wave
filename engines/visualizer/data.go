@@ -1,7 +1,6 @@
 package visualizer
 
 import (
-	"github.com/hkparker/Wave/helpers"
 	"github.com/hkparker/Wave/models"
 	log "github.com/sirupsen/logrus"
 )
@@ -37,29 +36,30 @@ func memoized(mac1, mac2 string) bool {
 	if broadcast(mac1) || broadcast(mac2) {
 		return true
 	}
-	ret := true
-	association1 := Associations[mac1]
-	if !helpers.StringIncludedIn(association1, mac2) {
-		Associations[mac1] = append(Associations[mac1], mac2)
-		ret = false
+
+	key := deterministicKey(mac1, mac2)
+	if _, exists := Associations[key]; exists {
+		return true
+	} else {
+		Associations[key] = models.Association{
+			Source: mac1,
+			Target: mac2,
+		}
 	}
-	association2 := Associations[mac2]
-	if !helpers.StringIncludedIn(association2, mac1) {
-		Associations[mac2] = append(Associations[mac2], mac1)
-		ret = false
-	}
+	return false
+
 	//if mac1 == mac2 {
 	//	log.Warn("association between identical mac " + mac1)
 	//	return true
 	//}
-	return ret
 }
 
 func visualizeAssociation(mac1, mac2 string) {
 	VisualEvents <- VisualEvent{
 		TYPE:   "NewAssociation",
-		"MAC1": mac1,
-		"MAC2": mac2,
+                "Key":  deterministicKey(mac1, mac2),
+		"target": mac1,
+		"source": mac2,
 	}
 	log.WithFields(log.Fields{
 		"at":   "visualizer.visualizeAssociation",

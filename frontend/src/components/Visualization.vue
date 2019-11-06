@@ -9,11 +9,60 @@
     name: 'Visualization',
     data: function() {
       return {
+        devicesByMAC: new Map(),
+        associationsByKey: new Map(),
+        isAssociated: new Map(),
+        devices: [],
+        associations: [],
+        onlyShowAssociated: false,
+        graph: ForceGraph3D(),
       }
     },
+    methods: {
+      updateDevice: function(device) {
+        this.devicesByMAC.set(device.MAC, device)
+        this.devices = []
+        for (var member of this.devicesByMAC.values()) {
+          this.devices.push(member)
+        }
+        this.graph.graphData({
+            links: this.associations,
+            nodes: this.devices,
+        });
+      },
+      updateAssociation: function(association) {
+	this.isAssociated.set(association.source, true)
+	this.isAssociated.set(association.target, true)
+        this.associationsByKey.set(association.Key, association)
+        this.associations = []
+        for (var member of this.associationsByKey.values()) {
+          this.associations.push(member)
+        }
+        this.graph.graphData({
+            links: this.associations,
+            nodes: this.devices,
+        });
+      },
+      nodeFilter: function(node) {
+        if (this.onlyShowAssociated) {
+          if (this.isAssociated.get(node.MAC)) {
+            return true
+          } else {
+            return false
+          }
+        }
+        return true
+      },
+    },
     mounted(){
-      var visualization = ForceGraph3D();
-      visualization(this.$el).graphData({nodes:[], links: []});
+      this.graph
+        .nodeVisibility(this.nodeFilter)
+        .nodeId("MAC")
+        .nodeRelSize(6)
+        .nodeOpacity(1)
+        .linkOpacity(0.8)
+        .linkWidth(3);
+      this.graph(this.$el).graphData({nodes:this.devices, links: this.associations});
 
       var ws_protocol = "ws://"
       if (window.location.protocol == "https:") {
@@ -21,19 +70,13 @@
       }
       var socket = new WebSocket(ws_protocol + window.location.host + '/streams/visualizer')
 
+      var context = this
       socket.onmessage = function (event) {
         var msg = JSON.parse(event.data)
-        var { nodes, links } = visualization.graphData();
         if (msg.type == "NewDevice") {
-          visualization.graphData({
-              links: links,
-              nodes: [...nodes, { "id": msg.MAC }],
-          });
+          context.updateDevice(msg)
         } else if (msg.type == "NewAssociation") {
-          visualization.graphData({
-              links: [...links, { "target": msg.MAC1, "source": msg.MAC2}],
-              nodes: nodes,
-          });
+          context.updateAssociation(msg)
         }
       }
     }

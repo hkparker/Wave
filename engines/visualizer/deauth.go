@@ -1,7 +1,6 @@
 package visualizer
 
 import (
-	"github.com/hkparker/Wave/helpers"
 	"github.com/hkparker/Wave/models"
 	log "github.com/sirupsen/logrus"
 )
@@ -14,16 +13,13 @@ func animateDeauth(frame models.Wireless80211Frame) {
 		log.Warn("duplicate deauth mac " + frame.Address1)
 		return
 	}
-	if links, ok := Associations[frame.Address1]; ok {
-		if helpers.StringIncludedIn(links, frame.Address3) {
-			Associations[frame.Address1] = helpers.StringsExcept(links, frame.Address3)
-		}
+	key := deterministicKey(frame.Address1, frame.Address3)
+	_, ok := Associations[key]
+	if !ok {
+		// deauth on unknown association
+		return
 	}
-	if links, ok := Associations[frame.Address3]; ok {
-		if helpers.StringIncludedIn(links, frame.Address1) {
-			Associations[frame.Address3] = helpers.StringsExcept(links, frame.Address1)
-		}
-	}
+	delete(Associations, key)
 
 	VisualEvents <- VisualEvent{
 		"type":   "AnimateDeauth",
