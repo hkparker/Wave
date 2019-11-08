@@ -2,7 +2,24 @@
   <div class="columns">
     <div v-if="displayDetails" id="overlay" class="column is-2">
       <div><button class="delete is-pulled-right" v-on:click="hideDetails()"></button></div>
-      <div id="details">display info about clicked nodes here</div>
+      <div id="details">
+        <hr class="spacer" />
+        <b>Selected Node:</b>
+        <table class="table is-fullwidth">
+          <tbody>
+            <tr>
+              <td><b>MAC</b></td>
+              <td>{{ selectedNodeMAC }}</td>
+            </tr>
+            <tr>
+              <td><b>Vendor</b></td>
+              <td>{{ selectedNodeVendor }}</td>
+            </tr>
+          </tbody>
+        </table>
+        <hr class="middle" />
+        <b>Selected Association:</b>
+      </div>
     </div>
     <div id="visualcontainer" class="column">
       <div id="visualization"></div>
@@ -25,7 +42,9 @@
         associations: [],
         onlyShowAssociated: false,
         graph: ForceGraph3D(),
-        displayDetails: true,
+        displayDetails: false,
+        selectedNodeMAC: "",
+        selectedNodeVendor: "",
       }
     },
     methods: {
@@ -43,7 +62,8 @@
 	document.getElementById("visualcontainer").setAttribute("class", "column is-10")
         Vue.nextTick(function () {
           context.graph.width(document.getElementById("visualcontainer").offsetWidth)
-          document.getElementById("details").innerHTML = node.MAC;
+          context.selectedNodeMAC = node.MAC
+          context.selectedNodeVendor = node.Vendor
         })
       },
       updateDevice: function(device) {
@@ -128,5 +148,21 @@
   }
   #visualcontainer {
     padding: 12px 0px 0px 0px;
+  }
+  table {
+    background-color: #2C2C2C;
+  }
+  td {
+    color: white;
+  }
+  hr.spacer {
+    visibility: hidden;
+    margin-top: 0px;
+    margin-bottom: 10px;
+  }
+  hr.middle {
+    margin-top: 5px;
+    margin-bottom: 15px;
+    visibility: hidden;
   }
 </style>
