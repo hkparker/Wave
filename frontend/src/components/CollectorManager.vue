@@ -140,7 +140,10 @@
           .catch(() => {
             // catch this more specifically
         })
-      }
+      },
+      deleteCollector: function() {
+        // finish this
+      },
     },
     beforeMount(){
       this.populateCollectors()

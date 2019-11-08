@@ -1,8 +1,17 @@
 <template>
-  <h1>Visualization</h1>
+  <div class="columns">
+    <div v-if="displayDetails" id="overlay" class="column is-2">
+      <div><button class="delete is-pulled-right" v-on:click="hideDetails()"></button></div>
+      <div id="details">display info about clicked nodes here</div>
+    </div>
+    <div id="visualcontainer" class="column">
+      <div id="visualization"></div>
+    </div>
+  </div>
 </template>
 
 <script>
+  import Vue from 'vue'
   import ForceGraph3D from '3d-force-graph';
 
   export default {
@@ -16,9 +25,27 @@
         associations: [],
         onlyShowAssociated: false,
         graph: ForceGraph3D(),
+        displayDetails: true,
       }
     },
     methods: {
+      hideDetails: function() {
+        this.displayDetails = false
+        var context = this
+	document.getElementById("visualcontainer").setAttribute("class", "column")
+        Vue.nextTick(function () {
+          context.graph.width(document.getElementById("visualization").offsetWidth)
+        })
+      },
+      showDetails: function(node) {
+        this.displayDetails = true
+        var context = this
+	document.getElementById("visualcontainer").setAttribute("class", "column is-10")
+        Vue.nextTick(function () {
+          context.graph.width(document.getElementById("visualcontainer").offsetWidth)
+          document.getElementById("details").innerHTML = node.MAC;
+        })
+      },
       updateDevice: function(device) {
         this.devicesByMAC.set(device.MAC, device)
         this.devices = []
@@ -55,14 +82,21 @@
       },
     },
     mounted(){
+      var element = document.getElementById("visualization")
       this.graph
+        .width(element.offsetWidth)
         .nodeVisibility(this.nodeFilter)
+        .onNodeClick(node => { this.showDetails(node) })
         .nodeId("MAC")
         .nodeRelSize(6)
         .nodeOpacity(1)
         .linkOpacity(0.8)
-        .linkWidth(3);
-      this.graph(this.$el).graphData({nodes:this.devices, links: this.associations});
+        .linkWidth(3)
+        .nodeLabel(node => node.MAC)
+        .onNodeHover(node => element.style.cursor = node ? 'pointer' : null);
+
+      this.graph.cameraPosition(0,0)
+      this.graph(element).graphData({nodes:this.devices, links: this.associations});
 
       var ws_protocol = "ws://"
       if (window.location.protocol == "https:") {
@@ -86,5 +120,13 @@
 <style scoped>
   h1 {
     text-align: center;
+  }
+  #overlay {
+    color: white;
+    background-color: #2C2C2C;
+    padding: 12px 0px 0px 12px;
+  }
+  #visualcontainer {
+    padding: 12px 0px 0px 0px;
   }
 </style>
