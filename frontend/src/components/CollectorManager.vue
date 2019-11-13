@@ -4,7 +4,15 @@
     <h2 class="subtitle">Current Collectors</h2>
     <div v-if="getCollectorsAlert" class="notification is-success">
       <button class="delete" v-on:click="getCollectorsAlert=false"></button>
-        Error getting collectors: {{ getCollectorsError }}
+      Error getting collectors: {{ getCollectorsError }}
+    </div>
+    <div v-if="collectorDeletedErrorAlert" class="notification is-danger">
+      <button class="delete" v-on:click="collectorDeletedErrorAlert"></button>
+      Error deleting collector: {{ collectorDeletedError }}
+    </div>
+    <div v-if="collectorDeletedAlert" class="notification is-success">
+      <button class="delete" v-on:click="collectorDeletedAlert=false"></button>
+      Collector Deleted
     </div>
     <table class="table is-striped">
       <thead>
@@ -23,7 +31,7 @@
           <td><a v-on:click="downloadKey(collector)">Download</a></td>
           <td><a v-on:click="downloadServerCertificate()">Download</a></td>
           <td>
-            <button class="button is-danger" v-on:click="deleteCollector(collector.name)">Delete</button>
+            <button class="button is-danger" v-on:click="deleteCollector(collector)">Delete</button>
           </td>
         </tr>
       </tbody>
@@ -76,9 +84,13 @@
       return {
         newCollectorName: "",
         collectorCreatedError: "",
+        collectorDeletedError: "",
         getCollectorsError: "",
         collectorCreatedAlert: false,
+        collectorDeletedErrorAlert: false,
+        collectorDeletedAlert: false,
         errorCreatingCollectorAlert: false,
+        errorDeletingCollectorAlert: false,
         getCollectorsAlert: false,
         collectors: []
       }
@@ -103,8 +115,8 @@
             this.collectorCreatedAlert = true
             this.populateCollectors() // just add to the data object?
           })
-          .catch(() => {
-            // catch this more specifically
+          .catch((err) => {
+            this.collectorCreatedError = err.response.data.error
             this.errorCreatingCollectorAlert = true
         })
       },
@@ -141,8 +153,19 @@
             // catch this more specifically
         })
       },
-      deleteCollector: function() {
-        // finish this
+      deleteCollector: function(name) {
+        var update = {
+          "name": name
+        }
+        axios({url: '/collectors/delete', data: update, method: 'POST', crossdomain: true, withCredentials: true })
+          .then(() => {
+            this.collectorDeletedAlert = true
+            this.populateCollectors() // just remove from the data object?
+          })
+          .catch((err) => {
+            this.collectorDeletedError = err.response.data.error
+            this.collectorDeletedErrorAlert = true
+        })
       },
     },
     beforeMount(){
