@@ -2,6 +2,10 @@
   <div class="container">
     <h1 class="title">Collector Management</h1>
     <h2 class="subtitle">Current Collectors</h2>
+    <div v-if="downloadErrorAlert" class="notification is-danger">
+      <button class="delete" v-on:click="downloadErrorAlert=false"></button>
+      Error: {{ downloadError }}
+    </div>
     <div v-if="getCollectorsAlert" class="notification is-success">
       <button class="delete" v-on:click="getCollectorsAlert=false"></button>
       Error getting collectors: {{ getCollectorsError }}
@@ -86,12 +90,14 @@
         collectorCreatedError: "",
         collectorDeletedError: "",
         getCollectorsError: "",
+        downloadError: "",
         collectorCreatedAlert: false,
         collectorDeletedErrorAlert: false,
         collectorDeletedAlert: false,
         errorCreatingCollectorAlert: false,
         errorDeletingCollectorAlert: false,
         getCollectorsAlert: false,
+        downloadErrorAlert: false,
         collectors: []
       }
     },
@@ -128,8 +134,13 @@
           .then((resp) => {
             FileDownload(resp.data, name + ".pem")
           })
-          .catch(() => {
-            // catch this more specifically
+          .catch((err) => {
+            if (err.response.status == 404) {
+              this.downloadError = "not found"
+            } else {
+              this.downloadError = err.response.data.error
+            }
+            this.downloadErrorAlert = true
         })
       },
       downloadKey: function(name) {
@@ -140,8 +151,13 @@
           .then((resp) => {
             FileDownload(resp.data, name + ".key")
           })
-          .catch(() => {
-            // catch this more specifically
+          .catch((err) => {
+            if (err.response.status == 404) {
+              this.downloadError = "not found"
+            } else {
+              this.downloadError = err.response.data.error
+            }
+            this.downloadErrorAlert = true
         })
       },
       downloadServerCertificate: function() {
@@ -149,8 +165,13 @@
           .then((resp) => {
             FileDownload(resp.data, "wave.pem")
           })
-          .catch(() => {
-            // catch this more specifically
+          .catch((err) => {
+            if (err.response.status == 404) {
+              this.downloadError = "not found"
+            } else {
+              this.downloadError = err.response.data.error
+            }
+            this.downloadErrorAlert = true
         })
       },
       deleteCollector: function(name) {

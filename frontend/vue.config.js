@@ -14,6 +14,9 @@ module.exports = {
       '/status': {
         target: 'http://localhost:8081',
       },
+      '/collector': {
+        target: 'http://localhost:8081',
+      },
       '/collectors': {
         target: 'http://localhost:8081',
       },
