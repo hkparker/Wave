@@ -8,23 +8,23 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
-    "3d-force-graph": "^1.56.3",
-    "axios": "^0.19.0",
+    "3d-force-graph": "^1.57.0",
+    "axios": "^0.19.1",
     "bulma": "^0.7.5",
-    "core-js": "^2.6.5",
-    "js-file-download": "^0.4.8",
-    "vue": "^2.6.10",
-    "vue-router": "^3.1.2",
-    "vuex": "^3.1.1"
+    "core-js": "^2.6.11",
+    "js-file-download": "^0.4.9",
+    "vue": "^2.6.11",
+    "vue-router": "^3.1.5",
+    "vuex": "^3.1.2"
   },
   "devDependencies": {
-    "@vue/cli-plugin-babel": "^3.10.0",
-    "@vue/cli-plugin-eslint": "^3.10.0",
-    "@vue/cli-service": "^3.10.0",
-    "babel-eslint": "^10.0.1",
+    "@vue/cli-plugin-babel": "^3.12.1",
+    "@vue/cli-plugin-eslint": "^3.12.1",
+    "@vue/cli-service": "^4.1.2",
+    "babel-eslint": "^10.0.3",
     "eslint": "^5.16.0",
     "eslint-plugin-vue": "^5.0.0",
-    "vue-template-compiler": "^2.6.10"
+    "vue-template-compiler": "^2.6.11"
   },
   "eslintConfig": {
     "root": true,
