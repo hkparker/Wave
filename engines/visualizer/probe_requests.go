@@ -45,6 +45,7 @@ func updateProbeRequests(frame models.Wireless80211Frame) {
 		}
 
 		visualizeProbeRequest(frame.Address2, ssid)
+		VisualEvents <- dev.VisualData()
 	}
 }
 

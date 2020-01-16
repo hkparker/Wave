@@ -71,10 +71,14 @@ func broadcast(mac string) bool {
 	if mac[:8] == "01:00:5e" {
 		return true
 	}
+	// Various uses
+	// https://standards.ieee.org/products-services/regauth/grpmac/public.html
+	if mac[:8] == "01:80:c2" {
+		return true
+	}
 	return helpers.StringIncludedIn(
 		[]string{
 			"ff:ff:ff:ff:ff:ff",
-			"33:33:00:01:00:02",
 			"00:00:00:00:00:00",
 		},
 		mac,

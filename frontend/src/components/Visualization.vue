@@ -15,6 +15,10 @@
               <td><b>Vendor</b></td>
               <td>{{ selectedNodeVendor }}</td>
             </tr>
+            <tr>
+              <td><b>Probed For</b></td>
+              <td>{{ selectedNodeProbedFor }}</td>
+            </tr>
           </tbody>
         </table>
         <hr class="middle" />
@@ -45,6 +49,7 @@
         displayDetails: false,
         selectedNodeMAC: "",
         selectedNodeVendor: "",
+        selectedNodeProbedFor: "",
       }
     },
     methods: {
@@ -64,6 +69,7 @@
           context.graph.width(document.getElementById("visualcontainer").offsetWidth)
           context.selectedNodeMAC = node.MAC
           context.selectedNodeVendor = node.Vendor
+          context.selectedNodeProbedFor = node.ProbedFor
         })
       },
       updateDevice: function(device) {
@@ -138,6 +144,9 @@
 </script>
 
 <style scoped>
+  .columns {
+    background-color: #000011;
+  }
   h1 {
     text-align: center;
   }
